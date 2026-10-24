@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rödel — Sardines since 1824 (concept)</title>
 <meta name="description" content="Concept redesign for Rödel, the sardine house founded in 1824. Hand-packed in Brittany; Millésime sardines dated by the year of the catch.">
 <meta name="robots" content="noindex, nofollow">
@@ -28,8 +28,6 @@
 
 <div class="viewport" aria-hidden="true">
   <canvas id="scene"></canvas>
-  <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
-  <div class="fig"><span class="mono" data-fig>Fig. 00 — The shoal</span><span class="mono" data-count>00 / 05</span><i class="bar"></i></div>
 </div>
 
 <header class="top">
@@ -44,18 +42,13 @@
   <a class="btn btn-ghost" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
 </header>
 
-<nav class="index" aria-hidden="true">
-  <a href="#top"><span>00</span></a>
-  <a href="#maison"><span>01</span></a>
-  <a href="#millesime"><span>02</span></a>
-  <a href="#collection"><span>03</span></a>
-  <a href="#histoire"><span>04</span></a>
-  <a href="#contact"><span>05</span></a>
-</nav>
-
 <main>
 
   <section id="top" class="band hero" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/shoal.webp" width="1200" height="853" alt="A shoal of silver sardines" fetchpriority="high" decoding="async">
+    </picture>
     <div class="copy">
       <p class="kicker mono">Maison fondée en 1824 · Bretagne</p>
       <h1>The sardine, <br><em>made a vintage.</em></h1>
@@ -69,6 +62,10 @@
   </section>
 
   <section id="maison" class="band" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/tin-open.webp" width="1200" height="853" alt="An open tin with five sardines laid head to tail" loading="lazy" decoding="async">
+    </picture>
     <div class="copy">
       <p class="kicker mono">01 — The method</p>
       <h2>Packed by hand. <br><em>Unchanged since 1824.</em></h2>
@@ -82,6 +79,10 @@
   </section>
 
   <section id="millesime" class="band" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/tin-ajar.webp" width="1200" height="853" alt="The Millésime 2025 tin, lid ajar" loading="lazy" decoding="async">
+    </picture>
     <div class="copy">
       <p class="kicker mono">02 — Millésime</p>
       <h2>Dated by the catch, <br><em>like wine by its harvest.</em></h2>
@@ -104,6 +105,7 @@
         <p data-p="desc"></p>
         <dl class="specs" data-p="specs"></dl>
       </div>
+      <ul class="cards" aria-label="The collection"></ul>
     </div>
     <div class="stage" aria-hidden="true"><span class="mono">Drag to turn the tin</span></div>
   </section>
@@ -153,5 +155,10 @@
   </section>
 
 </main>
+
+<nav class="dock" aria-label="Quick actions">
+  <a class="btn" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
+  <a class="btn btn-ghost" href="#contact">Contact</a>
+</nav>
 </body>
 </html>

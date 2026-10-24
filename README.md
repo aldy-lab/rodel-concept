@@ -13,6 +13,8 @@ A static site with no build step. Everything 3D is generated in code with Three.
 
 Easter egg: type `1824`.
 
+**Phones** don't load Three.js. The page uses stills rendered from the same models in `img/`, one card per product with an order link, and a bottom bar with the B2B store and Contact. To regenerate the stills after changing a model or label, serve the repo and run `python3 tools/stills.py`.
+
 ## Run
 
     python3 -m http.server 8000

@@ -57,7 +57,7 @@ a { color: inherit; }
   transition: opacity 1.2s ease;
 }
 .scene-ready #scene { opacity: 1; }
-.fig, .viewport .c { display: none; }
+.still, .cards, .dock { display: none; }
 
 /* ── header ── */
 .top {
@@ -97,21 +97,6 @@ a { color: inherit; }
   .btn:hover { background: var(--text); border-color: var(--text); }
   .btn-ghost:hover { background: transparent; border-color: var(--text); }
 }
-
-/* ── section index on the right ── */
-.index {
-  position: fixed; right: var(--gutter); top: 50%; z-index: 5;
-  transform: translateY(-50%);
-  display: grid; gap: 1.1rem;
-}
-.index a {
-  display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
-  font: 400 0.62rem var(--mono); color: var(--muted); text-decoration: none;
-  opacity: 0.5; transition: opacity 0.3s;
-}
-.index a::after { content: ""; width: 14px; height: 1px; background: currentColor; transition: width 0.3s; }
-.index a.on { opacity: 1; color: var(--text); }
-.index a.on::after { width: 32px; }
 
 /* ── bands: one screen each ── */
 main { position: relative; z-index: 1; }
@@ -248,77 +233,96 @@ p { margin: 0 0 1.2rem; color: var(--muted); }
   color: var(--muted); opacity: 0.7; font-size: 0.6rem;
 }
 
-/* ── phones: the scene lives in a framed window, the copy scrolls beneath it ── */
+/* ── phones: no WebGL. Rendered stills, product cards, a bottom action bar ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
-  :root { --stage: clamp(300px, 50svh, 540px); }
-  .nav, .index, .cue, .stage { display: none; }
-  .top { background: none; }
-  .top .btn { margin-left: auto; min-height: 40px; padding: 0 1rem; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(7, 13, 20, 0.35); }
+  :root { --header: 60px; --gutter: 20px; }
+  body { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .viewport, .nav, .cue, .stage, .tabs, .product { display: none; }
 
-  .viewport {
-    z-index: 6;
-    height: var(--stage);
-    pointer-events: auto; touch-action: pan-y; /* sideways drag turns the tin, vertical still scrolls */
-    background:
-      radial-gradient(90% 75% at 50% 45%, #12273e 0%, #0a1520 62%, var(--bg) 100%);
-    border-bottom: 1px solid var(--line-strong);
+  .top {
+    background: rgba(7, 13, 20, 0.78);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
   }
-  /* copy fades out just before it slides under the window */
-  .viewport::after {
-    content: ""; position: absolute; left: 0; right: 0; top: calc(100% + 1px); height: 48px;
-    background: linear-gradient(var(--bg), rgba(7, 13, 20, 0));
-    pointer-events: none;
-  }
-  .viewport .c { display: block; position: absolute; width: 13px; height: 13px; pointer-events: none; }
-  .viewport .c::before, .viewport .c::after { content: ""; position: absolute; background: var(--line-strong); }
-  .viewport .c::before { left: 6px; top: 0; width: 1px; height: 13px; }
-  .viewport .c::after { top: 6px; left: 0; height: 1px; width: 13px; }
-  .c.tl { left: 10px; top: calc(var(--header) - 6px); }
-  .c.tr { right: 10px; top: calc(var(--header) - 6px); }
-  .c.bl { left: 10px; bottom: 10px; }
-  .c.br { right: 10px; bottom: 10px; }
-
-  .fig {
-    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
-    position: absolute; left: 34px; right: 34px; bottom: 13px;
-    color: var(--muted); font-size: 0.6rem; pointer-events: none;
-  }
-  .fig [data-fig] { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .fig .bar {
-    position: absolute; left: -34px; right: -34px; bottom: -14px; height: 1px;
-    background: var(--accent);
-    transform-origin: left; transform: scaleX(0);
-  }
+  .mark { font-size: 1.25rem; }
+  .top > .btn { display: none; } /* the dock carries the store link */
 
   .band {
-    min-height: calc(100svh - var(--stage));
-    align-content: start;
-    padding: 2.6rem var(--gutter) 3.2rem;
+    min-height: 0; display: block;
+    padding: 3.4rem var(--gutter) 3.6rem;
+    border-top: 1px solid var(--line);
   }
-  .hero { padding-top: calc(var(--stage) + 2rem); min-height: 100svh; }
-  .hero h1 { font-size: clamp(2.5rem, 11vw, 3.6rem); margin-bottom: 1rem; }
-  .hero .lead { font-size: 1rem; }
-  .hero .actions { margin-top: 1.4rem; }
-  .kicker { margin-bottom: 1.1rem; }
-  h2 { font-size: clamp(2rem, 9vw, 2.8rem); margin-bottom: 1.1rem; }
+  .hero { padding-top: calc(var(--header) + 0.5rem); border-top: 0; }
   .copy, .copy.wide { max-width: none; }
+
+  /* stills: full-bleed, on a soft pool of light, drifting very slightly */
+  .still {
+    display: block;
+    margin: 0 calc(var(--gutter) * -1) 1.8rem;
+    background: radial-gradient(60% 55% at 50% 52%, rgba(64, 104, 140, 0.28), transparent 72%);
+  }
+  .still img { display: block; width: 100%; height: auto; animation: drift 7s ease-in-out infinite alternate; }
+  .hero .still { margin-bottom: 0.6rem; }
+  @keyframes drift { from { transform: translateY(4px); } to { transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .still img { animation: none; } }
+
+  .kicker { margin-bottom: 1.1rem; }
+  h1 { font-size: clamp(2.6rem, 12vw, 3.8rem); margin-bottom: 1.1rem; }
+  h2 { font-size: clamp(2.1rem, 9.5vw, 3rem); margin-bottom: 1.1rem; }
   h2 br { display: none; }
+  .lead { font-size: 1.04rem; }
+  .actions { margin-top: 1.6rem; }
+  .actions .btn { flex: 1 1 0; }
+
+  /* collection as cards */
+  .cards { display: grid; gap: 1.2rem; list-style: none; margin: 1.6rem 0 0; padding: 0; }
+  .card {
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(18, 39, 62, 0.45), rgba(11, 22, 33, 0.2));
+  }
+  .card picture {
+    display: block; border-bottom: 1px solid var(--line);
+    background: radial-gradient(60% 60% at 50% 55%, rgba(64, 104, 140, 0.3), transparent 75%);
+  }
+  .card img { display: block; width: 100%; height: auto; }
+  .card > :not(picture) { margin-left: 1.2rem; margin-right: 1.2rem; }
+  .card .mono { margin-top: 1.2rem; margin-bottom: 0.4rem; color: var(--accent); font-size: 0.62rem; }
+  .card h3 { font: 300 2rem/1.05 var(--serif); margin-top: 0; margin-bottom: 0.7rem; }
+  .card .specs { margin-top: 1.2rem; }
+  .card-link {
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 52px; margin: 0.4rem 0 0 !important; padding: 0 1.2rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.86rem; text-decoration: none; color: var(--text);
+  }
+  .card-link span { color: var(--accent); }
+
   .timeline { height: auto; border: 0; margin-top: 2rem; }
   .timeline::after { display: none; }
   .timeline li, .timeline li:nth-child(even), .timeline li:last-child {
     position: static; width: auto; text-align: left;
     border-left: 1px solid var(--accent); border-right: 0;
-    padding: 0 0 1rem 0.9rem;
+    padding: 0 0 1.1rem 0.9rem;
   }
+  .contact { grid-template-columns: 1fr; gap: 1.4rem; }
   .foot { position: static; margin-top: 2.5rem; }
-  #contact { padding-bottom: 1.4rem; }
+
+  /* the two things a buyer comes for, always one tap away */
+  .dock {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px;
+    position: fixed; z-index: 20;
+    left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+    padding: 8px;
+    background: rgba(11, 22, 33, 0.8);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border: 1px solid var(--line-strong);
+  }
+  .dock .btn { min-height: 48px; }
 }
 @media (max-width: 520px) {
   .specs { grid-template-columns: 1fr; }
   .specs div, .specs div + div { padding: 0.7rem 0; border-right: 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 1rem; }
   .specs dd { margin: 0; text-align: right; }
-  .contact { grid-template-columns: 1fr; gap: 1.4rem; }
-  .tabs button { padding: 0 0.7rem; font-size: 0.8rem; }
 }
 
 /* without WebGL the page still reads */
