@@ -29,14 +29,14 @@ function paint(geo, fn) {
   return geo;
 }
 
-export function createFishGeometry() {
+export function createFishGeometry(lite = false) {
   const pts = [new THREE.Vector2(0, X0 - 0.001)];
-  const N = 64;
+  const N = lite ? 40 : 64;
   for (let i = 0; i <= N; i++) {
     const t = i / N;
     pts.push(new THREE.Vector2(radiusAt(t), X0 + t * (X1 - X0)));
   }
-  const body = new THREE.LatheGeometry(pts, 40);
+  const body = new THREE.LatheGeometry(pts, lite ? 24 : 40);
   body.rotateZ(-Math.PI / 2);
   body.scale(1, 1, SQUASH);
   // a slightly fuller belly than back
@@ -87,7 +87,7 @@ export function createFishGeometry() {
 
 // Physical, iridescent skin. Per-instance `aWig` (0…1) drives the tail beat so
 // fish already packed in the tin lie still while the shoal swims.
-export function createFishMaterial(uniforms) {
+export function createFishMaterial(uniforms, lite = false) {
   const m = new THREE.MeshPhysicalMaterial({
     vertexColors: true,
     metalness: 0.9,
@@ -95,7 +95,7 @@ export function createFishMaterial(uniforms) {
     iridescence: 0.22,
     iridescenceIOR: 1.3,
     iridescenceThicknessRange: [260, 420],
-    clearcoat: 0.4,
+    clearcoat: lite ? 0 : 0.4, // a second specular lobe per pixel; phones skip it
     clearcoatRoughness: 0.2,
     side: THREE.DoubleSide,
     envMapIntensity: 1.3,
