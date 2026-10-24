@@ -46,7 +46,7 @@ const collection = initCollection();
 if (renderer) start();
 
 function start() {
-  let dpr = Math.min(devicePixelRatio, touch ? 1.5 : 2);
+  let dpr = Math.min(devicePixelRatio, touch ? 1.75 : 2);
   renderer.setPixelRatio(dpr);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -137,13 +137,14 @@ function start() {
       S(0.62, 0.08, -3.5, 1.1, 0.75, 0.2, 0.5, 1, 0.42, 0.04),
       S(0.3, -0.08, 0, 0.98, 2.7, -0.04, 2.15, 1, 0.42, 0.04),
     ],
+    // phones: the scene is framed in a window above the copy, so everything is centred in it
     tall: [
-      S(-0.2, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0, 0.3, 0.66),
-      S(-0.2, 0.42, 0, 0.98, 2.75, -0.05, 2.15, 1, 0, 0.3, 0.66),
-      S(0, 0.44, 0, 0.72, 0.45, -0.08, 0, 1, 0, 0.3),
-      S(0, 0.44, 0, 0.85, -0.15, 0, 0, 1, 0, 0.3),
-      S(0.05, 0.64, -1, 1.1, 0.75, 0.2, 0.5, 1, 0, 0.3, 0.62),
-      S(-0.2, 0.6, 0, 0.98, 2.7, -0.04, 2.15, 1, 0, 0.3, 0.6),
+      S(-0.16, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0, -0.06, 0.56),
+      S(-0.16, -0.14, 0, 0.98, 2.75, -0.05, 2.15, 1, 0, -0.06, 0.56),
+      S(0, -0.1, 0, 0.72, 0.45, -0.08, 0, 1, 0, -0.06, 0.92),
+      S(0, -0.12, 0, 0.85, -0.15, 0, 0, 1, 0, -0.06, 0.92),
+      S(0.02, -0.16, -1, 1.1, 0.75, 0.2, 0.5, 1, 0, -0.06, 0.66),
+      S(-0.16, -0.14, 0, 0.98, 2.7, -0.04, 2.15, 1, 0, -0.06, 0.56),
     ],
   };
   const KEYS = Object.keys(STATES.wide[0]);
@@ -160,26 +161,31 @@ function start() {
   probe.style.cssText = 'position:fixed;top:0;height:100vh;height:100lvh;width:0;visibility:hidden;pointer-events:none';
   document.body.append(probe);
   let lastW = 0, lastH = 0;
+  const viewport = document.querySelector('.viewport');
+  const mobileLayout = matchMedia('(max-width: 900px), (max-aspect-ratio: 9/10)');
+  let stageTop = 0; // on phones the copy is read below the window, so progress is measured there
 
   function resize() {
     centers = sections.map((s) => s.offsetTop + s.offsetHeight / 2);
+    tall = mobileLayout.matches;
     const w = innerWidth;
-    const h = touch ? Math.max(innerHeight, probe.offsetHeight) : innerHeight;
-    if (w === lastW && (h === lastH || (touch && Math.abs(h - lastH) < 160))) return;
+    // the phone window is sized in svh, so the address bar never resizes it
+    const h = tall ? viewport.clientHeight : touch ? Math.max(innerHeight, probe.offsetHeight) : innerHeight;
+    stageTop = tall ? h : 0;
+    if (w === lastW && (h === lastH || (touch && !tall && Math.abs(h - lastH) < 160))) return;
     lastW = w; lastH = h;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
     halfW = halfH * camera.aspect;
-    tall = camera.aspect < 0.9;
   }
   resize();
   addEventListener('resize', resize);
   new ResizeObserver(resize).observe(document.body);
 
   function progress() {
-    const y = scrollY + innerHeight / 2;
+    const y = scrollY + stageTop + (innerHeight - stageTop) / 2;
     if (y <= centers[0]) return 0;
     for (let i = 0; i < centers.length - 1; i++) {
       if (y < centers[i + 1]) return i + (y - centers[i]) / (centers[i + 1] - centers[i]);
@@ -195,19 +201,20 @@ function start() {
     mouse.y = e.clientY / innerHeight - 0.5;
   });
   let drag = 0, dragV = 0, spin = 0, spinTarget = 0;
-  const stage = document.querySelector('.stage');
-  if (stage) {
+  // desktop: the collection's stage; phones: the whole framed window
+  for (const el of [document.querySelector('.stage'), viewport]) {
+    if (!el) continue;
     let lastX = null;
-    stage.addEventListener('pointerdown', (e) => { lastX = e.clientX; stage.setPointerCapture(e.pointerId); });
-    stage.addEventListener('pointermove', (e) => {
+    el.addEventListener('pointerdown', (e) => { lastX = e.clientX; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointermove', (e) => {
       if (lastX === null) return;
       dragV = (e.clientX - lastX) * 0.01;
       drag += dragV;
       lastX = e.clientX;
     });
     const end = () => { lastX = null; };
-    stage.addEventListener('pointerup', end);
-    stage.addEventListener('pointercancel', end);
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
   }
 
   // easter egg: type 1824 and the shoal winds into a column for a few seconds
@@ -235,7 +242,25 @@ function start() {
   const clock = new THREE.Clock();
   let t = 0;
   const motion = reduced ? 0.25 : 1;
-  const followRate = touch ? 9 : 5; // a slow follow under a finger reads as lag
+  const followRate = touch ? 9 : 5;
+  // caption under the phone window: figure number, what is shown, and a progress rule
+  const figEl = document.querySelector('[data-fig]');
+  const countEl = document.querySelector('[data-count]');
+  const barEl = document.querySelector('.fig .bar');
+  const FIGS = ['The shoal', 'Hand-packed', 'Millésime', null, 'Since 1824', 'The open tin'];
+  let figKey = '', barLast = -1;
+  function caption(f, n) {
+    const i = Math.round(f);
+    const name = FIGS[i] ?? collection.current().name;
+    const key = i + name;
+    if (key !== figKey) {
+      figKey = key;
+      figEl.textContent = `Fig. 0${i} — ${name}`;
+      countEl.textContent = `0${i} / 0${n - 1}`;
+    }
+    const pr = f / (n - 1);
+    if (Math.abs(pr - barLast) > 0.002) { barLast = pr; barEl.style.transform = `scaleX(${pr.toFixed(4)})`; }
+  } // a slow follow under a finger reads as lag
   let odd = false;
   // quality governor (touch only): if the device can't hold ~40 fps, step the
   // resolution down, then drop the dust. Never steps back up, so it can't oscillate.
@@ -265,6 +290,7 @@ function start() {
     // target state from scroll
     const f = progress();
     const list = tall ? STATES.tall : STATES.wide;
+    if (tall) caption(f, list.length);
     const i0 = Math.min(Math.floor(f), list.length - 1), i1 = Math.min(i0 + 1, list.length - 1);
     const k = ease(THREE.MathUtils.smoothstep(f - i0, 0.12, 0.88));
     const damp = 1 - Math.exp(-dt * followRate);
@@ -276,7 +302,7 @@ function start() {
     }
 
     // tin
-    const fit = tall ? (halfW * 1.45) / 4.4 : Math.min(0.88, (halfW * 0.8) / 4.4);
+    const fit = tall ? (halfW * 1.3) / 4.4 : Math.min(0.88, (halfW * 0.8) / 4.4);
     const inCollection = Math.max(0, 1 - Math.abs(f - 3));
     dragV *= 0.92;
     drag *= 1 - dt * 0.6 * (1 - inCollection);
@@ -297,7 +323,7 @@ function start() {
     const vt = performance.now() < vortexUntil ? 1 : 0;
     vortex += (vt - vortex) * (1 - Math.exp(-dt * 1.5));
     const cx = cur.cx * halfW, cy = cur.cy * halfH;
-    const shoalScale = tall ? 0.75 : 1;
+    const shoalScale = tall ? 1.05 : 1;
     for (let i = 0; i < N; i++) {
       const d = fish[i];
       const tinFish = i < 5;

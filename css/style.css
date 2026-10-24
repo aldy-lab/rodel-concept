@@ -45,15 +45,19 @@ body {
 a { color: inherit; }
 .mono { font-family: var(--mono); font-size: var(--small); letter-spacing: 0.14em; text-transform: uppercase; }
 
-#scene {
-  position: fixed; top: 0; left: 0;
+/* the 3D viewport: full screen behind the copy on desktop, a framed window on phones */
+.viewport {
+  position: fixed; top: 0; left: 0; z-index: 0;
   width: 100%; height: 100vh; height: 100lvh; /* stays put while the iOS address bar collapses */
-  display: block;
   pointer-events: none;
+}
+#scene {
+  display: block; width: 100%; height: 100%;
   opacity: 0;
   transition: opacity 1.2s ease;
 }
 .scene-ready #scene { opacity: 1; }
+.fig, .viewport .c { display: none; }
 
 /* ── header ── */
 .top {
@@ -244,22 +248,61 @@ p { margin: 0 0 1.2rem; color: var(--muted); }
   color: var(--muted); opacity: 0.7; font-size: 0.6rem;
 }
 
-/* ── narrow: scene on top, copy below ── */
+/* ── phones: the scene lives in a framed window, the copy scrolls beneath it ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
-  .nav, .index { display: none; }
-  .top .btn { margin-left: auto; }
-  .band { align-content: end; padding-top: 50svh; padding-bottom: 2.5rem; }
-  .band::before {
-    content: ""; position: absolute; inset: 42svh 0 0; z-index: -1;
-    background: linear-gradient(transparent, rgba(7, 13, 20, 0.88) 18%, var(--bg));
+  :root { --stage: clamp(300px, 50svh, 540px); }
+  .nav, .index, .cue, .stage { display: none; }
+  .top { background: none; }
+  .top .btn { margin-left: auto; min-height: 40px; padding: 0 1rem; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(7, 13, 20, 0.35); }
+
+  .viewport {
+    z-index: 6;
+    height: var(--stage);
+    pointer-events: auto; touch-action: pan-y; /* sideways drag turns the tin, vertical still scrolls */
+    background:
+      radial-gradient(90% 75% at 50% 45%, #12273e 0%, #0a1520 62%, var(--bg) 100%);
+    border-bottom: 1px solid var(--line-strong);
   }
-  .hero { padding-top: 46svh; }
-  .cue { display: none; }
-  .stage { top: var(--header); bottom: auto; height: 40svh; width: 100%; }
-  .stage span { display: none; }
+  /* copy fades out just before it slides under the window */
+  .viewport::after {
+    content: ""; position: absolute; left: 0; right: 0; top: calc(100% + 1px); height: 48px;
+    background: linear-gradient(var(--bg), rgba(7, 13, 20, 0));
+    pointer-events: none;
+  }
+  .viewport .c { display: block; position: absolute; width: 13px; height: 13px; pointer-events: none; }
+  .viewport .c::before, .viewport .c::after { content: ""; position: absolute; background: var(--line-strong); }
+  .viewport .c::before { left: 6px; top: 0; width: 1px; height: 13px; }
+  .viewport .c::after { top: 6px; left: 0; height: 1px; width: 13px; }
+  .c.tl { left: 10px; top: calc(var(--header) - 6px); }
+  .c.tr { right: 10px; top: calc(var(--header) - 6px); }
+  .c.bl { left: 10px; bottom: 10px; }
+  .c.br { right: 10px; bottom: 10px; }
+
+  .fig {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    position: absolute; left: 34px; right: 34px; bottom: 13px;
+    color: var(--muted); font-size: 0.6rem; pointer-events: none;
+  }
+  .fig [data-fig] { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .fig .bar {
+    position: absolute; left: -34px; right: -34px; bottom: -14px; height: 1px;
+    background: var(--accent);
+    transform-origin: left; transform: scaleX(0);
+  }
+
+  .band {
+    min-height: calc(100svh - var(--stage));
+    align-content: start;
+    padding: 2.6rem var(--gutter) 3.2rem;
+  }
+  .hero { padding-top: calc(var(--stage) + 2rem); min-height: 100svh; }
+  .hero h1 { font-size: clamp(2.5rem, 11vw, 3.6rem); margin-bottom: 1rem; }
+  .hero .lead { font-size: 1rem; }
+  .hero .actions { margin-top: 1.4rem; }
+  .kicker { margin-bottom: 1.1rem; }
+  h2 { font-size: clamp(2rem, 9vw, 2.8rem); margin-bottom: 1.1rem; }
   .copy, .copy.wide { max-width: none; }
   h2 br { display: none; }
-  #histoire, #contact { padding-top: 30svh; }
   .timeline { height: auto; border: 0; margin-top: 2rem; }
   .timeline::after { display: none; }
   .timeline li, .timeline li:nth-child(even), .timeline li:last-child {
