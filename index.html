@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rödel — Sardines since 1824 (concept)</title>
+<meta name="description" content="Concept redesign for Rödel, the sardine house founded in 1824. Hand-packed in Brittany; Millésime sardines dated by the year of the catch.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Rödel — Sardines since 1824">
+<meta property="og:description" content="A concept redesign: the shoal, the tin, the Millésime.">
+<meta property="og:image" content="og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070d14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23070d14'/%3E%3Cpath d='M5 16c5-6 13-6 18 0-5 6-13 6-18 0zm18 0 5-4v8z' fill='%23b8c9d6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<header class="top">
+  <a class="mark" href="#top" aria-label="Rödel, back to top">RÖDEL<span class="mono">1824</span></a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#maison">Maison</a>
+    <a href="#millesime">Millésime</a>
+    <a href="#collection">Collection</a>
+    <a href="#histoire">History</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="btn btn-ghost" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
+</header>
+
+<nav class="index" aria-hidden="true">
+  <a href="#top"><span>00</span></a>
+  <a href="#maison"><span>01</span></a>
+  <a href="#millesime"><span>02</span></a>
+  <a href="#collection"><span>03</span></a>
+  <a href="#histoire"><span>04</span></a>
+  <a href="#contact"><span>05</span></a>
+</nav>
+
+<main>
+
+  <section id="top" class="band hero" data-scene>
+    <div class="copy">
+      <p class="kicker mono">Maison fondée en 1824 · Bretagne</p>
+      <h1>The sardine,<br><em>made a vintage.</em></h1>
+      <p class="lead">Rödel has packed sardines by hand in Brittany since 1824. The taste of Brittany, the elegance of Bordeaux.</p>
+      <div class="actions">
+        <a class="btn" href="#collection">See the collection</a>
+        <a class="btn btn-ghost" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
+      </div>
+    </div>
+    <p class="cue mono" aria-hidden="true"><span></span>Follow the shoal</p>
+  </section>
+
+  <section id="maison" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">01 — The method</p>
+      <h2>Packed by hand.<br><em>Unchanged since 1824.</em></h2>
+      <p>Each sardine is laid into its tin by hand, in Brittany, by the method the house has kept for two centuries. The fish are responsibly sourced, and the Millésime is prepared on the day of the catch.</p>
+      <dl class="specs">
+        <div><dt>Origin</dt><dd>Brittany, France</dd></div>
+        <div><dt>Method</dt><dd>Hand-packed</dd></div>
+        <div><dt>Since</dt><dd>1824</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="millesime" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">02 — Millésime</p>
+      <h2>Dated by the catch,<br><em>like wine by its harvest.</em></h2>
+      <p>Each year the house selects the finest catch and marks the tin with its year. The sardines are taken at optimal maturity, for richness and depth of flavour, and laid down like a cellar wine: the Classic keeps its quality for up to ten years.</p>
+      <figure class="rule" aria-label="Keeps up to ten years, 2025 to 2035">
+        <div class="ticks"></div>
+        <div class="span"><span class="mono">Keeps up to 10 years</span></div>
+        <div class="ends mono"><span>2025</span><span>2035</span></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="collection" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">03 — The collection</p>
+      <div class="tabs" role="group" aria-label="Choose a sardine"></div>
+      <div class="product" aria-live="polite">
+        <h2 data-p="name">Millésime 2025</h2>
+        <p class="sub mono" data-p="sub"></p>
+        <p data-p="desc"></p>
+        <dl class="specs" data-p="specs"></dl>
+      </div>
+    </div>
+    <div class="stage" aria-hidden="true"><span class="mono">Drag to turn the tin</span></div>
+  </section>
+
+  <section id="histoire" class="band" data-scene>
+    <div class="copy wide">
+      <p class="kicker mono">04 — Two centuries</p>
+      <h2>The oldest sardine house<br><em>in the world.</em></h2>
+      <p>Rödel &amp; Fils Frères. One family name, one process, and recipes kept in the house catalogues since the nineteenth century.</p>
+      <ol class="timeline">
+        <li style="--at:0"><span class="mono">1824</span>The house is founded. Its preserving method has not changed since.</li>
+        <li style="--at:.4"><span class="mono">c. 1905</span>Chica Pica: a spice blend from a Venezuelan friend of the house.</li>
+        <li style="--at:.505"><span class="mono">1926</span>A single-serving recipe, later recovered from an original catalogue.</li>
+        <li style="--at:.995"><span class="mono">2025</span>Millésime 2025: hand-boned, from the finest catch of the year.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="contact" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">05 — Trade &amp; contact</p>
+      <h2>On the shelves of<br><em>Paris, Bordeaux and&nbsp;Sète.</em></h2>
+      <p>Rödel is sold through fine grocers and restaurants. Professionals order through the B2B store.</p>
+      <div class="contact">
+        <div data-config-group>
+          <p class="mono">Trade</p>
+          <a class="btn" data-config="shopUrl" href="#" rel="noopener">Open the B2B store</a>
+        </div>
+        <div data-config-group>
+          <p class="mono">Write</p>
+          <a data-config="email" data-fill href="#">info@rodel.fr</a>
+        </div>
+        <div>
+          <p class="mono">House</p>
+          <address>Rödel SAS<br>14 rue Gambetta<br>78600 Le Mesnil-le-Roi, France</address>
+        </div>
+        <div data-config-group>
+          <p class="mono">Follow</p>
+          <a data-config="instagram" href="#" rel="noopener">Instagram</a>
+        </div>
+      </div>
+    </div>
+    <footer class="foot mono">
+      <span>© Rödel SAS</span>
+      <span>Concept redesign by ALDY Studio, not affiliated with Rödel SAS</span>
+    </footer>
+  </section>
+
+</main>
+</body>
+</html>
