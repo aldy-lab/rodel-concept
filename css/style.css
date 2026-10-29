@@ -532,48 +532,6 @@ p { text-wrap: pretty; }
 .progress span { position: relative; display: block; line-height: 28px; padding: 0 0.7rem; font-size: 0.6rem; color: var(--text); }
 .cart-aside .progress { width: 100%; margin-top: 1.2rem; }
 
-/* ── archive filmstrip (home) ── a plain grid unless the browser can pin it */
-.film-track { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); gap: 2rem 1.2rem; }
-.film-field { min-width: 0; }
-.film-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem 2rem; }
-.film-head .more { margin-top: 0; }
-.film-year {
-  display: block; margin-bottom: 0.9rem;
-  font: 300 italic clamp(2.4rem, 1.6rem + 2.4vw, 4rem)/0.9 var(--serif);
-  color: transparent; -webkit-text-stroke: 1px var(--accent);
-  font-variant-numeric: lining-nums;
-}
-.film-field .plate img { aspect-ratio: 4 / 5; object-fit: cover; }
-.film-field .plate figcaption { min-height: 2.4em; }
-
-@supports (animation-timeline: view()) {
-  @media (min-width: 1000px) and (min-aspect-ratio: 9/10) and (prefers-reduced-motion: no-preference) {
-    .filmstrip {
-      --field: 22rem; --gap: 3.2rem; --edge: var(--gutter);
-      /* every gap counts, or the last field stays cut off at the right edge */
-      --travel: max(0px, calc(var(--n) * var(--field) + (var(--n) - 1) * var(--gap) + 2 * var(--edge) - 100vw));
-      height: calc(100svh + var(--travel));
-      padding: 0;
-      view-timeline-name: --film; view-timeline-axis: block;
-    }
-    .film-vp {
-      position: sticky; top: 0; height: 100svh; overflow: clip;
-      display: flex; flex-direction: column; justify-content: center;
-      padding-top: var(--header);
-    }
-    .film-vp .section-head { padding: 0 var(--edge); margin-bottom: 2.4rem; max-width: none; }
-    .film-track {
-      display: flex; gap: var(--gap); margin: 0; padding: 0 var(--edge); width: max-content;
-      animation: film linear both; animation-timeline: --film;
-      animation-range: contain 0% contain 100%; animation-duration: auto;
-    }
-    .film-field { flex: none; width: var(--field); }
-    .film-field .plate img { height: 46vh; width: 100%; aspect-ratio: auto; }
-    .film-year { font-size: 5.2rem; margin-bottom: 1.2rem; }
-    @keyframes film { to { transform: translate3d(calc(-1 * var(--travel)), 0, 0); } }
-  }
-}
-
 /* ── Maison archive: filters, grid, viewer ── */
 .g-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 2rem; }
 .g-filters button {
@@ -715,6 +673,70 @@ p { text-wrap: pretty; }
     }
     @keyframes rise { to { transform: translateY(var(--rise)); } }
   }
+}
+
+/* ── home history reel: pinned while seven eras pass ── */
+.reel { --step: 72svh; height: calc(100svh + var(--steps) * var(--step)); padding: 0; }
+.reel-vp {
+  position: sticky; top: 0; height: 100svh; overflow: clip;
+  display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(2rem, 5vw, 5rem);
+  padding: calc(var(--header) + 1rem) var(--gutter) 2rem;
+}
+/* spacers that the observer reads: one per era, starting half a screen into the pin */
+.reel-steps { margin-top: -50svh; }
+.reel-steps > div { height: var(--step); }
+
+.reel-ambient { position: absolute; inset: 0; z-index: 0; }
+.reel-ambient img {
+  position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover;
+  filter: blur(70px) saturate(1.35); opacity: 0; transition: opacity 1.6s ease;
+}
+.reel-ambient img.is-active { opacity: 0.34; }
+.reel-ambient::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 70% 50%, rgba(7, 13, 20, 0.35), var(--bg) 78%); }
+
+.reel-copy { position: relative; z-index: 2; min-width: 0; }
+.reel-year {
+  margin: 0.4rem 0 1.4rem; display: flex; align-items: baseline; gap: 0.6rem;
+  font: 300 italic clamp(5.5rem, 2.5rem + 8vw, 11.5rem)/0.82 var(--serif); letter-spacing: -0.02em;
+  color: var(--text); font-variant-numeric: lining-nums tabular-nums;
+}
+.reel-prefix { font-size: 0.32em; color: var(--accent); }
+.reel-text { list-style: none; margin: 0; padding: 0; display: grid; }
+.reel-text li { grid-area: 1 / 1; opacity: 0; translate: 0 20px; transition: opacity 0.7s ease, translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
+.reel-text li.is-active { opacity: 1; translate: 0 0; transition-delay: 0.15s; pointer-events: auto; }
+.reel-date { display: none; }
+.reel-text h3 { font: 300 clamp(1.8rem, 1.2rem + 1.6vw, 2.8rem)/1.05 var(--serif); margin: 0 0 0.9rem; color: var(--text); }
+.reel-text p { max-width: 30rem; }
+.reel-progress { display: flex; align-items: center; gap: 1rem; margin: 2rem 0 1.4rem; }
+.reel-count { color: var(--accent); font-size: 0.6rem; }
+.reel-bar { position: relative; width: 9rem; height: 1px; background: var(--line-strong); }
+.reel-bar i { position: absolute; inset: 0; background: var(--accent); transform-origin: left; transform: scaleX(0.143); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.reel-hint { position: absolute; left: 50%; bottom: 1.6rem; translate: -50% 0; z-index: 2; color: var(--muted); font-size: 0.58rem; transition: opacity 0.6s; }
+.reel.started .reel-hint { opacity: 0; }
+
+/* the pile of prints */
+.reel-deck { position: relative; z-index: 1; height: min(72svh, 46rem); min-width: 0; }
+.print {
+  position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; max-width: 100%;
+  padding: 0.75rem 0.75rem 0.6rem; background: #0f1b27; border: 1px solid var(--line);
+  box-shadow: 0 50px 90px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 0, 0, 0.3);
+  opacity: 0; transform: translate(14%, 80%) rotate(calc(var(--r) + 12deg)) scale(0.96);
+  transition: transform 1.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.9s ease, filter 1.2s ease;
+}
+.print .frame img { display: block; width: auto; height: auto; max-width: min(40vw, 36rem); max-height: 60svh; }
+.print figcaption { margin-top: 0.6rem; font: 400 0.56rem/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); max-width: 30ch; }
+.print.is-active { opacity: 1; transform: rotate(var(--r)); filter: none; }
+.print.is-past {
+  /* each step back: further up and left, smaller, darker, more askew */
+  opacity: calc(1 + var(--d) * 0.24);
+  transform: translate(calc(var(--d) * 7%), calc(var(--d) * 5%)) rotate(calc(var(--r) + var(--d) * 5deg)) scale(calc(1 + var(--d) * 0.06));
+  filter: brightness(calc(1 + var(--d) * 0.16)) saturate(0.7);
+}
+.print.is-active .frame img { animation: kenburns 11s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+@keyframes kenburns { from { scale: 1.16; translate: 2% 1.5%; } to { scale: 1.02; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .print, .reel-text li, .reel-ambient img, .reel-bar i { transition: none; }
+  .print.is-active .frame img { animation: none; }
 }
 
 /* ── phones: no WebGL. Rendered stills, product cards, a bottom action bar ── */
@@ -884,7 +906,7 @@ p { text-wrap: pretty; }
   .home #millesime { order: 3; }
   .home #collection { display: none; }
   .home #histoire { order: 4; }
-  .home .archive-band { order: 5; }
+  .home .archive-band, .home .reel { order: 5; }
   .home #contact { order: 6; }
   .band-solid { padding: 3.4rem var(--gutter); }
   .range { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem 0.9rem; }
@@ -917,4 +939,20 @@ p { text-wrap: pretty; }
   .story-hero > :not(.hero-stack) { max-width: none; }
   .chapter-year { font-size: 7.5rem; top: 1.4rem; }
   .chapter.flip .chapter-year { right: auto; left: -0.04em; }
+}
+
+/* ── phones: the reel stacks photograph over text ── */
+@media (max-width: 900px), (max-aspect-ratio: 9/10) {
+  .reel { --step: 64svh; padding: 0; }
+  /* room for the header above and the action dock below */
+  .reel-vp { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; align-items: stretch; gap: 0.8rem; padding: calc(var(--header) + 1.6rem) var(--gutter) calc(88px + env(safe-area-inset-bottom)); }
+  .reel-deck { height: auto; min-height: 0; order: -1; }
+  .print .frame img { max-width: 70vw; max-height: 30svh; }
+  .reel-year { font-size: clamp(4rem, 18vw, 5.5rem); margin: 0 0 0.6rem; }
+  .reel-copy .kicker { display: none; }
+  .reel-text h3 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .reel-text p { font-size: 0.92rem; margin-bottom: 0; }
+  .reel-progress { margin: 1rem 0 0.6rem; }
+  .reel-copy .more { margin-top: 0.4rem; }
+  .reel-hint { display: none; }
 }

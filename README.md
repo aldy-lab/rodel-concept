@@ -47,7 +47,7 @@ The French is a faithful translation of Rödel's copy. **Have a native speaker p
 ## Home page motion
 
 - The 3D story runs only through its own sections. While a solid band (the collection grid, the archive filmstrip) is on screen, the story holds still and the scene fades out; it is not drawn at all when fully covered.
-- The archive filmstrip pins and slides sideways as you scroll (a CSS scroll timeline). It runs only where `animation-timeline` is supported, the screen is at least 1000px wide and motion is not reduced; elsewhere it is a plain grid. It never adds sideways page scroll.
+- The home history reel (`js/reel.js`) pins while seven eras pass (1804, 1824, 1843, 1872, c. 1880, 1900, 2025). Each era lays its archive photograph on a pile of prints, with a slow Ken Burns move; the year counts up to the era's date; the ground takes a blurred tint of the photograph; a counter and bar track progress. Eras are switched by an IntersectionObserver on spacer elements, so nothing runs per frame except the short count. Without JS the first era shows; with reduced motion the eras switch without movement.
 - The Maison history is told on scroll (`js/story.js`, CSS "story"): the hero's three archive photographs fan out from a stack; each chapter's photograph opens like a shutter and drifts inside its frame, its date rises in large outline behind the heading, the text arrives line by line, and a rail of chapter numerals (≥1200px) tracks the chapter being read; "Bon appétit" resolves letter by letter. Parallax uses CSS scroll timelines where supported; reduced motion gets the static page; without JS everything is visible.
 - The Maison archive (35 photographs) can be filtered by theme and opens in a full-screen viewer: arrows, keyboard, swipe, Esc.
 

@@ -24,6 +24,8 @@ const collection = initCollection();
 applyConfig();
 initStore(CONFIG);
 
+const reelRoot = document.querySelector('[data-reel]');
+if (reelRoot) import('./reel.js').then((m) => m.initReel(reelRoot));
 const storyRoot = document.querySelector('[data-story]');
 if (storyRoot) import('./story.js').then((m) => m.initStory(storyRoot));
 const galleryRoot = document.querySelector('[data-gallery]');

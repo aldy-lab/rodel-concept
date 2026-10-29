@@ -11,7 +11,7 @@ Old rodel.fr addresses get redirect pages; sitemap.xml lists both languages.
 import html, json, pathlib, re, subprocess, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from i18n import CHROME, S, STOCKISTS, ARCHIVE_FR, ARCHIVE_STRIP, GALLERY, GALLERY_TAGS, GALLERY_UI  # noqa: E402
+from i18n import CHROME, S, STOCKISTS, ARCHIVE_FR, GALLERY, GALLERY_TAGS, GALLERY_UI, REEL, REEL_UI  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE_URL = 'https://aldy-lab.github.io/rodel-concept/'
@@ -185,25 +185,45 @@ def band_collection(lang):
   </section>'''
 
 
-def band_archive(lang):
-    """A filmstrip: on wide screens it pins and slides sideways as you scroll (CSS
-    scroll timeline, gated in style.css); elsewhere it is a plain grid. Nothing
-    focusable inside the track — a clipped box cannot reveal a focused child."""
-    t = S[lang]
-    fields = ''.join(
-        f'<li class="film-field"><span class="film-year">{en if lang == "en" else fr}</span>{fig(slug, "", lang)}</li>'
-        for slug, en, fr in ARCHIVE_STRIP)
-    return f'''<section class="band-solid archive-band filmstrip" style="--n: {len(ARCHIVE_STRIP)}">
-    <div class="film-vp">
-      <div class="section-head film-head">
-        <div>
-          <p class="kicker mono">{t['archive_kicker']}</p>
-          <h2>{t['archive_h2']}</h2>
-        </div>
-        <a class="more" href="maison/#archive">{t['archive_more']} <span aria-hidden="true">→</span></a>
+def band_reel(lang):
+    """The home history reel: pinned while seven eras pass. Photographs pile up
+    like prints on a table, the year counts to the next era, the ground takes
+    the colour of the current photograph. js/reel.js marks the active step;
+    without it the first era shows."""
+    ui = REEL_UI[lang]
+    tilts = [-3, 2.5, -1.5, 3, -2.5, 1.5, -1]
+    n = len(REEL)
+    ambient, prints, texts, steps = [], [], [], []
+    for k, (slug, year, prefix, title, text) in enumerate(REEL):
+        a = ASSETS['archive'][slug]
+        alt, cap = (ARCHIVE_FR[slug] if lang == 'fr' else (a['alt'], a['caption']))
+        w, h = a['w'], a['h']
+        w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
+        src = f'img/archive/{slug}-800.webp'
+        on = ' is-active' if k == 0 else ''  # without JS the first era shows
+        ambient.append(f'<img class="{on.strip()}" src="{src}" alt="" data-step="{k}" loading="lazy" decoding="async">')
+        prints.append(
+            f'<figure class="print{on}" data-step="{k}" style="--r: {tilts[k % len(tilts)]}deg">'
+            f'<span class="frame"><img src="{src}" srcset="{src} {w8}w, img/archive/{slug}.webp {w}w" sizes="(max-width: 900px) 80vw, 34vw" '
+            f'width="{w8}" height="{h8}" alt="{esc(alt)}" loading="lazy" decoding="async"></span>'
+            f'{f"<figcaption>{esc(cap)}</figcaption>" if cap else ""}</figure>')
+        texts.append(f'<li class="{on.strip()}" data-step="{k}" data-year="{year}" data-prefix="{prefix[lang]}"><p class="mono reel-date">{(prefix[lang] + " ") if prefix[lang] else ""}{year}</p>'
+                     f'<h3>{esc(title[lang])}</h3><p>{esc(text[lang])}</p></li>')
+        steps.append('<div></div>')
+    return f'''<section class="band-solid reel" style="--steps: {n}" data-reel>
+    <div class="reel-vp">
+      <div class="reel-ambient" aria-hidden="true">{''.join(ambient)}</div>
+      <div class="reel-copy">
+        <p class="kicker mono">{ui['kicker']}</p>
+        <p class="reel-year" aria-hidden="true"><span class="reel-prefix"></span><span class="reel-num">{REEL[0][1]}</span></p>
+        <ol class="reel-text">{''.join(texts)}</ol>
+        <div class="reel-progress" aria-hidden="true"><span class="mono reel-count">01 / {n:02d}</span><span class="reel-bar"><i></i></span></div>
+        <a class="more" href="maison/">{ui['more']} <span aria-hidden="true">→</span></a>
       </div>
-      <ol class="film-track">{fields}</ol>
+      <div class="reel-deck">{''.join(prints)}</div>
+      <p class="reel-hint mono" aria-hidden="true">{ui['hint']}</p>
     </div>
+    <div class="reel-steps" aria-hidden="true">{''.join(steps)}</div>
   </section>'''
 
 
@@ -242,7 +262,7 @@ def band_stockists(lang):
         f'<li><span>{esc(n)}</span><span class="mono">{c[lang] if c else ""}</span></li>' for n, c in STOCKISTS) + '</ul>'
 
 
-BANDS = {'collection': band_collection, 'archive': band_archive, 'stockists': band_stockists}
+BANDS = {'collection': band_collection, 'reel': band_reel, 'stockists': band_stockists}
 
 
 # ── generated pages ────────────────────────────────────────────────────────

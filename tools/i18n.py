@@ -188,13 +188,6 @@ ARCHIVE_FR = {
     'tin-dark': ('Une boîte Rödel dans la pénombre', None),
 }
 
-# the home filmstrip: slug, label (en, fr) — only dates the sources state
-ARCHIVE_STRIP = [
-    ('napoleon', '1804', '1804'), ('founders-medal', '1824', '1824'), ('etel', '1843–1870', '1843–1870'),
-    ('shanghai-advert', '1850–1900', '1850–1900'), ('concarneau', '1872', '1872'), ('emblem-1880', 'c. 1880', 'v. 1880'),
-    ('plage-rodel', '1900', '1900'), ('arcachon-fishermen', 'Arcachon', 'Arcachon'), ('tin-marble-red', '2025', '2025'),
-]
-
 # the Maison archive: every archive photograph, by theme
 GALLERY_TAGS = {
     'usines': {'en': 'Factories &amp; coast', 'fr': 'Usines &amp; littoral'},
@@ -222,3 +215,37 @@ GALLERY_UI = {
     'fr': {'label': 'Les archives', 'filter': 'Filtrer les archives', 'all': 'Tout', 'viewer': 'Visionneuse des archives',
            'prev': 'Photographie précédente', 'next': 'Photographie suivante', 'close': 'Fermer', 'open': 'Ouvrir : {cap}'},
 }
+
+# the home history reel: one step per era — (slug, year, prefix{en,fr}, title{en,fr}, text{en,fr})
+REEL = [
+    ('napoleon', 1804, {'en': '', 'fr': ''},
+     {'en': 'The invention that changed everything', 'fr': 'L’invention qui changea tout'},
+     {'en': 'Napoleon offered a reward to whoever could preserve food for his armies. Nicolas Appert answered, and opened the first cannery in Massy.',
+      'fr': 'Napoléon offrit une récompense à qui saurait conserver les vivres de ses armées. Nicolas Appert releva le défi et ouvrit la première conserverie à Massy.'}),
+    ('founders-medal', 1824, {'en': '', 'fr': ''},
+     {'en': 'Charles Désiré Rödel', 'fr': 'Charles Désiré Rödel'},
+     {'en': 'Appert’s most accomplished disciple builds the cannery in Bordeaux: Rödel & Fils Frères is founded, today the oldest cannery brand in the world.',
+      'fr': 'Le disciple le plus accompli d’Appert bâtit la conserverie de Bordeaux : naît Rödel & Fils Frères, aujourd’hui la plus ancienne marque de conserverie au monde.'}),
+    ('etel', 1843, {'en': '', 'fr': ''},
+     {'en': 'Victorine Lemoine Rödel', 'fr': 'Victorine Lemoine Rödel'},
+     {'en': 'The founder’s widow leads the house until 1870 and opens new factories in Étel, Concarneau, Saint-Yrieix and Port-Maria.',
+      'fr': 'La veuve du fondateur dirige la Maison jusqu’en 1870 et ouvre de nouvelles usines à Étel, Concarneau, Saint-Yrieix et Port-Maria.'}),
+    ('concarneau', 1872, {'en': '', 'fr': ''},
+     {'en': 'Seventeen factories', 'fr': 'Dix-sept usines'},
+     {'en': 'From Arcachon to Concarneau, one of France’s foremost houses of preserved foods. The beach below the Concarneau factory still bears its name.',
+      'fr': 'D’Arcachon à Concarneau, l’une des toutes premières maisons de conserves de France. La plage en contrebas de l’usine de Concarneau porte encore son nom.'}),
+    ('emblem-1880', 1880, {'en': 'c.', 'fr': 'v.'},
+     {'en': 'A globe and a beehive', 'fr': 'Un globe et une ruche'},
+     {'en': 'The emblem of an outward-looking house, which presented itself as supplier to the Emperor of Brazil, Lord Mountbatten and Theodore Roosevelt.',
+      'fr': 'L’emblème d’une Maison tournée vers le monde, qui se présentait comme fournisseur de l’empereur du Brésil, de Lord Mountbatten et de Theodore Roosevelt.'}),
+    ('plage-rodel', 1900, {'en': '', 'fr': ''},
+     {'en': 'A true luxury', 'fr': 'Un véritable luxe'},
+     {'en': 'Ten million tins of sardines a year in France. Canned sardines were a true luxury, reserved for the most discerning tables.',
+      'fr': 'Dix millions de boîtes de sardines par an en France. La sardine en boîte était un véritable luxe, réservé aux tables les plus raffinées.'}),
+    ('tin-marble-red', 2025, {'en': '', 'fr': ''},
+     {'en': 'Millésime 2025', 'fr': 'Millésime 2025'},
+     {'en': 'Still caught off Concarneau and packed by hand the same day, found in the finest houses of Paris: a name whispered among gourmets.',
+      'fr': 'Toujours pêchée au large de Concarneau et mise en boîte à la main le jour même, présente dans les plus belles maisons de Paris : un nom murmuré entre gourmets.'}),
+]
+REEL_UI = {'en': {'kicker': 'Two centuries · 1804–2025', 'more': 'The whole history', 'hint': 'Scroll through the eras'},
+           'fr': {'kicker': 'Deux siècles · 1804–2025', 'more': 'Toute l’histoire', 'hint': 'Faites défiler les époques'}}
