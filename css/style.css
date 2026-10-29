@@ -682,9 +682,12 @@ p { text-wrap: pretty; }
   display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(2rem, 5vw, 5rem);
   padding: calc(var(--header) + 1rem) var(--gutter) 2rem;
 }
-/* spacers that the observer reads: one per era, starting half a screen into the pin */
-.reel-steps { margin-top: -50svh; }
+/* spacers the observer reads, one per era. They cover the whole section, first
+   and last stretched by half a screen, so a jump to either end still lands on
+   the right era instead of keeping a stale one */
+.reel-steps { margin-top: -100svh; }
 .reel-steps > div { height: var(--step); }
+.reel-steps > div:first-child, .reel-steps > div:last-child { height: calc(var(--step) + 50svh); }
 
 .reel-ambient { position: absolute; inset: 0; z-index: 0; }
 .reel-ambient img {

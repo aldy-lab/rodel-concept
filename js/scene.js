@@ -126,18 +126,26 @@ export function startScene(collection) {
 
   const sections = [...document.querySelectorAll('[data-scene]')];
   let centers = [];
-  // Solid bands (the collection grid, the archive) cover the scene. While one is
-  // on screen the story holds still and the scene fades out, instead of the tin
-  // drifting on behind the band and peeking out at its edges.
+  // Solid bands (the collection grid, the history reel) and the footer are not
+  // part of the 3D story. Their height is cut out of the story's scroll, so the
+  // tin holds still while they pass; and the scene travels with the page at
+  // their edges — pushed up by a band arriving from below, let back in by one
+  // leaving at the top — so a band never slices through the tin.
   const viewport = document.querySelector('.viewport');
-  const solids = [...document.querySelectorAll('.band-solid')];
+  const solids = [...document.querySelectorAll('.band-solid, .site-foot')];
   let spans = [];
   const collapse = (y) => spans.reduce((out, [t, b]) => out - Math.max(0, Math.min(y, b) - t), y);
-  function cover() {
-    const top = scrollY, bottom = scrollY + innerHeight;
-    return spans.reduce((m, [t, b]) => Math.max(m, Math.max(0, Math.min(b, bottom) - Math.max(t, top)) / innerHeight), 0);
+  function shift() {
+    const h = innerHeight;
+    for (const [t, b] of spans) {
+      const top = t - scrollY, bot = b - scrollY;
+      if (top >= h || bot <= 0) continue; // not on screen
+      if (top <= 0 && bot >= h) return null; // covers the screen: nothing to draw
+      return top > 0 ? top - h : bot; // arriving from below : leaving at the top
+    }
+    return 0;
   }
-  let veil = 1;
+  let lastShift = 0;
   let halfW = 5, halfH = 3;
 
   // iOS changes innerHeight while the address bar collapses mid-scroll. Size the
@@ -325,9 +333,13 @@ export function startScene(collection) {
     // needs the slow drift and wobble: draw every other frame and save the GPU.
     moving += Math.abs(spinTarget - spin) + Math.abs(dragV) + vortex + (1 - cur.pack);
     odd = !odd;
-    const v = 1 - THREE.MathUtils.smoothstep(cover(), 0.2, 0.7);
-    if (Math.abs(v - veil) > 0.004 || (v === 0) !== (veil === 0)) { veil = v; viewport.style.opacity = v.toFixed(3); }
-    if ((touch && moving < 0.002 && odd) || phoneLayout.matches || veil === 0) { requestAnimationFrame(frame); return; }
+    const sh = shift();
+    if (sh !== lastShift) {
+      lastShift = sh;
+      viewport.style.visibility = sh === null ? 'hidden' : '';
+      viewport.style.transform = sh ? `translate3d(0, ${sh.toFixed(1)}px, 0)` : '';
+    }
+    if ((touch && moving < 0.002 && odd) || phoneLayout.matches || sh === null) { requestAnimationFrame(frame); return; }
 
     camera.position.x += (mouse.x * 0.4 - camera.position.x) * damp;
     camera.position.y += (0.6 - mouse.y * 0.25 - camera.position.y) * damp;
