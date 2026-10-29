@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
-// A quarter-club sardine tin: tinplate walls, painted sleeve, printed lid on a
-// hinge at the −x end, and five slots for fish laid head-to-tail.
+// A Rödel 1/6 sardine tin: tinplate walls, painted sleeve, a lid carrying the
+// photographed print of the real tin, hinged at the −x end, and five slots for
+// fish laid head-to-tail. Proportions follow the pack shots (1.275 : 1).
 
 function roundRect(w, d, r, PathType = THREE.Shape) {
   const s = new PathType();
@@ -32,14 +33,14 @@ function slab(dims, depth) {
   return g;
 }
 
-export const TIN = { W: 4.2, D: 2.9, H: 0.8, R: 0.42, T: 0.06 };
+export const TIN = { W: 4.2, D: 3.3, H: 0.8, R: 0.52, T: 0.06 };
 
 export function createTin(labelTexture) {
   const { W, D, H, R, T } = TIN;
   const group = new THREE.Group();
 
   const tinplate = new THREE.MeshStandardMaterial({ color: '#c9d1d8', metalness: 1, roughness: 0.28 });
-  const paint = new THREE.MeshStandardMaterial({ color: '#13263a', metalness: 0.5, roughness: 0.5, envMapIntensity: 0.45 });
+  const paint = new THREE.MeshStandardMaterial({ color: '#b3121a', metalness: 0.7, roughness: 0.3, envMapIntensity: 0.8 });
 
   const inner = [W - 2 * T, D - 2 * T, R - T];
   group.add(new THREE.Mesh(ring([W, D, R], inner, H), tinplate));
@@ -69,23 +70,16 @@ export function createTin(labelTexture) {
   lidGeo.translate(W / 2, 0, 0);
   lid.add(new THREE.Mesh(lidGeo, tinplate));
 
-  // the print stops short of the free end, leaving bare tinplate for the pull ring
-  const lw = W - 0.8, ld = D - 0.3;
-  const labelGeo = new THREE.ShapeGeometry(roundRect(lw, ld, R - 0.12), 14);
+  // the photographed lid covers the whole top, rim highlights and all
+  const lw = W + 0.04, ld = D + 0.04;
+  const labelGeo = new THREE.ShapeGeometry(roundRect(lw, ld, R + 0.02), 24);
   const uv = labelGeo.attributes.uv, lp = labelGeo.attributes.position;
   for (let i = 0; i < uv.count; i++) uv.setXY(i, (lp.getX(i) + lw / 2) / lw, (lp.getY(i) + ld / 2) / ld);
   labelGeo.rotateX(-Math.PI / 2);
-  labelGeo.translate(0.15 + lw / 2, 0.037, 0);
-  const label = new THREE.Mesh(labelGeo, new THREE.MeshStandardMaterial({ map: labelTexture, metalness: 0.3, roughness: 0.42 }));
+  labelGeo.translate(W / 2, 0.037, 0);
+  // the photo already carries the studio light; keep the shading light-handed
+  const label = new THREE.Mesh(labelGeo, new THREE.MeshStandardMaterial({ map: labelTexture, metalness: 0.15, roughness: 0.38, envMapIntensity: 0.6 }));
   lid.add(label);
-
-  // pull ring on the free end
-  const rivet = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.03, 20), tinplate);
-  rivet.position.set(W - 0.12, 0.05, 0);
-  const pull = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.026, 10, 36), tinplate);
-  pull.rotation.x = Math.PI / 2;
-  pull.position.set(W - 0.33, 0.06, 0);
-  lid.add(rivet, pull);
   group.add(lid);
 
   // Five fish lying on their side, alternating head-to-tail, slightly staggered in height.
@@ -102,5 +96,5 @@ export function createTin(labelTexture) {
     slots.push(new THREE.Matrix4().compose(pos, q, new THREE.Vector3().setScalar(FISH_SCALE)));
   }
 
-  return { group, lid, paint, slots };
+  return { group, lid, label, paint, slots };
 }

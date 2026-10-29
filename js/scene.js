@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createFishGeometry, createFishMaterial } from './fish.js';
 import { createTin } from './tin.js';
-import { PRODUCTS, drawLabel } from './label.js';
+import { TINS, aspectOf } from './products.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // phones and tablets: lighter shading, capped resolution, tighter scroll follow
@@ -39,23 +39,33 @@ export function startScene(collection) {
   scene.add(key, rim, new THREE.AmbientLight('#2a3d52', 0.6));
 
   // ── label + tin ──
-  const labelCanvas = document.createElement('canvas');
-  labelCanvas.width = 2048; labelCanvas.height = 1544;
-  const labelTex = new THREE.CanvasTexture(labelCanvas);
-  labelTex.colorSpace = THREE.SRGBColorSpace;
-  labelTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  const tin = createTin(labelTex);
+  // each lid is the real tin, photographed from above (tools/import_assets.py)
+  const loader = new THREE.TextureLoader();
+  const lids = new Map();
+  function lidTexture(p) {
+    if (!lids.has(p.id)) {
+      const tex = loader.load(`img/lids/${p.id}.webp`);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      lids.set(p.id, tex);
+    }
+    return lids.get(p.id);
+  }
+  const tin = createTin(lidTexture(TINS[0]));
   scene.add(tin.group);
   const paintTarget = new THREE.Color();
+  let depthTarget = 1, depth = 1; // the 69 g tin is narrower than the 1/6 tins
 
   function setProduct(p) {
-    drawLabel(labelCanvas, p);
-    labelTex.needsUpdate = true;
+    tin.label.material.map = lidTexture(p);
+    tin.label.material.needsUpdate = true;
     paintTarget.set(p.paint);
+    depthTarget = aspectOf(TINS[0]) / aspectOf(p);
   }
-  setProduct(PRODUCTS[0]);
+  setProduct(collection.current());
   tin.paint.color.copy(paintTarget);
-  document.fonts.ready.then(() => setProduct(collection.current()));
+  // warm the cache so a tab change never waits on the network
+  addEventListener('load', () => TINS.forEach(lidTexture));
   collection.onChange = (p) => { setProduct(p); spinTarget += Math.PI * 2; };
 
   // ── shoal ──
@@ -101,11 +111,11 @@ export function startScene(collection) {
   const S = (tx, ty, tz, rx, ry, rz, lid, pack, cx, cy) => ({ tx, ty, tz, rx, ry, rz, lid, pack, cx, cy });
   // ry ≈ π puts the hinge on the right, so an open lid swings away from the copy
   const STATES = [
-      S(0.52, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0.42, 0.04),
+      S(0.52, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0.58, 0.04),
       S(0.27, -0.1, 0, 0.98, 2.75, -0.05, 2.15, 1, 0.42, 0.04),
       S(0.44, -0.02, 0, 0.72, 0.45, -0.08, 0, 1, 0.42, 0.04),
       S(0.44, -0.05, 0, 0.85, -0.15, 0, 0, 1, 0.42, 0.04),
-      S(0.62, 0.08, -3.5, 1.1, 0.75, 0.2, 0.5, 1, 0.42, 0.04),
+      S(0.66, 0.16, -6, 1.1, 0.75, 0.2, 0.5, 1, 0.42, 0.04),
       S(0.3, -0.08, 0, 0.98, 2.7, -0.04, 2.15, 1, 0.42, 0.04),
   ];
   const KEYS = Object.keys(STATES[0]);
@@ -242,7 +252,8 @@ export function startScene(collection) {
       cur.ry + drag + spin + (reduced ? 0 : Math.sin(t * 0.4) * 0.12 * inCollection),
       cur.rz,
     );
-    tin.group.scale.setScalar(fit);
+    depth += (depthTarget - depth) * damp;
+    tin.group.scale.set(fit, fit, fit * depth);
     tin.lid.rotation.z = cur.lid;
     tin.paint.color.lerp(paintTarget, damp);
     tin.group.updateMatrixWorld(true);

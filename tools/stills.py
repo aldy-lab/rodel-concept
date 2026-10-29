@@ -8,8 +8,8 @@ from playwright.async_api import async_playwright
 
 BASE = 'http://127.0.0.1:8731/tools/stills.html'
 OUT = pathlib.Path(__file__).resolve().parent.parent / 'img'
-PRODUCTS = ['millesime-2025', 'classic', 'chica-pica', 'citron', 'classic-1926']
-SHOTS = [('shoal', 'shot=shoal'), ('tin-open', 'shot=open'), ('tin-ajar', 'shot=ajar')] + [(f'tin-{p}', f'shot=tin&p={p}') for p in PRODUCTS]
+# the phone cards use the real pack shots; only the scene's own moments are rendered
+SHOTS = [('shoal', 'shot=shoal'), ('tin-open', 'shot=open'), ('tin-ajar', 'shot=ajar')]
 
 async def main():
     async with async_playwright() as p:

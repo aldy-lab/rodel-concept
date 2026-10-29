@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createFishGeometry, createFishMaterial } from '../js/fish.js';
 import { createTin } from '../js/tin.js';
-import { PRODUCTS, drawLabel } from '../js/label.js';
+import { TINS } from '../js/products.js';
 
 const q = new URLSearchParams(location.search);
 const shot = q.get('shot') || 'tin';
@@ -38,9 +38,6 @@ function fishMesh(n, wiggle) {
   return mesh;
 }
 
-await document.fonts.load('300 100px "Cormorant Garamond"');
-await document.fonts.load('italic 300 100px "Cormorant Garamond"');
-await document.fonts.load('500 30px "JetBrains Mono"');
 
 const m4 = new THREE.Matrix4(), X = new THREE.Vector3(1, 0, 0);
 
@@ -58,11 +55,8 @@ if (shot === 'shoal') {
   shoal.position.x = 0.55;
   scene.add(shoal);
 } else {
-  const p = PRODUCTS.find((x) => x.id === q.get('p')) || PRODUCTS[0];
-  const canvas = document.createElement('canvas');
-  canvas.width = 2048; canvas.height = 1544;
-  drawLabel(canvas, p);
-  const tex = new THREE.CanvasTexture(canvas);
+  const p = TINS.find((x) => x.id === q.get('p')) || TINS[0];
+  const tex = await new THREE.TextureLoader().loadAsync(`../img/lids/${p.id}.webp`);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   const tin = createTin(tex);
