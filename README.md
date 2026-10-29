@@ -32,14 +32,28 @@ Trade accounts and sign-in from the Squarespace store cannot carry over. "Reques
 
 **Phones** don't load Three.js. They get stills rendered from the same models and the real pack shots.
 
+## Languages
+
+The whole site exists in English (`/`) and French (`/fr/`), with a FR/EN switch on every page that leads to the same page in the other language, plus `hreflang` links. In France the Toubon law requires commercial terms, prices and order forms to be in French for French buyers.
+
+- Page bodies: `pages/en/*.html` and `pages/fr/*.html`
+- Shared head, header, footer and dock: `templates/chrome.html`, labels in `tools/i18n.py`
+- Generated pages (collection, trade, store, product pages, order form, cart) and archive captions: `tools/i18n.py`
+- Product texts: `js/products.js` (English in `PRODUCTS`, French in `FR`)
+- Script strings: `js/i18n.js`
+
+The French is a faithful translation of Rödel's copy. **Have a native speaker proofread it before launch.** It is worth deciding with the client whether French should be the default language at the domain root.
+
 ## Tools
 
     python3 -m http.server 8731            # serve
-    python3 tools/build.py                 # regenerate the sub-pages + sitemap from index.html chrome
+    python3 tools/build.py                 # regenerate all 36 pages (both languages), redirects and sitemap
     python3 tools/import_assets.py <dir>   # re-import photos from a rodel.fr download folder
     python3 tools/stills.py                # re-render the phone stills (server must be running)
 
-Product data lives in one place, `js/products.js`. It drives the 3D tabs, the phone cards, `/collection/` and `/trade/`.
+Product data lives in one place, `js/products.js`. It drives the 3D tabs, the home collection grid, `/collection/`, `/trade/`, the store, product pages, the order form and the cart. Every page is generated, `index.html` included: edit `pages/` and `templates/`, never the output.
+
+**Structured data:** Organization on every page; Product (brand, GTIN-13/EAN, SKU, weight) and BreadcrumbList on product pages. Empty fields are stripped. Prices are left out of the markup because they are trade prices.
 
 All go-live values sit in the `CONFIG` block at the top of `js/main.js`. Leave a value blank and its link is removed from the page.
 

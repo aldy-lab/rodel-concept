@@ -82,9 +82,79 @@ export const byId = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
 
 export const MIN_ORDER = 1000; // euros, from the B2B ordering terms
 
-// One formatter for the whole site; tools/build.py's money() must print the same.
-const eur = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' });
-export const money = (n) => eur.format(n);
+// One formatter per language; tools/build.py's money() must print exactly the
+// same (fr-FR uses a narrow no-break space for thousands and a no-break space before €).
+const fmt = (lang) => new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { style: 'currency', currency: 'EUR' });
+export const money = (n) => fmt(LANG).format(n);
 
 // lid width ÷ depth, measured from the pack shots (tools/assets.json)
 export const aspectOf = (p) => p.aspect ?? 1.275;
+
+// ── French ── the same products, in French; tx() picks the page's language.
+const GENERIC_FR = 'Sardines sélectionnées à l’huile d’olive vierge extra, nettoyées à la main et délicatement mises en boîte à la main. Préparées uniquement à partir de poisson frais, le jour même de la pêche, exclusivement sur la côte bretonne.';
+const FR = {
+  millesime: {
+    name: 'Millésime 2025', shop: 'Sardines Millésime', line: 'Millésime',
+    lead: 'La pierre angulaire de l’art de la conserve.',
+    desc: 'Ce produit fut la pierre angulaire de l’art de la conserve et servit de référence à toutes les autres conserveries. Créé par le fils de Charles Rödel, il suivait une méthode précise et reconnaissable entre toutes, garantissant un goût et une qualité qui se conservent, et se savourent, même après dix ans.',
+    note: 'Les sardines millésimées Rödel marient avec harmonie la saveur d’un poisson de grande qualité, issu des meilleures populations de sardines, et la délicatesse d’une huile d’olive d’exception. Elles livrent un arôme franc, porteur des eaux pures où elles sont nées.',
+    b2b: 'Sardines à l’huile d’olive 1/6 - 115 g Millésimées',
+  },
+  'millesime-boneless': {
+    name: 'Millésime sans arêtes', shop: 'Sardines Millésime sans arêtes', line: 'Millésime',
+    lead: 'Sans arêtes, comme autrefois pour la cour royale.',
+    desc: 'Les plus belles sardines de chaque millésime sont préparées sans attendre, le jour même de leur pêche. Les sardines sans arêtes furent conçues pour la cour royale, où il était impensable que la plus fine des arêtes vienne troubler les nobles gorges de ses illustres invités.',
+    note: GENERIC_FR,
+    b2b: 'Sardines sans arêtes à l’huile d’olive 1/6 - 115 g Millésimées',
+  },
+  'chica-pica': {
+    name: 'Chica Pica', shop: 'Sardines aux épices Chica Pica', line: 'Recettes de la Maison',
+    lead: 'Un mélange d’épices secret, marque déposée de la Maison.',
+    desc: 'Chica Pica, « fille sauvage » : un mélange d’épices secret créé pour Rödel au début du XXᵉ siècle par un ami vénézuélien. Une marque déposée et une signature culinaire durable de la Maison.',
+    note: 'Ces sardines gourmet exhalent un arôme délicat, propre aux produits de la mer de grande qualité. Elles sont infusées du mélange d’aromates Chica Pica d’origine : carotte, cornichon, piment, poivre blanc, clou de girofle et laurier composent son parfum singulier. En bouche, le goût est riche et ample, légèrement salé et fumé, d’une belle profondeur.',
+    b2b: 'Sardines aux aromates Chica Pica 1/6 - 115 g',
+  },
+  citron: {
+    name: 'Citron', shop: 'Sardines au citron', line: 'Recettes de la Maison',
+    lead: 'Huile d’olive vierge extra et citron entier mûri au soleil.',
+    desc: 'Une alliance qui traverse les siècles. Le poisson et le citron forment une harmonie classique, comme l’amour et le mariage dans un refrain de jazz intemporel. Associés à l’huile d’olive vierge extra et à un citron entier mûri au soleil, ils créent un goût inoubliable et intemporel.',
+    note: 'La dégustation s’ouvre sur une saveur de sardine intensément fraîche : une note marine pure, nette, sans artifice. L’huile d’olive adoucit et enrichit cette première impression, apportant une texture veloutée et une agréable rondeur. Le citron ne rivalise pas avec la sardine et l’huile : il en souligne subtilement le caractère et ajoute une légère pointe acidulée qui élève toute la dégustation.',
+    b2b: 'Sardines à l’huile d’olive au citron 1/6 - 115 g',
+  },
+  'classic-1926': {
+    name: 'Classique 1926', shop: 'Sardines 69 g Classique 1926', line: 'Millésime',
+    lead: 'Une boîte de 69 g, pour ceux qui préfèrent ne pas partager.',
+    desc: 'Ces sardines ont été découvertes dans un catalogue de 1926, et nous avons également retrouvé la recette originale de l’époque. Le format de 69 g était destiné avant tout à ceux qui préfèrent ne pas partager leur boîte.',
+    note: GENERIC_FR,
+    b2b: 'Sardines à l’huile d’olive 1/10 - 69 g',
+  },
+  'green-pepper': {
+    name: 'Poivre Vert', shop: 'Sardines au poivre vert', line: 'Recettes de la Maison',
+    lead: 'Au poivre vert.',
+    desc: 'Sardines sélectionnées à l’huile d’olive vierge extra au poivre vert, nettoyées à la main et délicatement mises en boîte à la main. Préparées uniquement à partir de poisson frais, le jour même de la pêche, exclusivement sur la côte bretonne.',
+    b2b: 'Sardines à l’huile d’olive et poivre vert 1/6 - 115 g',
+  },
+  'spicy-tomato': {
+    name: 'Tomate Épicée', shop: 'Sardines à la tomate épicée', line: 'Recettes de la Maison',
+    lead: 'À la tomate épicée.',
+    desc: 'Sardines sélectionnées à la tomate épicée, nettoyées à la main et délicatement mises en boîte à la main. Préparées uniquement à partir de poisson frais, le jour même de la pêche, exclusivement sur la côte bretonne.',
+    b2b: 'Sardines à l’huile d’olive et tomate épicée 1/6 - 115 g',
+  },
+  'achards-truffle': {
+    name: 'Achards & Truffe', shop: 'Sardines aux achards et à la truffe', line: 'Recettes de la Maison',
+    lead: 'Aux achards et à la truffe Tuber brumale.',
+    desc: 'Sardines sélectionnées à l’huile d’olive vierge extra, aux achards et à la truffe, nettoyées à la main et délicatement mises en boîte à la main. Préparées uniquement à partir de poisson frais, le jour même de la pêche, exclusivement sur la côte bretonne.',
+    note: GENERIC_FR,
+    b2b: 'Sardines à l’huile d’olive, truffe et achards 1/6 - 115 g',
+  },
+  'cod-liver': {
+    name: 'Foie de Morue Fumé', shop: 'Foie de morue fumé', line: 'Spécialités', format: 'Étui',
+    lead: 'Foie de morue fumé au bois de hêtre.',
+    desc: 'Foie de morue fumé au bois de hêtre, parmi les spécialités de la Maison.',
+    b2b: 'Foie de morue fumé au bois de hêtre 121 g',
+  },
+};
+export const PRODUCTS_FR = FR;
+export const LANG = typeof document !== 'undefined' && document.documentElement.lang.startsWith('fr') ? 'fr' : 'en';
+// text of a product in the page's language (falls back to English)
+export const tx = (p, key) => (LANG === 'fr' && FR[p.id]?.[key]) || p[key];

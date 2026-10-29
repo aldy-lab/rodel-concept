@@ -11,7 +11,8 @@ const CONFIG = {
 };
 // ─────────────────────────────────────────────────────────────────────────
 
-import { TINS } from './products.js';
+import { TINS, tx } from './products.js';
+import { T } from './i18n.js';
 import { initStore } from './store.js';
 
 // Phones get a still-image layout: product cards, a bottom action bar, no WebGL.
@@ -19,7 +20,6 @@ import { initStore } from './store.js';
 const phone = matchMedia('(max-width: 900px), (max-aspect-ratio: 9/10)').matches;
 const base = document.documentElement.dataset.base || '';
 
-renderCards();
 const collection = initCollection();
 applyConfig();
 initStore(CONFIG);
@@ -45,23 +45,6 @@ function applyConfig() {
   });
 }
 
-// ── phone, home page: one card per tin, with the real pack shot ──
-function renderCards() {
-  const list = document.querySelector('.cards');
-  if (!list) return;
-  list.innerHTML = TINS.map((p) => `
-    <li class="card">
-      <picture>
-        <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-        <img src="${base}img/products/${p.id}-600.webp" width="600" height="450" alt="Rödel ${p.name} tin" loading="lazy" decoding="async">
-      </picture>
-      <p class="mono">${p.line} · ${p.weight}</p>
-      <h3>${p.name}</h3>
-      <p>${p.lead}</p>
-      <a class="card-link" href="${base}collection/#${p.id}">Read more <span aria-hidden="true">→</span></a>
-    </li>`).join('');
-}
-
 // ── desktop, home page: collection tabs drive the tin ──
 function initCollection() {
   const api = { onChange: null, current: () => TINS[idx] };
@@ -73,10 +56,12 @@ function initCollection() {
   const specs = document.querySelector('[data-p="specs"]');
   if (!tabs) return api;
 
+  const base = document.documentElement.dataset.base || '';
   TINS.forEach((p, i) => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.textContent = p.name;
+    // each tab shows the real lid, so the range is visible at a glance
+    b.innerHTML = `<img src="${base}img/lids/${p.id}-160.webp" width="160" height="125" alt="" loading="lazy"><span>${tx(p, 'name')}</span>`;
     b.setAttribute('aria-pressed', i === 0);
     b.addEventListener('click', () => select(i));
     tabs.append(b);
@@ -96,10 +81,10 @@ function initCollection() {
   }
 
   function render(p) {
-    name.textContent = p.name;
+    name.textContent = tx(p, 'name');
     sub.textContent = p.tin;
-    desc.textContent = p.desc;
-    specs.innerHTML = [['Line', p.line], ['Net weight', p.weight], ['Ref.', p.ref]]
+    desc.textContent = tx(p, 'desc');
+    specs.innerHTML = [[T.specs[0], tx(p, 'line')], [T.specs[1], p.weight], [T.specs[2], p.ref]]
       .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
   }
   render(TINS[0]);

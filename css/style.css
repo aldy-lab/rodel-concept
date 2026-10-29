@@ -491,6 +491,51 @@ p { text-wrap: pretty; }
 .people { padding: clamp(4rem, 10vh, 6rem) var(--gutter); border-top: 1px solid var(--line); }
 .people-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
 
+/* ── brand mark, language, proof ── */
+.mark img { display: block; height: 30px; width: auto; }
+.mark-foot img { display: block; height: 46px; width: auto; }
+.lang {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 0 0 0.9rem; margin-left: 0.2rem;
+  border-left: 1px solid var(--line); font: 500 0.66rem var(--mono); letter-spacing: 0.14em;
+  color: var(--muted); text-decoration: none;
+}
+@media (hover: hover) { .lang:hover { color: var(--text); } }
+.proof { list-style: none; padding: 0; margin: 1.6rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; color: var(--muted); font-size: 0.6rem; }
+.proof li { display: flex; align-items: center; gap: 0.6rem; }
+.proof li::before { content: ""; width: 5px; height: 5px; border: 1px solid var(--accent); transform: rotate(45deg); }
+.btn { white-space: normal; text-align: center; padding-block: 0.55rem; line-height: 1.3; }
+
+/* 3D tabs: the real lids, so the range reads at a glance */
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
+.tabs button { flex-direction: column; align-items: stretch; gap: 0.45rem; padding: 0.45rem 0.45rem 0.55rem; font-size: 0.74rem; line-height: 1.2; text-align: left; }
+.tabs button img { display: block; width: 100%; height: auto; aspect-ratio: 1.28; object-fit: contain; background: rgba(7, 13, 20, 0.4); }
+.tabs button[aria-pressed="true"] { background: rgba(184, 201, 214, 0.12); color: var(--text); border-color: var(--accent); }
+
+/* home bands sit on solid ground: the fixed 3D scene stays behind them */
+.band-solid { position: relative; background: var(--bg); padding: clamp(4.5rem, 11vh, 7rem) var(--gutter); border-top: 1px solid var(--line); }
+.range { list-style: none; margin: 0 0 2.4rem; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.4rem 1.6rem; }
+.range-item a { display: flex; flex-direction: column; gap: 0.35rem; color: inherit; text-decoration: none; height: 100%; }
+.range-item img { display: block; width: 100%; height: auto; margin-bottom: 0.8rem; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@media (hover: hover) { .range-item a:hover img { transform: translateY(-4px); } }
+.range-item .mono { color: var(--muted); font-size: 0.58rem; }
+.range-name { font: 300 1.8rem/1.1 var(--serif); color: var(--text); }
+.range-lead { font-size: 0.9rem; color: var(--muted); }
+.range-price { color: var(--accent) !important; margin-top: auto; padding-top: 0.4rem; }
+.collection-band .actions { justify-content: flex-start; }
+.strip { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1rem; }
+.strip li { min-width: 0; }
+.strip li > .mono { display: block; color: var(--accent); margin-bottom: 0.6rem; font-size: 0.6rem; }
+.strip .plate img { aspect-ratio: 3 / 4; object-fit: cover; }
+.stockists.compact { columns: 2; column-gap: 1.6rem; margin: 1.2rem 0 0; }
+.stockists.compact li { font-size: 1rem; padding: 0.55rem 0; }
+
+/* progress toward the €1,000 minimum */
+.progress { position: relative; height: 30px; border: 1px solid var(--line-strong); width: min(100%, 26rem); overflow: hidden; }
+.progress i { position: absolute; inset: 0; background: rgba(184, 201, 214, 0.18); transform-origin: left; transform: scaleX(0); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.progress.ok i { background: rgba(184, 201, 214, 0.42); }
+.progress span { position: relative; display: block; line-height: 28px; padding: 0 0.7rem; font-size: 0.6rem; color: var(--text); }
+.cart-aside .progress { width: 100%; margin-top: 1.2rem; }
+
 /* ── phones: no WebGL. Rendered stills, product cards, a bottom action bar ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
   :root { --header: 60px; --gutter: 20px; }
@@ -643,4 +688,30 @@ p { text-wrap: pretty; }
   .order-table, .order-table tr.group, .order-table tbody { display: block; }
   .cart-line { grid-template-columns: 5.5rem minmax(0, 1fr); grid-template-areas: "img copy" "step total" "step remove"; }
   .cart-aside { padding: 1.2rem; }
+}
+
+/* ── phones: brand, bands, home order ── */
+@media (max-width: 900px), (max-aspect-ratio: 9/10) {
+  .mark img { height: 22px; }
+  .lang { padding-left: 0.7rem; }
+  .top .cart-link { margin-left: auto; }
+  /* on a phone the products come straight after the hero */
+  .home main { display: flex; flex-direction: column; }
+  .home #top { order: 0; }
+  .home .collection-band { order: 1; }
+  .home #maison { order: 2; }
+  .home #millesime { order: 3; }
+  .home #collection { display: none; }
+  .home #histoire { order: 4; }
+  .home .archive-band { order: 5; }
+  .home #contact { order: 6; }
+  .band-solid { padding: 3.4rem var(--gutter); }
+  .range { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem 0.9rem; }
+  .range-name { font-size: 1.35rem; }
+  .range-lead { font-size: 0.8rem; }
+  .collection-band .actions { flex-direction: column; }
+  .collection-band .actions .btn { width: 100%; }
+  .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
+  .stockists.compact { columns: 1; }
+  .proof { font-size: 0.56rem; }
 }

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr" data-base="../../" data-pages="../../fr/">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panier | Boutique B2B Rödel</title>
+<meta name="description" content="Votre demande de commande B2B Rödel.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Panier | Boutique B2B Rödel">
+<meta property="og:description" content="Votre demande de commande B2B Rödel.">
+<meta property="og:image" content="https://aldy-lab.github.io/rodel-concept/og.png">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070d14">
+<link rel="canonical" href="https://aldy-lab.github.io/rodel-concept/fr/cart/">
+<link rel="alternate" hreflang="en" href="https://aldy-lab.github.io/rodel-concept/cart/">
+<link rel="alternate" hreflang="fr" href="https://aldy-lab.github.io/rodel-concept/fr/cart/">
+<link rel="alternate" hreflang="x-default" href="https://aldy-lab.github.io/rodel-concept/cart/">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Rödel & Fils Frères", "legalName": "RODEL SAS", "foundingDate": "1824", "url": "https://aldy-lab.github.io/rodel-concept/", "logo": "https://aldy-lab.github.io/rodel-concept/img/brand/logo-black.png", "email": "info@rodel.fr", "address": {"@type": "PostalAddress", "streetAddress": "14 rue Gambetta", "postalCode": "78600", "addressLocality": "Le Mesnil-le-Roi", "addressCountry": "FR"}}</script>
+<link rel="icon" href="../../img/brand/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<script type="module" src="../../js/main.js"></script>
+</head>
+<body class="page page-cart">
+
+<header class="top">
+  <a class="mark" href="../../fr/" aria-label="Rödel, accueil"><img src="../../img/brand/logo-white.png" width="1154" height="338" alt="Rödel &amp; Fils Frères"></a>
+  <nav class="nav" aria-label="Navigation">
+    <a href="../../fr/maison/">La Maison</a>
+    <a href="../../fr/sardines/">Les Sardines</a>
+    <a href="../../fr/collection/">La Collection</a>
+    <a href="../../fr/trade/">Professionnels</a>
+  </nav>
+  <a class="btn btn-ghost" href="../../fr/store/" aria-current="page">Boutique B2B</a>
+  <a class="cart-link" data-cart-link href="../../fr/cart/">Panier<span class="count" data-cart-count>0</span></a>
+  <a class="lang" href="../../cart/" hreflang="en" lang="en" aria-label="English version">EN</a>
+</header>
+
+<main>
+<section class="page-hero">
+  <p class="kicker mono">Boutique B2B</p>
+  <h1>Votre <em>commande.</em></h1>
+  <p class="lead">Les frais de port sont toujours à la charge du client. Le minimum de commande est de 1 000 €. Les commandes sont envoyées sous forme de demande ; la Maison confirme la disponibilité, la livraison et la facture.</p>
+</section>
+
+<section class="cart-section">
+  <div data-cart-empty>
+    <p class="statement-line">Votre panier est vide.</p>
+    <div class="actions"><a class="btn" href="../../fr/store/">Boutique B2B</a><a class="btn btn-ghost" href="../../fr/order/">Bon de commande B2B</a></div>
+  </div>
+
+  <div class="cart-grid" data-cart-full hidden>
+    <ul class="cart-lines" data-cart-lines></ul>
+    <aside class="cart-aside">
+      <dl class="summary" data-cart-summary></dl>
+      <div class="progress" data-progress role="img" aria-label="Progression vers le minimum de commande"><i></i><span class="mono"></span></div>
+      <p class="minimum mono" data-cart-minimum role="status"></p>
+      <form id="order-request" class="request">
+        <p class="mono request-title">Demande de commande</p>
+        <label class="field"><span class="mono">Société</span><input type="text" name="company" data-label="Société" required autocomplete="organization"></label>
+        <label class="field"><span class="mono">Numéro de TVA</span><input type="text" name="vat" data-label="Numéro de TVA" required></label>
+        <label class="field"><span class="mono">Nom du contact</span><input type="text" name="name" data-label="Nom du contact" required autocomplete="name"></label>
+        <label class="field"><span class="mono">E-mail</span><input type="email" name="email" data-label="E-mail" required autocomplete="email"></label>
+        <label class="field"><span class="mono">Téléphone (facultatif)</span><input type="tel" name="phone" data-label="Téléphone" autocomplete="tel"></label>
+        <label class="field"><span class="mono">Adresse de livraison</span><textarea name="address" rows="3" data-label="Adresse de livraison" required></textarea></label>
+        <label class="field"><span class="mono">Message (facultatif)</span><textarea name="message" rows="3" data-label="Message"></textarea></label>
+        <button class="btn" type="submit">Envoyer la demande de commande</button>
+        <p class="route" data-route></p>
+        <p class="mono status" data-status role="status"></p>
+        <label class="field" data-fallback hidden><span class="mono">Votre commande</span><textarea rows="8" readonly></textarea></label>
+      </form>
+    </aside>
+  </div>
+
+  <div data-cart-done hidden>
+    <p class="statement-line">Merci. La demande de commande de <span data-done-company></span> a été envoyée.</p>
+    <p>La Maison confirmera la disponibilité, la livraison et la facture par e-mail.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="foot-grid">
+    <div>
+      <p class="mark-foot"><img src="../../img/brand/logo-white.png" width="1154" height="338" alt="Rödel &amp; Fils Frères"></p>
+      <p class="mono">&amp; Fils Frères · Fondée en 1824</p>
+    </div>
+    <div>
+      <p class="mono">Conserverie</p>
+      <address>2 rue Henri Fabre<br>29900 Concarneau, France</address>
+    </div>
+    <div>
+      <p class="mono">Siège social</p>
+      <address>Rödel SAS<br>14 rue Gambetta<br>78600 Le Mesnil-le-Roi, France</address>
+    </div>
+    <div data-config-group>
+      <p class="mono">Écrire</p>
+      <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
+      <a data-config="email" data-fill href="#">info@rodel.fr</a>
+    </div>
+    <div data-config-group>
+      <p class="mono">Suivez-nous</p>
+      <a data-config="instagram" href="#" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="foot-base mono">
+    <span>© Rödel SAS</span>
+    <a href="../../fr/legal/">Mentions légales</a>
+    <span>Concept de refonte par ALDY Studio, sans lien avec Rödel SAS</span>
+  </div>
+</footer>
+
+<nav class="dock" aria-label="Accès rapide">
+  <a class="btn" href="../../fr/store/">Boutique B2B</a>
+  <a class="btn btn-ghost" data-cart-link href="../../fr/cart/">Panier <span class="count" data-cart-count>0</span></a>
+</nav>
+</body>
+</html>

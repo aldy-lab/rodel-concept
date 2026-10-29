@@ -1,24 +1,28 @@
 <!doctype html>
-<html lang="en" data-base="">
+<html lang="en" data-base="" data-pages="">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rödel — Sardines since 1824</title>
-<meta name="description" content="Rödel & Fils Frères, founded in 1824: Millésime sardines from Concarneau, caught in the morning and packed by hand the same day.">
+<meta name="description" content="Rödel &amp; Fils Frères, founded in 1824: Millésime sardines from Concarneau, caught in the morning and packed by hand the same day.">
 <meta name="robots" content="noindex, nofollow">
 <meta property="og:title" content="Rödel — Sardines since 1824">
-<meta property="og:description" content="The taste of Brittany. The elegance of Bordeaux.">
-<meta property="og:image" content="og.png">
+<meta property="og:description" content="Rödel &amp; Fils Frères, founded in 1824: Millésime sardines from Concarneau, caught in the morning and packed by hand the same day.">
+<meta property="og:image" content="https://aldy-lab.github.io/rodel-concept/og.png">
+<meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#070d14">
-<!-- chrome:head -->
+<link rel="canonical" href="https://aldy-lab.github.io/rodel-concept/">
+<link rel="alternate" hreflang="en" href="https://aldy-lab.github.io/rodel-concept/">
+<link rel="alternate" hreflang="fr" href="https://aldy-lab.github.io/rodel-concept/fr/">
+<link rel="alternate" hreflang="x-default" href="https://aldy-lab.github.io/rodel-concept/">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Rödel & Fils Frères", "legalName": "RODEL SAS", "foundingDate": "1824", "url": "https://aldy-lab.github.io/rodel-concept/", "logo": "https://aldy-lab.github.io/rodel-concept/img/brand/logo-black.png", "email": "info@rodel.fr", "address": {"@type": "PostalAddress", "streetAddress": "14 rue Gambetta", "postalCode": "78600", "addressLocality": "Le Mesnil-le-Roi", "addressCountry": "FR"}}</script>
 <link rel="icon" href="img/brand/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script type="module" src="js/main.js"></script>
-<!-- /chrome:head -->
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
@@ -31,10 +35,8 @@
 <div class="viewport" aria-hidden="true">
   <canvas id="scene"></canvas>
 </div>
-
-<!-- chrome:header -->
 <header class="top">
-  <a class="mark" href="./" aria-label="Rödel, home">RÖDEL<span class="mono">1824</span></a>
+  <a class="mark" href="./" aria-label="Rödel, home"><img src="img/brand/logo-white.png" width="1154" height="338" alt="Rödel &amp; Fils Frères"></a>
   <nav class="nav" aria-label="Main">
     <a href="maison/">Maison</a>
     <a href="sardines/">Sardines</a>
@@ -43,22 +45,27 @@
   </nav>
   <a class="btn btn-ghost" href="store/">B2B store</a>
   <a class="cart-link" data-cart-link href="cart/">Cart<span class="count" data-cart-count>0</span></a>
+  <a class="lang" href="fr/" hreflang="fr" lang="fr" aria-label="Version française">FR</a>
 </header>
-<!-- /chrome:header -->
 
 <main>
 
   <section id="top" class="band hero" data-scene>
     <picture class="still">
-      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64, R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
       <img src="img/shoal.webp" width="1200" height="853" alt="A shoal of silver sardines" fetchpriority="high" decoding="async">
     </picture>
     <div class="copy">
-      <p class="kicker mono">Rödel &amp; Fils Frères · Fondée en 1824</p>
+      <p class="kicker mono">Rödel &amp; Fils Frères · Bordeaux, 1824</p>
       <h1>The taste of Brittany. <br><em>The elegance of Bordeaux.</em></h1>
       <p class="lead">Sardines from the Bay of Concarneau, caught in the morning and laid in the tin by hand the same day. Since 1824.</p>
+      <ul class="proof mono">
+        <li>Packed by hand in Concarneau</li>
+        <li>Caught and tinned the same day</li>
+        <li>Nine fishing families of Concarneau</li>
+      </ul>
       <div class="actions">
-        <a class="btn" href="collection/">The collection</a>
+        <a class="btn" href="#all-products">Discover the collection</a>
         <a class="btn btn-ghost" href="maison/">Our history</a>
       </div>
     </div>
@@ -67,7 +74,7 @@
 
   <section id="maison" class="band" data-scene>
     <picture class="still">
-      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64, R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
       <img src="img/tin-open.webp" width="1200" height="853" alt="An open tin with five sardines laid head to tail" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
@@ -85,7 +92,7 @@
 
   <section id="millesime" class="band" data-scene>
     <picture class="still">
-      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64, R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
       <img src="img/tin-ajar.webp" width="1200" height="853" alt="The Millésime 2025 tin, lid ajar" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
@@ -110,10 +117,104 @@
         <p data-p="desc"></p>
         <dl class="specs" data-p="specs"></dl>
       </div>
-      <ul class="cards" aria-label="The collection"></ul>
-      <a class="more" href="collection/">The full collection <span aria-hidden="true">→</span></a>
+      <a class="more" href="#all-products">All nine tins <span aria-hidden="true">→</span></a>
     </div>
     <div class="stage" aria-hidden="true"><span class="mono">Drag to turn the tin</span></div>
+  </section>
+
+  <section class="band-solid collection-band" id="all-products">
+    <div class="section-head">
+      <p class="kicker mono">The full collection</p>
+      <h2>Nine tins. <em>One standard.</em></h2>
+      <p>Millésime sardines, recipes of the house and a speciality, packed by hand in Concarneau. Professionals order by the case.</p>
+    </div>
+    <ul class="range">
+      <li class="range-item">
+        <a href="store/millesime/">
+          <img src="img/products/millesime-600.webp" srcset="img/products/millesime-600.webp 600w, img/products/millesime.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Millésime 2025, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Millésime · 115 g</span>
+          <span class="range-name">Millésime 2025</span>
+          <span class="range-lead">The cornerstone of the art of preservation.</span>
+          <span class="range-price mono">€4.20 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/millesime-boneless/">
+          <img src="img/products/millesime-boneless-600.webp" srcset="img/products/millesime-boneless-600.webp 600w, img/products/millesime-boneless.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Millésime Boneless, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Millésime · 115 g</span>
+          <span class="range-name">Millésime Boneless</span>
+          <span class="range-lead">Hand-boned, as once prepared for the royal court.</span>
+          <span class="range-price mono">€4.50 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/chica-pica/">
+          <img src="img/products/chica-pica-600.webp" srcset="img/products/chica-pica-600.webp 600w, img/products/chica-pica.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Chica Pica, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Recipes of the house · 115 g</span>
+          <span class="range-name">Chica Pica</span>
+          <span class="range-lead">A secret spice blend, and a registered trademark of the house.</span>
+          <span class="range-price mono">€4.60 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/citron/">
+          <img src="img/products/citron-600.webp" srcset="img/products/citron-600.webp 600w, img/products/citron.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Citron, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Recipes of the house · 115 g</span>
+          <span class="range-name">Citron</span>
+          <span class="range-lead">Extra virgin olive oil and a whole sun-ripened lemon.</span>
+          <span class="range-price mono">€4.40 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/classic-1926/">
+          <img src="img/products/classic-1926-600.webp" srcset="img/products/classic-1926-600.webp 600w, img/products/classic-1926.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Classic 1926, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Millésime · 69 g</span>
+          <span class="range-name">Classic 1926</span>
+          <span class="range-lead">A 69 g tin, for those who prefer not to share.</span>
+          <span class="range-price mono">€3.30 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/green-pepper/">
+          <img src="img/products/green-pepper-600.webp" srcset="img/products/green-pepper-600.webp 600w, img/products/green-pepper.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Poivre Vert, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Recipes of the house · 115 g</span>
+          <span class="range-name">Poivre Vert</span>
+          <span class="range-lead">With green peppercorns.</span>
+          <span class="range-price mono">€4.40 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/spicy-tomato/">
+          <img src="img/products/spicy-tomato-600.webp" srcset="img/products/spicy-tomato-600.webp 600w, img/products/spicy-tomato.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Tomate Épicée, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Recipes of the house · 115 g</span>
+          <span class="range-name">Tomate Épicée</span>
+          <span class="range-lead">In a spiced tomato sauce.</span>
+          <span class="range-price mono">€4.40 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/achards-truffle/">
+          <img src="img/products/achards-truffle-600.webp" srcset="img/products/achards-truffle-600.webp 600w, img/products/achards-truffle.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Achards &amp; Truffe, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Recipes of the house · 115 g</span>
+          <span class="range-name">Achards &amp; Truffe</span>
+          <span class="range-lead">With achards and Tuber brumale truffle.</span>
+          <span class="range-price mono">€5.90 per tin, trade</span>
+        </a>
+      </li>
+      <li class="range-item">
+        <a href="store/cod-liver/">
+          <img src="img/products/cod-liver-600.webp" srcset="img/products/cod-liver-600.webp 600w, img/products/cod-liver.webp 1200w" sizes="(max-width: 900px) 50vw, 22vw" width="600" height="450" alt="Rödel Foie de Morue Fumé, photographed from above" loading="lazy" decoding="async">
+          <span class="mono">Specialities · 121 g</span>
+          <span class="range-name">Foie de Morue Fumé</span>
+          <span class="range-lead">Cod liver, smoked over beechwood.</span>
+          <span class="range-price mono">€3.60 per tin, trade</span>
+        </a>
+      </li>
+    </ul>
+    <div class="actions">
+      <a class="btn" href="store/">B2B store</a>
+      <button class="btn btn-ghost" type="button" data-assortment data-href="cart/">Add the full assortment: 3 cases of every sardine, €1,314.90</button>
+    </div>
   </section>
 
   <section id="histoire" class="band" data-scene>
@@ -132,11 +233,21 @@
     </div>
   </section>
 
+  <section class="band-solid archive-band">
+    <div class="section-head">
+      <p class="kicker mono">From the archive</p>
+      <h2>Two centuries <em>in pictures.</em></h2>
+    </div>
+    <ol class="strip"><li><span class="mono">1824</span><figure class="plate"><img src="img/archive/founders-medal-800.webp" srcset="img/archive/founders-medal-800.webp 744w, img/archive/founders-medal.webp 744w" sizes="(max-width: 900px) 100vw, 46vw" width="744" height="744" alt="Bronze medal with the profiles of the founders" loading="lazy" decoding="async"><figcaption>The only portrait of the founders</figcaption></figure></li><li><span class="mono">1843–1870</span><figure class="plate"><img src="img/archive/etel-800.webp" srcset="img/archive/etel-800.webp 800w, img/archive/etel.webp 1034w" sizes="(max-width: 900px) 100vw, 46vw" width="800" height="487" alt="The Rödel factory at Étel" loading="lazy" decoding="async"><figcaption>Étel</figcaption></figure></li><li><span class="mono">1850–1900</span><figure class="plate"><img src="img/archive/shanghai-advert-800.webp" srcset="img/archive/shanghai-advert-800.webp 800w, img/archive/shanghai-advert.webp 1233w" sizes="(max-width: 900px) 100vw, 46vw" width="800" height="649" alt="Rödel advertisement for its agents in China, Baboud Mary &amp; Cie, Shanghai" loading="lazy" decoding="async"><figcaption>Sole agents for China: Baboud Mary &amp; Cie, Shanghai</figcaption></figure></li><li><span class="mono">c. 1880</span><figure class="plate"><img src="img/archive/emblem-1880-800.webp" srcset="img/archive/emblem-1880-800.webp 800w, img/archive/emblem-1880.webp 1600w" sizes="(max-width: 900px) 100vw, 46vw" width="800" height="803" alt="The Rödel emblem: a globe paired with a beehive" loading="lazy" decoding="async"><figcaption>The globe and the beehive, conceived around 1880</figcaption></figure></li><li><span class="mono">Fortnum &amp; Mason</span><figure class="plate"><img src="img/archive/fortnum-mason-800.webp" srcset="img/archive/fortnum-mason-800.webp 800w, img/archive/fortnum-mason.webp 1600w" sizes="(max-width: 900px) 100vw, 46vw" width="800" height="480" alt="A Rödel tin made for Fortnum &amp; Mason" loading="lazy" decoding="async"><figcaption>A special edition for Fortnum &amp; Mason</figcaption></figure></li><li><span class="mono">1900</span><figure class="plate"><img src="img/archive/plage-rodel-800.webp" srcset="img/archive/plage-rodel-800.webp 800w, img/archive/plage-rodel.webp 1168w" sizes="(max-width: 900px) 100vw, 46vw" width="800" height="566" alt="Plage Rödel in Concarneau, photograph from 1900" loading="lazy" decoding="async"><figcaption>Plage Rödel, Concarneau, 1900</figcaption></figure></li></ol>
+    <a class="more" href="maison/">The whole history <span aria-hidden="true">→</span></a>
+  </section>
+
   <section id="contact" class="band" data-scene>
     <div class="copy">
       <p class="kicker mono">05 — Where to find Rödel</p>
       <h2>A name whispered <br><em>among gourmets.</em></h2>
-      <p>Rödel is found in iconic houses: La Grande Épicerie de Paris, Galeries Lafayette Haussmann, Gillardeau, Kaviari, and fine grocers from Bordeaux and Sète to Vienna.</p>
+      <p>Today our products are found exclusively in iconic stores, sought out by gourmets from around the world:</p>
+      <ul class="stockists compact"><li><span>La Grande Épicerie de Paris</span><span class="mono">Paris</span></li><li><span>Galeries Lafayette Haussmann</span><span class="mono">Paris</span></li><li><span>Gillardeau La Boutique</span><span class="mono"></span></li><li><span>Kaviari Delikatessen</span><span class="mono"></span></li><li><span>Maison Rolle, Halles de Lyon Paul Bocuse</span><span class="mono">Lyon</span></li><li><span>Julius Meinl am Graben</span><span class="mono">Vienna</span></li><li><span>Maison Arostéguy</span><span class="mono">Biarritz</span></li><li><span>L’Échoppe de la Lune</span><span class="mono">Bordeaux</span></li><li><span>Maison Janicot</span><span class="mono">Sète</span></li><li><span>Les Accords Parfaits</span><span class="mono"></span></li><li><span>Grand Marché Marnière</span><span class="mono"></span></li><li><span>Izraël</span><span class="mono"></span></li><li><span>Épicerie de Longueil</span><span class="mono"></span></li><li><span>Maison Gabriella Delicatessen</span><span class="mono"></span></li></ul>
       <div class="contact">
         <div data-config-group>
           <p class="mono">Professionals</p>
@@ -158,13 +269,13 @@
     </div>
   </section>
 
+
 </main>
 
-<!-- chrome:footer -->
 <footer class="site-foot">
   <div class="foot-grid">
     <div>
-      <p class="mark-foot">RÖDEL</p>
+      <p class="mark-foot"><img src="img/brand/logo-white.png" width="1154" height="338" alt="Rödel &amp; Fils Frères"></p>
       <p class="mono">&amp; Fils Frères · Fondée en 1824</p>
     </div>
     <div>
@@ -196,6 +307,5 @@
   <a class="btn" href="store/">B2B store</a>
   <a class="btn btn-ghost" data-cart-link href="cart/">Cart <span class="count" data-cart-count>0</span></a>
 </nav>
-<!-- /chrome:footer -->
 </body>
 </html>

@@ -1,0 +1,59 @@
+<!-- head -->
+<link rel="icon" href="img/brand/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="module" src="js/main.js"></script>
+<!-- /head -->
+<!-- header -->
+<header class="top">
+  <a class="mark" href="./" aria-label="{{t:home_label}}"><img src="img/brand/logo-white.png" width="1154" height="338" alt="Rödel &amp; Fils Frères"></a>
+  <nav class="nav" aria-label="{{t:nav_label}}">
+    <a href="maison/">{{t:nav_maison}}</a>
+    <a href="sardines/">{{t:nav_sardines}}</a>
+    <a href="collection/">{{t:nav_collection}}</a>
+    <a href="trade/">{{t:nav_trade}}</a>
+  </nav>
+  <a class="btn btn-ghost" href="store/">{{t:store}}</a>
+  <a class="cart-link" data-cart-link href="cart/">{{t:cart}}<span class="count" data-cart-count>0</span></a>
+  {{lang-switch}}
+</header>
+<!-- /header -->
+<!-- footer -->
+<footer class="site-foot">
+  <div class="foot-grid">
+    <div>
+      <p class="mark-foot"><img src="img/brand/logo-white.png" width="1154" height="338" alt="Rödel &amp; Fils Frères"></p>
+      <p class="mono">&amp; Fils Frères · Fondée en 1824</p>
+    </div>
+    <div>
+      <p class="mono">{{t:cannery}}</p>
+      <address>2 rue Henri Fabre<br>29900 Concarneau, France</address>
+    </div>
+    <div>
+      <p class="mono">{{t:office}}</p>
+      <address>Rödel SAS<br>14 rue Gambetta<br>78600 Le Mesnil-le-Roi, France</address>
+    </div>
+    <div data-config-group>
+      <p class="mono">{{t:write}}</p>
+      <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
+      <a data-config="email" data-fill href="#">info@rodel.fr</a>
+    </div>
+    <div data-config-group>
+      <p class="mono">{{t:follow}}</p>
+      <a data-config="instagram" href="#" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="foot-base mono">
+    <span>© Rödel SAS</span>
+    <a href="legal/">{{t:legal}}</a>
+    <span>{{t:concept}}</span>
+  </div>
+</footer>
+
+<nav class="dock" aria-label="{{t:dock_label}}">
+  <a class="btn" href="store/">{{t:store}}</a>
+  <a class="btn btn-ghost" data-cart-link href="cart/">{{t:cart}} <span class="count" data-cart-count>0</span></a>
+</nav>
+<!-- /footer -->

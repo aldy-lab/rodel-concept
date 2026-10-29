@@ -1,0 +1,134 @@
+<!-- {"title": "Rödel — Sardines depuis 1824", "description": "Rödel & Fils Frères, fondée en 1824 : sardines millésimées de Concarneau, pêchées le matin et mises en boîte à la main le jour même.", "nav": "", "body": "home"} -->
+<!-- extra-head -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<!-- /extra-head -->
+<!-- before-header -->
+<div class="viewport" aria-hidden="true">
+  <canvas id="scene"></canvas>
+</div>
+<!-- /before-header -->
+
+  <section id="top" class="band hero" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/shoal.webp" width="1200" height="853" alt="Un banc de sardines argentées" fetchpriority="high" decoding="async">
+    </picture>
+    <div class="copy">
+      <p class="kicker mono">Rödel &amp; Fils Frères · Bordeaux, 1824</p>
+      <h1>Le goût de la Bretagne. <br><em>L’élégance de Bordeaux.</em></h1>
+      <p class="lead">Des sardines de la baie de Concarneau, pêchées le matin et rangées à la main dans la boîte le jour même. Depuis 1824.</p>
+      <ul class="proof mono">
+        <li>Mises en boîte à la main à Concarneau</li>
+        <li>Pêchées et conservées le jour même</li>
+        <li>Neuf familles de pêcheurs</li>
+      </ul>
+      <div class="actions">
+        <a class="btn" href="#all-products">Découvrir la collection</a>
+        <a class="btn btn-ghost" href="maison/">Notre histoire</a>
+      </div>
+    </div>
+    <p class="cue mono" aria-hidden="true"><span></span>Suivez le banc</p>
+  </section>
+
+  <section id="maison" class="band" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/tin-open.webp" width="1200" height="853" alt="Une boîte ouverte, cinq sardines rangées tête-bêche" loading="lazy" decoding="async">
+    </picture>
+    <div class="copy">
+      <p class="kicker mono">01 — Le même procédé depuis 1824</p>
+      <h2>Pêchées le matin. <br><em>En boîte le jour même.</em></h2>
+      <p>Neuf familles de pêcheurs de Concarneau ramènent la pêche à la bolinche traditionnelle, depuis la baie de Concarneau, l’archipel des Glénan et la pointe de Trévignon. Chaque sardine est nettoyée à la main, frite trente secondes pour être saisie, puis rangée dans la boîte. Jamais congelée.</p>
+      <dl class="specs">
+        <div><dt>Saison</dt><dd>De mai à octobre</dd></div>
+        <div><dt>Eaux</dt><dd>Concarneau, Glénan</dd></div>
+        <div><dt>Mise en boîte</dt><dd>À la main, le jour même</dd></div>
+      </dl>
+      <a class="more" href="sardines/">Préservé jusqu’à aujourd’hui : le secret de la perfection <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section id="millesime" class="band" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/tin-ajar.webp" width="1200" height="853" alt="La boîte Millésime 2025, couvercle entrouvert" loading="lazy" decoding="async">
+    </picture>
+    <div class="copy">
+      <p class="kicker mono">02 — Millésime</p>
+      <h2>La plus belle pêche <br><em>d’une année.</em></h2>
+      <p>La Maison Rödel se distingue par sa sélection de sardines. Le Millésime est une appellation réservée à la plus belle pêche d’une année donnée, récoltée à maturité optimale pour une richesse exceptionnelle et une remarquable profondeur de goût. Rödel indique sur chaque couvercle quand, par qui et où le poisson a été pêché.</p>
+      <figure class="rule" aria-label="Se savoure même après dix ans, de 2025 à 2035">
+        <div class="ticks"></div>
+        <div class="span"><span class="mono">Se savoure même après dix ans</span></div>
+        <div class="ends mono"><span>2025</span><span>2035</span></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="collection" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">03 — La collection</p>
+      <div class="tabs" role="group" aria-label="Choisir une boîte"></div>
+      <div class="product" aria-live="polite">
+        <h2 data-p="name">Millésime 2025</h2>
+        <p class="sub mono" data-p="sub"></p>
+        <p data-p="desc"></p>
+        <dl class="specs" data-p="specs"></dl>
+      </div>
+      <a class="more" href="#all-products">Les neuf boîtes <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="stage" aria-hidden="true"><span class="mono">Faites tourner la boîte</span></div>
+  </section>
+
+  {{band:collection}}
+
+  <section id="histoire" class="band" data-scene>
+    <div class="copy wide">
+      <p class="kicker mono">04 — Depuis 1824</p>
+      <h2>La plus ancienne marque <br><em>de conserves au monde.</em></h2>
+      <p>En 1820, l’Amirauté française demanda à Nicolas Appert, l’inventeur de la conserve, d’établir une conserverie à Bordeaux. Il en confia la charge à son disciple le plus accompli, Charles Rödel.</p>
+      <ol class="timeline">
+        <li style="--at:0"><span class="mono">1804</span>Nicolas Appert ouvre la première conserverie, à Massy.</li>
+        <li style="--at:.09"><span class="mono">1824</span>Fondation de Rödel &amp; Fils Frères à Bordeaux.</li>
+        <li style="--at:.306"><span class="mono">1872</span>Une usine Rödel ouvre à Concarneau.</li>
+        <li style="--at:.342"><span class="mono">v. 1880</span>L’emblème : un globe et une ruche.</li>
+        <li style="--at:.995"><span class="mono">2025</span>Millésime 2025, la plus belle pêche de l’année.</li>
+      </ol>
+      <a class="more" href="maison/">Lire l’histoire <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  {{band:archive}}
+
+  <section id="contact" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">05 — Où trouver Rödel</p>
+      <h2>Un nom murmuré <br><em>entre gourmets.</em></h2>
+      <p>Nos produits se trouvent aujourd’hui exclusivement dans des maisons emblématiques, recherchées par les gourmets du monde entier :</p>
+      {{band:stockists}}
+      <div class="contact">
+        <div data-config-group>
+          <p class="mono">Professionnels</p>
+          <a class="btn" href="store/">Boutique B2B</a>
+        </div>
+        <div data-config-group>
+          <p class="mono">Commandes &amp; partenariats</p>
+          <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
+        </div>
+        <div>
+          <p class="mono">Conserverie</p>
+          <address>2 rue Henri Fabre<br>29900 Concarneau, France</address>
+        </div>
+        <div>
+          <p class="mono">Bon de commande</p>
+          <a href="order/">Bon de commande B2B</a>
+        </div>
+      </div>
+    </div>
+  </section>
+

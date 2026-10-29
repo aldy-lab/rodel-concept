@@ -1,0 +1,134 @@
+<!-- {"title": "Rödel — Sardines since 1824", "description": "Rödel & Fils Frères, founded in 1824: Millésime sardines from Concarneau, caught in the morning and packed by hand the same day.", "nav": "", "body": "home"} -->
+<!-- extra-head -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<!-- /extra-head -->
+<!-- before-header -->
+<div class="viewport" aria-hidden="true">
+  <canvas id="scene"></canvas>
+</div>
+<!-- /before-header -->
+
+  <section id="top" class="band hero" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/shoal.webp" width="1200" height="853" alt="A shoal of silver sardines" fetchpriority="high" decoding="async">
+    </picture>
+    <div class="copy">
+      <p class="kicker mono">Rödel &amp; Fils Frères · Bordeaux, 1824</p>
+      <h1>The taste of Brittany. <br><em>The elegance of Bordeaux.</em></h1>
+      <p class="lead">Sardines from the Bay of Concarneau, caught in the morning and laid in the tin by hand the same day. Since 1824.</p>
+      <ul class="proof mono">
+        <li>Packed by hand in Concarneau</li>
+        <li>Caught and tinned the same day</li>
+        <li>Nine fishing families of Concarneau</li>
+      </ul>
+      <div class="actions">
+        <a class="btn" href="#all-products">Discover the collection</a>
+        <a class="btn btn-ghost" href="maison/">Our history</a>
+      </div>
+    </div>
+    <p class="cue mono" aria-hidden="true"><span></span>Follow the shoal</p>
+  </section>
+
+  <section id="maison" class="band" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/tin-open.webp" width="1200" height="853" alt="An open tin with five sardines laid head to tail" loading="lazy" decoding="async">
+    </picture>
+    <div class="copy">
+      <p class="kicker mono">01 — The same process from 1824</p>
+      <h2>Caught in the morning. <br><em>In the tin the same day.</em></h2>
+      <p>Nine fishing families of Concarneau bring in the catch with the traditional bolinche, from the Bay of Concarneau, the Glénan archipelago and Cape Trévignon. Every sardine is cleaned by hand, fried for thirty seconds to seal it, and laid in the tin. Never frozen.</p>
+      <dl class="specs">
+        <div><dt>Season</dt><dd>May to October</dd></div>
+        <div><dt>Waters</dt><dd>Concarneau, Glénan</dd></div>
+        <div><dt>Packed</dt><dd>By hand, same day</dd></div>
+      </dl>
+      <a class="more" href="sardines/">We preserved it till today: the secret of perfection <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section id="millesime" class="band" data-scene>
+    <picture class="still">
+      <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+      <img src="img/tin-ajar.webp" width="1200" height="853" alt="The Millésime 2025 tin, lid ajar" loading="lazy" decoding="async">
+    </picture>
+    <div class="copy">
+      <p class="kicker mono">02 — Millésime</p>
+      <h2>The finest catch <br><em>of a given year.</em></h2>
+      <p>The House of Rödel is distinguished by its selection of sardines. Millésime is a designation reserved for the finest catch of a given year, harvested at optimal maturity for exceptional richness and remarkable depth of flavour. Rödel marks on each lid when, by whom and where the fish were caught.</p>
+      <figure class="rule" aria-label="Savoured even after ten years, 2025 to 2035">
+        <div class="ticks"></div>
+        <div class="span"><span class="mono">Savoured even after ten years</span></div>
+        <div class="ends mono"><span>2025</span><span>2035</span></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="collection" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">03 — The collection</p>
+      <div class="tabs" role="group" aria-label="Choose a tin"></div>
+      <div class="product" aria-live="polite">
+        <h2 data-p="name">Millésime 2025</h2>
+        <p class="sub mono" data-p="sub"></p>
+        <p data-p="desc"></p>
+        <dl class="specs" data-p="specs"></dl>
+      </div>
+      <a class="more" href="#all-products">All nine tins <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="stage" aria-hidden="true"><span class="mono">Drag to turn the tin</span></div>
+  </section>
+
+  {{band:collection}}
+
+  <section id="histoire" class="band" data-scene>
+    <div class="copy wide">
+      <p class="kicker mono">04 — Since 1824</p>
+      <h2>The oldest cannery brand <br><em>in the world.</em></h2>
+      <p>In 1820 the French Admiralty asked Nicolas Appert, the inventor of preserving, to build a cannery in Bordeaux. He entrusted it to his most accomplished disciple, Charles Rödel.</p>
+      <ol class="timeline">
+        <li style="--at:0"><span class="mono">1804</span>Nicolas Appert opens the first cannery, in Massy.</li>
+        <li style="--at:.09"><span class="mono">1824</span>Rödel &amp; Fils Frères is founded in Bordeaux.</li>
+        <li style="--at:.306"><span class="mono">1872</span>A Rödel factory opens in Concarneau.</li>
+        <li style="--at:.342"><span class="mono">c. 1880</span>The emblem: a globe paired with a beehive.</li>
+        <li style="--at:.995"><span class="mono">2025</span>Millésime 2025, from the finest catch of the year.</li>
+      </ol>
+      <a class="more" href="maison/">Read the history <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  {{band:archive}}
+
+  <section id="contact" class="band" data-scene>
+    <div class="copy">
+      <p class="kicker mono">05 — Where to find Rödel</p>
+      <h2>A name whispered <br><em>among gourmets.</em></h2>
+      <p>Today our products are found exclusively in iconic stores, sought out by gourmets from around the world:</p>
+      {{band:stockists}}
+      <div class="contact">
+        <div data-config-group>
+          <p class="mono">Professionals</p>
+          <a class="btn" href="store/">B2B store</a>
+        </div>
+        <div data-config-group>
+          <p class="mono">Orders &amp; partnerships</p>
+          <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
+        </div>
+        <div>
+          <p class="mono">Cannery</p>
+          <address>2 rue Henri Fabre<br>29900 Concarneau, France</address>
+        </div>
+        <div>
+          <p class="mono">Order form</p>
+          <a href="order/">B2B order form</a>
+        </div>
+      </div>
+    </div>
+  </section>
+

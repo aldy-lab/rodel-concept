@@ -2,7 +2,8 @@
 // request. There is no payment on this site — an order is sent as a request
 // and confirmed by the house, as the B2B terms describe.
 
-import { PRODUCTS, byId, MIN_ORDER, money } from './products.js';
+import { PRODUCTS, byId, MIN_ORDER, money, tx } from './products.js';
+import { T } from './i18n.js';
 
 const KEY = 'rodel-cart-v1';
 
@@ -87,7 +88,7 @@ function buyForms() {
       cart.add(form.dataset.id, n);
       if (note) {
         note.hidden = false;
-        note.textContent = `${n} ${n === 1 ? 'case' : 'cases'} added`;
+        note.textContent = T.added(n);
         clearTimeout(form._t);
         form._t = setTimeout(() => { note.hidden = true; }, 2400);
       }
@@ -132,8 +133,9 @@ function orderForm() {
     document.querySelector('[data-of="total"]').textContent = money(total);
     const short = MIN_ORDER - total;
     const msg = document.querySelector('[data-of="minimum"]');
-    msg.textContent = short > 0 ? `Add ${money(short)} to reach the ${money(MIN_ORDER)} minimum.` : 'The minimum order is reached.';
+    msg.textContent = short > 0 ? T.toMinimum(money(short), money(MIN_ORDER)) : T.minimumReached;
     msg.classList.toggle('ok', short <= 0);
+    progress(total);
     return cases;
   };
   rows.forEach((r) => stepper(r.querySelector('.stepper'), sum));
@@ -149,6 +151,7 @@ function cartPage(config) {
   const box = document.querySelector('[data-cart-lines]');
   if (!box) return;
   const base = document.documentElement.dataset.base || '';
+  const pages = document.documentElement.dataset.pages ?? base; // page links stay in the page's language
   const summary = document.querySelector('[data-cart-summary]');
   const form = document.getElementById('order-request');
   const empty = document.querySelector('[data-cart-empty]');
@@ -168,24 +171,24 @@ function cartPage(config) {
         const li = box.querySelector(`[data-id="${p.id}"]`);
         const input = li.querySelector('input');
         if (document.activeElement !== input) input.value = cases;
-        li.querySelector('.cart-line-total').innerHTML = `<span class="mono">${units} tins</span>${money(total)}`;
+        li.querySelector('.cart-line-total').innerHTML = `<span class="mono">${units} ${T.tins}</span>${money(total)}`;
       });
     } else {
       shown = sig;
       box.innerHTML = ls.map(({ p, cases, units, total }) => `
       <li class="cart-line" data-id="${p.id}">
-        <a href="${base}store/${p.id}/"><img src="${base}img/products/${p.id}-600.webp" width="600" height="450" alt="" loading="lazy"></a>
+        <a href="${pages}store/${p.id}/"><img src="${base}img/products/${p.id}-600.webp" width="600" height="450" alt="" loading="lazy"></a>
         <div class="cart-line-copy">
-          <a class="cart-line-name" href="${base}store/${p.id}/">${p.name}</a>
-          <p class="mono">${p.weight} · ${money(p.price)} per tin · ${p.units} per case</p>
+          <a class="cart-line-name" href="${pages}store/${p.id}/">${tx(p, 'name')}</a>
+          <p class="mono">${p.weight} · ${money(p.price)} ${T.perTin} · ${p.units} ${T.perCase}</p>
         </div>
-        <div class="stepper" role="group" aria-label="Cases of ${p.name}">
-          <button type="button" data-step="-1" aria-label="One case fewer">−</button>
-          <input type="number" inputmode="numeric" min="0" max="999" value="${cases}" aria-label="Cases">
-          <button type="button" data-step="1" aria-label="One case more">+</button>
+        <div class="stepper" role="group" aria-label="${T.casesOf(tx(p, 'name'))}">
+          <button type="button" data-step="-1" aria-label="${T.fewer}">−</button>
+          <input type="number" inputmode="numeric" min="0" max="999" value="${cases}" aria-label="${T.cases}">
+          <button type="button" data-step="1" aria-label="${T.more}">+</button>
         </div>
-        <p class="cart-line-total"><span class="mono">${units} tins</span>${money(total)}</p>
-        <button type="button" class="remove" aria-label="Remove ${p.name}">Remove</button>
+        <p class="cart-line-total"><span class="mono">${units} ${T.tins}</span>${money(total)}</p>
+        <button type="button" class="remove" aria-label="${T.removeName(tx(p, 'name'))}">${T.remove}</button>
       </li>`).join('');
       box.querySelectorAll('.cart-line').forEach((li) => {
         const id = li.dataset.id;
@@ -196,31 +199,30 @@ function cartPage(config) {
     }
     const short = MIN_ORDER - t.total;
     summary.innerHTML = `
-      <div><dt>Cases</dt><dd>${t.cases}</dd></div>
-      <div><dt>Tins</dt><dd>${t.units}</dd></div>
-      <div class="grand"><dt>Total</dt><dd>${money(t.total)}</dd></div>`;
+      <div><dt>${T.cases}</dt><dd>${t.cases}</dd></div>
+      <div><dt>${T.tins}</dt><dd>${t.units}</dd></div>
+      <div class="grand"><dt>${T.total}</dt><dd>${money(t.total)}</dd></div>`;
     const min = document.querySelector('[data-cart-minimum]');
-    min.textContent = short > 0 ? `Add ${money(short)} to reach the ${money(MIN_ORDER)} minimum order.` : 'The minimum order is reached.';
+    min.textContent = short > 0 ? T.toMinimum(money(short), money(MIN_ORDER)) : T.minimumReached;
     min.classList.toggle('ok', short <= 0);
+    progress(t.total);
     form.querySelector('[type=submit]').disabled = short > 0;
   }
 
   function request(data) {
     const ls = lines();
     const t = totals();
-    const order = ls.map(({ p, cases, units, total }) => `${p.ref}  ${p.b2b}  ×${cases} cases (${units} tins)  ${money(total)}`).join('\n');
+    const order = ls.map(({ p, cases, units, total }) => `${p.ref}  ${tx(p, 'b2b')}  ×${cases} (${units} ${T.tins})  ${money(total)}`).join('\n');
     const who = ['company', 'vat', 'name', 'email', 'phone', 'address', 'message']
       .map((k) => [form.elements[k].dataset.label, data.get(k)]).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n');
-    return { order, t, who, text: `B2B order request\n\n${order}\n\nTotal: ${t.cases} cases, ${t.units} tins, ${money(t.total)}\nShipping at the customer's expense.\n\n${who}` };
+    return { order, t, who, text: `${T.requestTitle}\n\n${order}\n\n${T.total}: ${T.casesTins(t.cases, t.units)}, ${money(t.total)}\n${T.shipping}\n\n${who}` };
   }
 
   // The request goes to a form endpoint when one is configured; otherwise to the
   // trade inbox by email. Either way nothing here pretends to take a payment.
   const viaEmail = !config.orderEndpoint;
-  form.querySelector('[type=submit]').textContent = viaEmail ? 'Email the order request' : 'Send the order request';
-  form.querySelector('[data-route]').textContent = viaEmail
-    ? `Your email app opens with the order written out, addressed to ${config.tradeEmail}.`
-    : 'The house confirms availability, delivery and invoice by email.';
+  form.querySelector('[type=submit]').textContent = viaEmail ? T.emailIt : T.sendIt;
+  form.querySelector('[data-route]').textContent = viaEmail ? T.routeEmail(config.tradeEmail) : T.routePost;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -229,13 +231,13 @@ function cartPage(config) {
     const r = request(data);
     const status = form.querySelector('[data-status]');
     if (viaEmail) {
-      location.href = `mailto:${config.tradeEmail}?subject=${encodeURIComponent(`B2B order request — ${data.get('company')}`)}&body=${encodeURIComponent(r.text)}`;
-      status.textContent = 'If nothing opened, copy the order below into an email.';
+      location.href = `mailto:${config.tradeEmail}?subject=${encodeURIComponent(T.subject(data.get('company')))}&body=${encodeURIComponent(r.text)}`;
+      status.textContent = T.ifNothing;
       form.querySelector('[data-fallback]').hidden = false;
       form.querySelector('[data-fallback] textarea').value = r.text;
       return;
     }
-    status.textContent = 'Sending…';
+    status.textContent = T.sending;
     try {
       const res = await fetch(config.orderEndpoint, {
         method: 'POST',
@@ -248,12 +250,30 @@ function cartPage(config) {
       done.hidden = false;
       done.querySelector('[data-done-company]').textContent = data.get('company');
     } catch {
-      status.textContent = `The request could not be sent. Please write to ${config.tradeEmail}.`;
+      status.textContent = T.failed(config.tradeEmail);
     }
   });
 
   document.addEventListener('cart', render);
   render();
+}
+
+// ── progress toward the €1,000 minimum (order form and cart) ──
+function progress(total) {
+  document.querySelectorAll('[data-progress]').forEach((el) => {
+    const share = Math.min(1, total / MIN_ORDER);
+    el.querySelector('i').style.transform = `scaleX(${share.toFixed(4)})`;
+    el.classList.toggle('ok', share >= 1);
+    el.querySelector('span').textContent = T.progress(money(Math.min(total, MIN_ORDER)), money(MIN_ORDER));
+  });
+}
+
+// ── one click: three cases of every sardine, which clears the minimum ──
+function assortment() {
+  document.querySelectorAll('[data-assortment]').forEach((b) => b.addEventListener('click', () => {
+    PRODUCTS.filter((p) => p.cat === 'Sardines').forEach((p) => cart.add(p.id, 3));
+    location.href = b.dataset.href;
+  }));
 }
 
 export function initStore(config) {
@@ -264,4 +284,5 @@ export function initStore(config) {
   filters();
   orderForm();
   cartPage(config);
+  assortment();
 }

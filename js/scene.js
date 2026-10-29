@@ -41,10 +41,11 @@ export function startScene(collection) {
   // ── label + tin ──
   // each lid is the real tin, photographed from above (tools/import_assets.py)
   const loader = new THREE.TextureLoader();
+  const base = document.documentElement.dataset.base || ''; // /fr/ pages sit one folder down
   const lids = new Map();
   function lidTexture(p) {
     if (!lids.has(p.id)) {
-      const tex = loader.load(`img/lids/${p.id}.webp`);
+      const tex = loader.load(`${base}img/lids/${p.id}.webp`);
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
       lids.set(p.id, tex);
