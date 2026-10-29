@@ -1,0 +1,58 @@
+{
+ "napoleon": {
+  "request_id": "01a189cb-4e97-7852-9b86-0eeff3ac05ac",
+  "digest": "890007583197184d",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/napoleon.mp4",
+  "kb": 1161
+ },
+ "founders-medal": {
+  "request_id": "01a189d9-c220-7cee-a458-f3c6df801743",
+  "digest": "d2b12e832a3ef507",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/founders-medal.mp4",
+  "kb": 590
+ },
+ "etel": {
+  "request_id": "01a189cf-a686-7848-9cb5-d58ccffccfeb",
+  "digest": "7b7143eac01bac04",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/etel.mp4",
+  "kb": 639
+ },
+ "concarneau": {
+  "request_id": "01a189d1-2b80-7f80-b5ce-e3311f3bc848",
+  "digest": "841c49e6d603a2ca",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/concarneau.mp4",
+  "kb": 1430
+ },
+ "emblem-1880": {
+  "request_id": "01a189d3-293b-7ac9-9ec7-2a60f7a2a448",
+  "digest": "0bd61106a9db7170",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/emblem-1880.mp4",
+  "kb": 1767
+ },
+ "plage-rodel": {
+  "request_id": "01a189dc-aa95-7bd4-bc35-e9c923b3ad59",
+  "digest": "05ce3fcf275225dc",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/plage-rodel.mp4",
+  "kb": 357
+ },
+ "tin-marble-red": {
+  "request_id": "01a189df-18a3-7f4a-a70b-2bd73dd61c07",
+  "digest": "f9010b738bf6958b",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/tin-marble-red.mp4",
+  "kb": 718
+ }
+}
