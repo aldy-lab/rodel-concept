@@ -25,7 +25,7 @@ Each request carries an Idempotency-Key derived from slug, model and prompt, so
 running it twice does not pay twice; a run that was interrupted resumes
 polling the requests it already made.
 """
-import argparse, hashlib, json, os, pathlib, subprocess, sys, time, urllib.error, urllib.request, uuid
+import argparse, hashlib, json, os, pathlib, ssl, subprocess, sys, time, urllib.error, urllib.request, uuid
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE_URL = 'https://aldy-lab.github.io/rodel-concept/'   # the inputs are the site's own public images
@@ -66,6 +66,13 @@ PROMPTS = {
 DURATION = 5
 CFG = 0.5
 
+# python.org builds on macOS ship without system certificates; use certifi's
+try:
+    import certifi
+    TLS = ssl.create_default_context(cafile=certifi.where())
+except ImportError:
+    TLS = ssl.create_default_context()
+
 
 def credentials():
     kid, sec = os.environ.get('HF_API_KEY_ID'), os.environ.get('HF_API_KEY_SECRET')
@@ -90,7 +97,7 @@ def call(method, url, auth, body=None, idem=None):
     if idem:
         req.add_header('Idempotency-Key', idem)
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:
+        with urllib.request.urlopen(req, timeout=60, context=TLS) as r:
             return json.loads(r.read())
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors='replace')[:300]
@@ -164,7 +171,8 @@ def main():
         if r['status'] != 'completed':
             print(f'  {slug}: {r["status"]} {r.get("error") or ""}'); continue
         raw = CACHE / f'{slug}-{rid[:8]}.mp4'
-        urllib.request.urlretrieve(r['video']['url'], raw)
+        with urllib.request.urlopen(r['video']['url'], timeout=300, context=TLS) as resp:
+            raw.write_bytes(resp.read())
         dst = OUT / f'{slug}.mp4'
         compress(raw, dst)
         state[slug].update({'mp4': f'img/reel/{slug}.mp4', 'kb': dst.stat().st_size // 1024})
