@@ -736,6 +736,12 @@ p { text-wrap: pretty; }
   filter: brightness(calc(1 + var(--d) * 0.16)) saturate(0.7);
 }
 .print.is-active .frame img { animation: kenburns 11s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+/* a Higgsfield clip sits over its still and fades in once it plays */
+.print .frame { position: relative; }
+.print-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s ease; }
+.print.playing .print-video { opacity: 1; }
+.print.playing .frame img { animation: none; }
+.reel-ai { margin: 1rem 0 0; color: var(--muted); font-size: 0.54rem; }
 @keyframes kenburns { from { scale: 1.16; translate: 2% 1.5%; } to { scale: 1.02; translate: 0 0; } }
 @media (prefers-reduced-motion: reduce) {
   .print, .reel-text li, .reel-ambient img, .reel-bar i { transition: none; }

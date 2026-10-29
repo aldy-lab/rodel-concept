@@ -247,5 +247,7 @@ REEL = [
      {'en': 'Still caught off Concarneau and packed by hand the same day, found in the finest houses of Paris: a name whispered among gourmets.',
       'fr': 'Toujours pêchée au large de Concarneau et mise en boîte à la main le jour même, présente dans les plus belles maisons de Paris : un nom murmuré entre gourmets.'}),
 ]
-REEL_UI = {'en': {'kicker': 'Two centuries · 1804–2025', 'more': 'The whole history', 'hint': 'Scroll through the eras'},
-           'fr': {'kicker': 'Deux siècles · 1804–2025', 'more': 'Toute l’histoire', 'hint': 'Faites défiler les époques'}}
+REEL_UI = {'en': {'kicker': 'Two centuries · 1804–2025', 'more': 'The whole history', 'hint': 'Scroll through the eras',
+                  'ai': 'Archive photographs animated with AI (Higgsfield)'},
+           'fr': {'kicker': 'Deux siècles · 1804–2025', 'more': 'Toute l’histoire', 'hint': 'Faites défiler les époques',
+                  'ai': 'Photographies d’archive animées par IA (Higgsfield)'}}

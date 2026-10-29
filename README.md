@@ -51,6 +51,12 @@ The French is a faithful translation of Rödel's copy. **Have a native speaker p
 - The Maison history is told on scroll (`js/story.js`, CSS "story"): the hero's three archive photographs fan out from a stack; each chapter's photograph opens like a shutter and drifts inside its frame, its date rises in large outline behind the heading, the text arrives line by line, and a rail of chapter numerals (≥1200px) tracks the chapter being read; "Bon appétit" resolves letter by letter. Parallax uses CSS scroll timelines where supported; reduced motion gets the static page; without JS everything is visible.
 - The Maison archive (35 photographs) can be filtered by theme and opens in a full-screen viewer: arrows, keyboard, swipe, Esc.
 
+## Animated history (Higgsfield)
+
+`tools/higgsfield.py` turns the seven history-reel photographs into short clips with Higgsfield's Kling 2.5 Turbo Pro image-to-video model. The prompts are restrained: light, air, water and the camera move, while faces, objects and lettering stay as they are. The clips are compressed into `img/reel/` and listed in `tools/reel_videos.json`; `tools/build.py` then puts them on the reel. An era plays its clip once when it comes on screen and holds the last frame. Data savers and reduced motion keep the stills. The reel then carries the line "Archive photographs animated with AI (Higgsfield)", because a heritage brand must not pass animation off as archive footage.
+
+Credentials go in `~/.config/higgsfield/credentials` (never in the repo). Run `python3 tools/higgsfield.py --dry-run` first: it shows the seven requests and costs nothing.
+
 ## Tools
 
     python3 -m http.server 8731            # serve

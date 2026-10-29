@@ -70,7 +70,7 @@ def rebase(text, asset_base, page_base):
         else:
             val = one(val)
         return f'{name}="{val}"'
-    return re.sub(r'\b(href|src|srcset)="([^"]*)"', attr, text)
+    return re.sub(r'\b(href|src|srcset|poster)="([^"]*)"', attr, text)
 
 
 # ── shared pieces ──────────────────────────────────────────────────────────
@@ -192,6 +192,10 @@ def band_reel(lang):
     without it the first era shows."""
     ui = REEL_UI[lang]
     tilts = [-3, 2.5, -1.5, 3, -2.5, 1.5, -1]
+    # clips made by tools/higgsfield.py; an era without one keeps its still
+    vids_file = ROOT / 'tools' / 'reel_videos.json'
+    vids = {k: v for k, v in (json.loads(vids_file.read_text()) if vids_file.exists() else {}).items()
+            if v.get('mp4') and (ROOT / v['mp4']).exists()}
     n = len(REEL)
     ambient, prints, texts, steps = [], [], [], []
     for k, (slug, year, prefix, title, text) in enumerate(REEL):
@@ -205,7 +209,9 @@ def band_reel(lang):
         prints.append(
             f'<figure class="print{on}" data-step="{k}" style="--r: {tilts[k % len(tilts)]}deg">'
             f'<span class="frame"><img src="{src}" srcset="{src} {w8}w, img/archive/{slug}.webp {w}w" sizes="(max-width: 900px) 80vw, 34vw" '
-            f'width="{w8}" height="{h8}" alt="{esc(alt)}" loading="lazy" decoding="async"></span>'
+            f'width="{w8}" height="{h8}" alt="{esc(alt)}" loading="lazy" decoding="async">'
+            + (f'<video class="print-video" muted playsinline preload="none" poster="{src}" data-src="{vids[slug]["mp4"]}" aria-hidden="true"></video>' if slug in vids else '')
+            + '</span>'
             f'{f"<figcaption>{esc(cap)}</figcaption>" if cap else ""}</figure>')
         texts.append(f'<li class="{on.strip()}" data-step="{k}" data-year="{year}" data-prefix="{prefix[lang]}"><p class="mono reel-date">{(prefix[lang] + " ") if prefix[lang] else ""}{year}</p>'
                      f'<h3>{esc(title[lang])}</h3><p>{esc(text[lang])}</p></li>')
@@ -219,6 +225,7 @@ def band_reel(lang):
         <ol class="reel-text">{''.join(texts)}</ol>
         <div class="reel-progress" aria-hidden="true"><span class="mono reel-count">01 / {n:02d}</span><span class="reel-bar"><i></i></span></div>
         <a class="more" href="maison/">{ui['more']} <span aria-hidden="true">→</span></a>
+        {f'<p class="reel-ai mono">{ui["ai"]}</p>' if vids else ''}
       </div>
       <div class="reel-deck">{''.join(prints)}</div>
       <p class="reel-hint mono" aria-hidden="true">{ui['hint']}</p>

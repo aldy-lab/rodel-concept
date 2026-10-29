@@ -22,6 +22,18 @@ export function initReel(root) {
 
   // photographs further down the pile load as the reader approaches
   prints.forEach((p) => p.querySelector('img').loading = 'eager');
+  // Higgsfield clips: only the era on show loads and plays, once, and holds
+  // its last frame; data savers and reduced motion keep the stills
+  const saveData = navigator.connection?.saveData;
+  const motion = !reduced && !saveData;
+  function play(p, on) {
+    const v = p.querySelector('video');
+    if (!v) return;
+    if (!on || !motion) { v.pause(); p.classList.remove('playing'); return; }
+    if (!v.src) v.src = v.dataset.src;
+    v.currentTime = 0;
+    v.play().then(() => p.classList.add('playing')).catch(() => {});
+  }
 
   function countTo(target) {
     cancelAnimationFrame(raf);
@@ -46,6 +58,7 @@ export function initReel(root) {
       p.classList.toggle('is-next', d > 0);
       p.style.setProperty('--d', Math.max(-4, Math.min(0, d)));
       p.style.zIndex = String(10 + i);
+      play(p, d === 0);
     });
     texts.forEach((t, i) => t.classList.toggle('is-active', i === k));
     ambient.forEach((a, i) => a.classList.toggle('is-active', i === k));
