@@ -44,6 +44,12 @@ The whole site exists in English (`/`) and French (`/fr/`), with a FR/EN switch 
 
 The French is a faithful translation of Rödel's copy. **Have a native speaker proofread it before launch.** It is worth deciding with the client whether French should be the default language at the domain root.
 
+## Home page motion
+
+- The 3D story runs only through its own sections. While a solid band (the collection grid, the archive filmstrip) is on screen, the story holds still and the scene fades out; it is not drawn at all when fully covered.
+- The archive filmstrip pins and slides sideways as you scroll (a CSS scroll timeline). It runs only where `animation-timeline` is supported, the screen is at least 1000px wide and motion is not reduced; elsewhere it is a plain grid. It never adds sideways page scroll.
+- The Maison archive (35 photographs) can be filtered by theme and opens in a full-screen viewer: arrows, keyboard, swipe, Esc.
+
 ## Tools
 
     python3 -m http.server 8731            # serve
@@ -63,6 +69,7 @@ All go-live values sit in the `CONFIG` block at the top of `js/main.js`. Leave a
 - **Claims to confirm:** "the oldest cannery brand in the world"; supplier to the Emperor of Brazil, Lord Mountbatten and Theodore Roosevelt; hand-boned sardines "conceived for the royal court". These are kept as Rödel's own wording.
 - **Certification badges** (MSC, Produit en Bretagne, Eco Friendly) sit on their products page with no stated certificate. They are left out here until licences are shown.
 - **Images left out**, and why, are listed in `tools/assets.json` under `excluded`: AI-generated images, stock photos, other shops' storefronts, collage slides, unnamed portraits, low-resolution files.
+- **The Fortnum & Mason tin photo on rodel.fr is AI-generated** (the file is a ChatGPT image). The history text about Fortnum & Mason stays; the picture is left out. Ask whether a real photograph of a special edition exists.
 - **Photos needed:** Philippe Hass (only a 320 px video still exists), and names for the two unidentified portraits.
 - **Edits to their copy:** "rue du Public Jardin" became *rue du Jardin Public*, and "Port-Marie" became *Port-Maria* (as printed on their own postcard). Grammar was lightly corrected throughout.
 - **Two price lists on rodel.fr.** The order form gives trade unit prices (Boneless €4.50); the e-shop lists exactly double (€9.00), except the 69 g tin (€3.30 vs €5.90). The store uses the order-form prices; the e-shop figures are kept in `js/products.js` as `eshop`. Ask which list is current, and whether prices are excl. VAT.

@@ -124,6 +124,18 @@ export function startScene(collection) {
 
   const sections = [...document.querySelectorAll('[data-scene]')];
   let centers = [];
+  // Solid bands (the collection grid, the archive) cover the scene. While one is
+  // on screen the story holds still and the scene fades out, instead of the tin
+  // drifting on behind the band and peeking out at its edges.
+  const viewport = document.querySelector('.viewport');
+  const solids = [...document.querySelectorAll('.band-solid')];
+  let spans = [];
+  const collapse = (y) => spans.reduce((out, [t, b]) => out - Math.max(0, Math.min(y, b) - t), y);
+  function cover() {
+    const top = scrollY, bottom = scrollY + innerHeight;
+    return spans.reduce((m, [t, b]) => Math.max(m, Math.max(0, Math.min(b, bottom) - Math.max(t, top)) / innerHeight), 0);
+  }
+  let veil = 1;
   let halfW = 5, halfH = 3;
 
   // iOS changes innerHeight while the address bar collapses mid-scroll. Size the
@@ -137,7 +149,8 @@ export function startScene(collection) {
   const phoneLayout = matchMedia('(max-width: 900px), (max-aspect-ratio: 9/10)');
 
   function resize() {
-    centers = sections.map((s) => s.offsetTop + s.offsetHeight / 2);
+    spans = solids.map((s) => [s.offsetTop, s.offsetTop + s.offsetHeight]);
+    centers = sections.map((s) => collapse(s.offsetTop + s.offsetHeight / 2));
     const w = innerWidth;
     const h = touch ? Math.max(innerHeight, probe.offsetHeight) : innerHeight;
     if (w === lastW && (h === lastH || (touch && Math.abs(h - lastH) < 160))) return;
@@ -153,7 +166,7 @@ export function startScene(collection) {
   new ResizeObserver(resize).observe(document.body);
 
   function progress() {
-    const y = scrollY + innerHeight / 2;
+    const y = collapse(scrollY + innerHeight / 2);
     if (y <= centers[0]) return 0;
     for (let i = 0; i < centers.length - 1; i++) {
       if (y < centers[i + 1]) return i + (y - centers[i]) / (centers[i + 1] - centers[i]);
@@ -310,7 +323,9 @@ export function startScene(collection) {
     // needs the slow drift and wobble: draw every other frame and save the GPU.
     moving += Math.abs(spinTarget - spin) + Math.abs(dragV) + vortex + (1 - cur.pack);
     odd = !odd;
-    if ((touch && moving < 0.002 && odd) || phoneLayout.matches) { requestAnimationFrame(frame); return; }
+    const v = 1 - THREE.MathUtils.smoothstep(cover(), 0.2, 0.7);
+    if (Math.abs(v - veil) > 0.004 || (v === 0) !== (veil === 0)) { veil = v; viewport.style.opacity = v.toFixed(3); }
+    if ((touch && moving < 0.002 && odd) || phoneLayout.matches || veil === 0) { requestAnimationFrame(frame); return; }
 
     camera.position.x += (mouse.x * 0.4 - camera.position.x) * damp;
     camera.position.y += (0.6 - mouse.y * 0.25 - camera.position.y) * damp;

@@ -149,7 +149,7 @@ ARCHIVE_FR = {
     'founders-medal': ('Médaille de bronze aux profils des fondateurs', 'Le seul portrait des fondateurs'),
     'plage-rodel': ('La plage Rödel à Concarneau, photographie de 1900', 'Plage Rödel, Concarneau, 1900'),
     'emblem-1880': ('L’emblème Rödel : un globe associé à une ruche', 'Le globe et la ruche, imaginés vers 1880'),
-    'fortnum-mason': ('Une boîte Rödel réalisée pour Fortnum & Mason', 'Une édition spéciale pour Fortnum & Mason'),
+    'arcachon-fishermen': ('Pêcheurs à Arcachon, sur une ancienne carte postale', 'Arcachon, les pêcheurs'),
     'cannery-workers': ('Ouvrières préparant les sardines dans une conserverie, photographie d’archive', None),
     'hands-open-tins': ('Deux boîtes ouvertes de sardines Rödel tenues dans les mains', None),
     'arcachon-postcard': ('Carte postale de l’usine Rödel d’Arcachon', 'Arcachon, l’usine Rödel'),
@@ -188,6 +188,37 @@ ARCHIVE_FR = {
     'tin-dark': ('Une boîte Rödel dans la pénombre', None),
 }
 
-# the archive strip on the home page: slug, year label
-ARCHIVE_STRIP = [('founders-medal', '1824'), ('etel', '1843–1870'), ('shanghai-advert', '1850–1900'),
-                 ('emblem-1880', 'c. 1880'), ('fortnum-mason', 'Fortnum &amp; Mason'), ('plage-rodel', '1900')]
+# the home filmstrip: slug, label (en, fr) — only dates the sources state
+ARCHIVE_STRIP = [
+    ('napoleon', '1804', '1804'), ('founders-medal', '1824', '1824'), ('etel', '1843–1870', '1843–1870'),
+    ('shanghai-advert', '1850–1900', '1850–1900'), ('concarneau', '1872', '1872'), ('emblem-1880', 'c. 1880', 'v. 1880'),
+    ('plage-rodel', '1900', '1900'), ('arcachon-fishermen', 'Arcachon', 'Arcachon'), ('tin-marble-red', '2025', '2025'),
+]
+
+# the Maison archive: every archive photograph, by theme
+GALLERY_TAGS = {
+    'usines': {'en': 'Factories &amp; coast', 'fr': 'Usines &amp; littoral'},
+    'boites': {'en': 'Tins &amp; labels', 'fr': 'Boîtes &amp; étiquettes'},
+    'documents': {'en': 'Documents', 'fr': 'Documents'},
+    'portraits': {'en': 'Portraits', 'fr': 'Portraits'},
+    'monde': {'en': 'Ports &amp; the world', 'fr': 'Ports &amp; monde'},
+}
+GALLERY = [
+    ('plage-rodel', 'usines'), ('etel', 'usines'), ('concarneau', 'usines'), ('quiberon', 'usines'), ('arcachon', 'usines'),
+    ('bourre', 'usines'), ('arcachon-postcard', 'usines'), ('quiberon-port-maria', 'usines'), ('factory-staff', 'usines'),
+    ('cannery-workers', 'usines'), ('engraving-workshop', 'usines'),
+    ('founders-medal', 'portraits'), ('napoleon', 'portraits'), ('pedro-ii', 'portraits'),
+    ('sardine-tin-old', 'boites'), ('foie-gras-tin', 'boites'), ('petits-pois', 'boites'),
+    ('mackerel-tin', 'boites'), ('tuna-tin', 'boites'), ('tuna-blanc', 'boites'), ('label', 'boites'), ('sign', 'boites'),
+    ('early-tins', 'boites'),
+    ('emblem-1880', 'documents'), ('share-certificate', 'documents'), ('shanghai-advert', 'documents'), ('medals', 'documents'),
+    ('catalogue-page', 'documents'), ('catalogue-asparagus', 'documents'), ('hanoi-advert', 'documents'),
+    ('marques-aquitaine', 'documents'), ('qualites-book', 'documents'),
+    ('arcachon-fishermen', 'monde'), ('fishermen', 'monde'), ('canton-road', 'monde'),
+]
+GALLERY_UI = {
+    'en': {'label': 'The archive', 'filter': 'Filter the archive', 'all': 'All', 'viewer': 'Archive viewer',
+           'prev': 'Previous photograph', 'next': 'Next photograph', 'close': 'Close', 'open': 'Open {cap}'},
+    'fr': {'label': 'Les archives', 'filter': 'Filtrer les archives', 'all': 'Tout', 'viewer': 'Visionneuse des archives',
+           'prev': 'Photographie précédente', 'next': 'Photographie suivante', 'close': 'Fermer', 'open': 'Ouvrir : {cap}'},
+}

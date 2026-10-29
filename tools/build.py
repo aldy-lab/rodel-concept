@@ -11,7 +11,7 @@ Old rodel.fr addresses get redirect pages; sitemap.xml lists both languages.
 import html, json, pathlib, re, subprocess, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from i18n import CHROME, S, STOCKISTS, ARCHIVE_FR, ARCHIVE_STRIP  # noqa: E402
+from i18n import CHROME, S, STOCKISTS, ARCHIVE_FR, ARCHIVE_STRIP, GALLERY, GALLERY_TAGS, GALLERY_UI  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE_URL = 'https://aldy-lab.github.io/rodel-concept/'
@@ -185,16 +185,55 @@ def band_collection(lang):
 
 
 def band_archive(lang):
+    """A filmstrip: on wide screens it pins and slides sideways as you scroll (CSS
+    scroll timeline, gated in style.css); elsewhere it is a plain grid. Nothing
+    focusable inside the track — a clipped box cannot reveal a focused child."""
     t = S[lang]
-    plates = ''.join(f'<li><span class="mono">{year}</span>{fig(slug, "", lang)}</li>' for slug, year in ARCHIVE_STRIP)
-    return f'''<section class="band-solid archive-band">
-    <div class="section-head">
-      <p class="kicker mono">{t['archive_kicker']}</p>
-      <h2>{t['archive_h2']}</h2>
+    fields = ''.join(
+        f'<li class="film-field"><span class="film-year">{en if lang == "en" else fr}</span>{fig(slug, "", lang)}</li>'
+        for slug, en, fr in ARCHIVE_STRIP)
+    return f'''<section class="band-solid archive-band filmstrip" style="--n: {len(ARCHIVE_STRIP)}">
+    <div class="film-vp">
+      <div class="section-head film-head">
+        <div>
+          <p class="kicker mono">{t['archive_kicker']}</p>
+          <h2>{t['archive_h2']}</h2>
+        </div>
+        <a class="more" href="maison/#archive">{t['archive_more']} <span aria-hidden="true">→</span></a>
+      </div>
+      <ol class="film-track">{fields}</ol>
     </div>
-    <ol class="strip">{plates}</ol>
-    <a class="more" href="maison/">{t['archive_more']} <span aria-hidden="true">→</span></a>
   </section>'''
+
+
+def gallery(lang):
+    ui = GALLERY_UI[lang]
+    counts = {tag: sum(1 for _, t in GALLERY if t == tag) for tag in GALLERY_TAGS}
+    filters = f'<button type="button" data-g="all" aria-pressed="true">{ui["all"]} <span class="mono">{len(GALLERY)}</span></button>' + ''.join(
+        f'<button type="button" data-g="{tag}" aria-pressed="false">{names[lang]} <span class="mono">{counts[tag]}</span></button>'
+        for tag, names in GALLERY_TAGS.items())
+    items = []
+    for slug, tag in GALLERY:
+        a = ASSETS['archive'][slug]
+        alt, cap = (ARCHIVE_FR[slug] if lang == 'fr' else (a['alt'], a['caption']))
+        label = cap or alt
+        w, h = a['w'], a['h']
+        w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
+        items.append(
+            f'<li class="g-item" data-tag="{tag}"><button type="button" class="g-open" aria-label="{esc(ui["open"].format(cap=label))}">'
+            f'<img src="img/archive/{slug}-800.webp" srcset="img/archive/{slug}-800.webp {w8}w, img/archive/{slug}.webp {w}w" '
+            f'sizes="(max-width: 900px) 50vw, 24vw" width="{w8}" height="{h8}" alt="{esc(alt)}" loading="lazy" decoding="async">'
+            f'<span class="g-cap">{esc(label)}</span><span class="g-tag mono">{GALLERY_TAGS[tag][lang]}</span></button></li>')
+    return f'''<div class="gallery" data-gallery>
+    <div class="g-filters" role="group" aria-label="{ui['filter']}">{filters}</div>
+    <ul class="g-grid" aria-label="{ui['label']}">{''.join(items)}</ul>
+    <dialog class="lightbox" aria-label="{ui['viewer']}">
+      <figure><img alt=""><figcaption><span class="lb-cap"></span><span class="lb-count mono"></span></figcaption></figure>
+      <button type="button" class="lb-prev" aria-label="{ui['prev']}">←</button>
+      <button type="button" class="lb-next" aria-label="{ui['next']}">→</button>
+      <button type="button" class="lb-close" aria-label="{ui['close']}">×</button>
+    </dialog>
+  </div>'''
 
 
 def band_stockists(lang):
@@ -521,6 +560,7 @@ def render(lang, slug, src):
     extra_head, before = block(body, 'extra-head'), block(body, 'before-header')
     body = re.sub(r'<!-- (extra-head|before-header) -->\n.*?<!-- /\1 -->\n?', '', body, flags=re.S)
     body = re.sub(r'\{\{band:([a-z]+)\}\}', lambda m: BANDS[m.group(1)](lang), body)
+    body = body.replace('{{gallery}}', gallery(lang))
     body = figs(body, lang)
 
     depth = (slug.count('/') + 1 if slug else 0) + (1 if lang == 'fr' else 0)

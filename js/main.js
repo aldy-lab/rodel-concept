@@ -24,6 +24,9 @@ const collection = initCollection();
 applyConfig();
 initStore(CONFIG);
 
+const galleryRoot = document.querySelector('[data-gallery]');
+if (galleryRoot) import('./gallery.js').then((m) => m.initGallery(galleryRoot));
+
 if (!phone && document.getElementById('scene')) {
   import('./scene.js')
     .then((m) => m.startScene(collection))

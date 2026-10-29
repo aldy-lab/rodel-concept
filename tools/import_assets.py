@@ -21,7 +21,7 @@ ARCHIVE = {
     29: ('founders-medal', 'Bronze medal with the profiles of the founders', 'The only portrait of the founders'),
     30: ('plage-rodel', 'Plage Rödel in Concarneau, photograph from 1900', 'Plage Rödel, Concarneau, 1900'),
     32: ('emblem-1880', 'The Rödel emblem: a globe paired with a beehive', 'The globe and the beehive, conceived around 1880'),
-    35: ('fortnum-mason', 'A Rödel tin made for Fortnum & Mason', 'A special edition for Fortnum & Mason'),
+    35: ('arcachon-fishermen', 'Fishermen at Arcachon, on an early postcard', 'Arcachon, fishermen'),
     37: ('cannery-workers', 'Women preparing sardines in a cannery, archive photograph', None),
     41: ('hands-open-tins', 'Two open tins of Rödel sardines held in two hands', None),
     42: ('arcachon-postcard', 'Postcard of the Rödel factory at Arcachon', 'Arcachon, the Rödel factory'),
@@ -69,7 +69,7 @@ PACKS = {
 EXCLUDED = {
     'stockist shop photos (10–24)': 'photographs of other businesses; the site lists stockists by name',
     'stock photography (25, 36, 38, 39, 40, 96)': 'not Rödel’s; licence unknown',
-    'AI-generated images (28, 34, 60, 66)': 'filenames show Midjourney/ChatGPT output; a premium heritage page should not pass these off as archive',
+    'AI-generated images (28, 34, 60, 66)': 'filenames show Midjourney/ChatGPT output, including the Fortnum & Mason tin (34); a heritage page must not pass these off as archive',
     'certification badges (45 Eco Friendly, 46 MSC, 47 Produit en Bretagne)': 'need proof of certification/licence before use',
     'collage slides with overlaid text (75, 87–90, 92, 94, 95)': 'designed as slides, not photographs',
     'unidentified portraits (48, 82)': 'need a name and permission',
