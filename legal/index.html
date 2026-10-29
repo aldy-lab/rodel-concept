@@ -29,7 +29,8 @@
     <a href="../collection/">Collection</a>
     <a href="../trade/">Trade</a>
   </nav>
-  <a class="btn btn-ghost" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
+  <a class="btn btn-ghost" href="../store/">B2B store</a>
+  <a class="cart-link" data-cart-link href="../cart/">Cart<span class="count" data-cart-count>0</span></a>
 </header>
 
 <main>
@@ -42,11 +43,12 @@
   <section>
     <h2>Website publisher</h2>
     <dl class="facts">
-      <div><dt>Company</dt><dd>RODEL SAS, société par actions simplifiée</dd></div>
+      <div><dt>Company</dt><dd>RODEL SAS</dd></div>
+      <div><dt>Legal form</dt><dd>Société par Actions Simplifiée (SAS)</dd></div>
       <div><dt>Registered office</dt><dd>14 rue Gambetta, 78600 Le Mesnil-le-Roi, France</dd></div>
       <div><dt>SIRET</dt><dd>568 503 460 00079</dd></div>
       <div><dt>SIREN</dt><dd>568 503 460</dd></div>
-      <div><dt>RCS</dt><dd>Versailles</dd></div>
+      <div><dt>Commercial Register (RCS)</dt><dd>Versailles</dd></div>
       <div><dt>Share capital</dt><dd>€210,144.36</dd></div>
       <div><dt>Intra-community VAT</dt><dd>FR35 568 503 460</dd></div>
       <div><dt>President</dt><dd>RÖDEL CAPITAL s.r.o.</dd></div>
@@ -61,17 +63,19 @@
 
   <section>
     <h2>Personal data</h2>
-    <p>In accordance with the EU General Data Protection Regulation (GDPR 2016/679) and the French Data Protection Act (no. 78-17), information you send us by email is used solely to answer your enquiry and is kept for at most six months after the last contact. You have the rights of access, rectification, erasure, objection and restriction. To exercise them, write to <a data-config="email" data-fill href="#">info@rodel.fr</a> or to 14 rue Gambetta, 78600 Le Mesnil-le-Roi. For further information, see the CNIL website, <a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>.</p>
+    <p>In accordance with the EU General Data Protection Regulation (GDPR 2016/679) and the French Data Protection Act (n°78-17), information collected through the order request form and by email is used solely to respond to your inquiries. Data is retained for a maximum period of 6 months after last contact. You have the rights of access, rectification, erasure, objection and restriction.</p>
+    <p>To exercise these rights, please contact: <a data-config="email" data-fill href="#">info@rodel.fr</a>, 14 rue Gambetta, 78600 Le Mesnil-le-Roi. For further information, you may consult the CNIL website (<a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>).</p>
   </section>
 
   <section>
     <h2>Cookies and third parties</h2>
-    <p>This website sets no cookies and uses no analytics. Typefaces are loaded from Google Fonts, and on large screens the 3D scene loads the three.js library from jsDelivr; both services receive your IP address when the page loads.</p>
+    <p>This website uses only essential technical storage: the contents of your B2B cart are kept in your browser’s local storage and never leave your device until you send an order request. No marketing or tracking cookies are activated. If analytical cookies are introduced, a banner will be displayed allowing you to accept or decline on first visit.</p>
+    <p>Typefaces are loaded from Google Fonts and, on large screens, the 3D scene loads the three.js library from jsDelivr; both services receive your IP address when the page loads.</p>
   </section>
 
   <section>
     <h2>Liability and governing law</h2>
-    <p>The content of this website is provided for information only. Rödel SAS strives for accuracy but cannot be held responsible for errors or temporary unavailability. This site and its content are governed by French law.</p>
+    <p>The content of this website is provided for informational purposes only. Rödel SAS strives for accuracy but cannot be held responsible for errors or temporary unavailability. This site and its content are governed by French law.</p>
   </section>
 </div>
 
@@ -95,6 +99,9 @@
       <p class="mono">Write</p>
       <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
       <a data-config="email" data-fill href="#">info@rodel.fr</a>
+    </div>
+    <div data-config-group>
+      <p class="mono">Follow us on social</p>
       <a data-config="instagram" href="#" rel="noopener">Instagram</a>
     </div>
   </div>
@@ -106,8 +113,8 @@
 </footer>
 
 <nav class="dock" aria-label="Quick actions">
-  <a class="btn" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
-  <a class="btn btn-ghost" href="../trade/#contact">Contact</a>
+  <a class="btn" href="../store/">B2B store</a>
+  <a class="btn btn-ghost" data-cart-link href="../cart/">Cart <span class="count" data-cart-count>0</span></a>
 </nav>
 </body>
 </html>

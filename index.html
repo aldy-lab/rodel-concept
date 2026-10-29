@@ -41,7 +41,8 @@
     <a href="collection/">Collection</a>
     <a href="trade/">Trade</a>
   </nav>
-  <a class="btn btn-ghost" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
+  <a class="btn btn-ghost" href="store/">B2B store</a>
+  <a class="cart-link" data-cart-link href="cart/">Cart<span class="count" data-cart-count>0</span></a>
 </header>
 <!-- /chrome:header -->
 
@@ -70,7 +71,7 @@
       <img src="img/tin-open.webp" width="1200" height="853" alt="An open tin with five sardines laid head to tail" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
-      <p class="kicker mono">01 — The same process since 1824</p>
+      <p class="kicker mono">01 — The same process from 1824</p>
       <h2>Caught in the morning. <br><em>In the tin the same day.</em></h2>
       <p>Nine fishing families of Concarneau bring in the catch with the traditional bolinche, from the Bay of Concarneau, the Glénan archipelago and Cape Trévignon. Every sardine is cleaned by hand, fried for thirty seconds to seal it, and laid in the tin. Never frozen.</p>
       <dl class="specs">
@@ -78,7 +79,7 @@
         <div><dt>Waters</dt><dd>Concarneau, Glénan</dd></div>
         <div><dt>Packed</dt><dd>By hand, same day</dd></div>
       </dl>
-      <a class="more" href="sardines/">The secret of perfection <span aria-hidden="true">→</span></a>
+      <a class="more" href="sardines/">We preserved it till today: the secret of perfection <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
@@ -90,7 +91,7 @@
     <div class="copy">
       <p class="kicker mono">02 — Millésime</p>
       <h2>The finest catch <br><em>of a given year.</em></h2>
-      <p>A designation reserved for the finest catch of a given year, harvested at optimal maturity for exceptional richness and remarkable depth of flavour. Rödel marks on each lid when, by whom and where the fish were caught.</p>
+      <p>The House of Rödel is distinguished by its selection of sardines. Millésime is a designation reserved for the finest catch of a given year, harvested at optimal maturity for exceptional richness and remarkable depth of flavour. Rödel marks on each lid when, by whom and where the fish were caught.</p>
       <figure class="rule" aria-label="Savoured even after ten years, 2025 to 2035">
         <div class="ticks"></div>
         <div class="span"><span class="mono">Savoured even after ten years</span></div>
@@ -139,7 +140,7 @@
       <div class="contact">
         <div data-config-group>
           <p class="mono">Professionals</p>
-          <a class="btn" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
+          <a class="btn" href="store/">B2B store</a>
         </div>
         <div data-config-group>
           <p class="mono">Orders &amp; partnerships</p>
@@ -150,8 +151,8 @@
           <address>2 rue Henri Fabre<br>29900 Concarneau, France</address>
         </div>
         <div>
-          <p class="mono">Stockists &amp; terms</p>
-          <a href="trade/">Trade</a>
+          <p class="mono">Order form</p>
+          <a href="order/">B2B order form</a>
         </div>
       </div>
     </div>
@@ -178,6 +179,9 @@
       <p class="mono">Write</p>
       <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
       <a data-config="email" data-fill href="#">info@rodel.fr</a>
+    </div>
+    <div data-config-group>
+      <p class="mono">Follow us on social</p>
       <a data-config="instagram" href="#" rel="noopener">Instagram</a>
     </div>
   </div>
@@ -189,8 +193,8 @@
 </footer>
 
 <nav class="dock" aria-label="Quick actions">
-  <a class="btn" data-config="shopUrl" href="#" rel="noopener">B2B store</a>
-  <a class="btn btn-ghost" href="trade/#contact">Contact</a>
+  <a class="btn" href="store/">B2B store</a>
+  <a class="btn btn-ghost" data-cart-link href="cart/">Cart <span class="count" data-cart-count>0</span></a>
 </nav>
 <!-- /chrome:footer -->
 </body>

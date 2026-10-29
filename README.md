@@ -14,6 +14,21 @@ A static site with no build step to serve it. The text, product data and photogr
 | `/collection/` | All nine products: pack shot, tin wording, description, ref, EAN, weight, case |
 | `/trade/` | B2B terms, the trade catalogue, stockists, contacts |
 | `/legal/` | Mentions légales |
+| `/store/` | B2B store: nine products, filter, add by the case |
+| `/store/<product>/` | Product page: price per tin and per case, add to cart, ref and EAN |
+| `/order/` | The B2B order form: ref, GENCOD, units/case, unit price, live totals, €1,000 minimum |
+| `/cart/` | Cart and order request (company, VAT, delivery address) |
+
+Every old rodel.fr address (`/about`, `/products`, `/gallery`, `/contact-1`, `/b2b-order-form`, `/eshop`, `/eshop/p/…`, the privacy page) has a redirect page to its new home, so links keep working once the domain moves.
+
+## The B2B store
+
+There is no payment on the site, by design. The cart lives in the visitor's browser (`localStorage`), and checkout sends an **order request**, which the house confirms, matching their B2B terms.
+
+- `CONFIG.orderEndpoint` blank (now): the request opens an email to `tradeEmail` with the order written out, and a copyable fallback if no mail app opens.
+- `CONFIG.orderEndpoint` set (a Formspree or Basin form URL): the request is POSTed as JSON and the cart clears.
+
+Trade accounts and sign-in from the Squarespace store cannot carry over. "Request a trade account" emails george@.
 
 **Phones** don't load Three.js. They get stills rendered from the same models and the real pack shots.
 
@@ -36,8 +51,13 @@ All go-live values sit in the `CONFIG` block at the top of `js/main.js`. Leave a
 - **Images left out**, and why, are listed in `tools/assets.json` under `excluded`: AI-generated images, stock photos, other shops' storefronts, collage slides, unnamed portraits, low-resolution files.
 - **Photos needed:** Philippe Hass (only a 320 px video still exists), and names for the two unidentified portraits.
 - **Edits to their copy:** "rue du Public Jardin" became *rue du Jardin Public*, and "Port-Marie" became *Port-Maria* (as printed on their own postcard). Grammar was lightly corrected throughout.
-- **B2B prices** are not published here, although their order form shows them publicly.
+- **Two price lists on rodel.fr.** The order form gives trade unit prices (Boneless €4.50); the e-shop lists exactly double (€9.00), except the 69 g tin (€3.30 vs €5.90). The store uses the order-form prices; the e-shop figures are kept in `js/products.js` as `eshop`. Ask which list is current, and whether prices are excl. VAT.
+- **Data retention:** the legal notice keeps their "6 months after last contact". Order requests are commercial records with their own retention rules; confirm with the client.
 - **Two addresses:** george@rodel.fr is used for orders and partnerships (their contact page), and info@rodel.fr for general enquiries and personal data (their legal notice).
 - **Legal notice:** the hosting and third-party lines describe this concept (GitHub Pages, Google Fonts, jsDelivr). Update them at go-live; self-hosting the fonts would remove the Google Fonts disclosure.
+
+## Text coverage
+
+202 of the 211 sentences on rodel.fr are on this site, checked by matching every sentence. The 9 not moved are deliberate: the Squarespace hosting lines and "Created in-house by RODEL SAS" (no longer true), the contact-form and cookie sentences (rewritten for the order request and local storage), and "Follow us on social" (it appears once an Instagram URL is set in `CONFIG`).
 
 Easter egg: type `1824` on the home page.

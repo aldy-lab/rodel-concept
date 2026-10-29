@@ -2,15 +2,17 @@
 // GO-LIVE CONFIG — fill in to switch a link on; leave "" and the element is
 // removed from the page (and its empty container with it).
 const CONFIG = {
-  shopUrl: 'https://www.rodel.fr/eshop',            // B2B store (professional accounts)
-  orderFormUrl: 'https://www.rodel.fr/b2b-order-form', // B2B order form
-  email: 'info@rodel.fr',      // general enquiries and personal data (legal notice)
+  // Where order requests are POSTed as JSON (e.g. a Formspree or Basin form).
+  // Blank: the cart opens an email to tradeEmail with the order written out.
+  orderEndpoint: '',
+  email: 'info@rodel.fr',        // general enquiries and personal data (legal notice)
   tradeEmail: 'george@rodel.fr', // orders and partnerships (contact page)
   instagram: '',
 };
 // ─────────────────────────────────────────────────────────────────────────
 
 import { TINS } from './products.js';
+import { initStore } from './store.js';
 
 // Phones get a still-image layout: product cards, a bottom action bar, no WebGL.
 // Must match the phone media query in style.css.
@@ -20,6 +22,7 @@ const base = document.documentElement.dataset.base || '';
 renderCards();
 const collection = initCollection();
 applyConfig();
+initStore(CONFIG);
 
 if (!phone && document.getElementById('scene')) {
   import('./scene.js')

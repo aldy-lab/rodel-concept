@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" data-base="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cart | Rödel B2B Store</title>
+<meta name="description" content="Your Rödel B2B order request.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Cart | Rödel B2B Store">
+<meta property="og:description" content="Your Rödel B2B order request.">
+<meta property="og:image" content="https://aldy-lab.github.io/rodel-concept/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070d14">
+<link rel="canonical" href="https://aldy-lab.github.io/rodel-concept/cart/">
+<link rel="icon" href="../img/brand/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<script type="module" src="../js/main.js"></script>
+</head>
+<body class="page page-cart">
+
+<header class="top">
+  <a class="mark" href="../" aria-label="Rödel, home">RÖDEL<span class="mono">1824</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="../maison/">Maison</a>
+    <a href="../sardines/">Sardines</a>
+    <a href="../collection/">Collection</a>
+    <a href="../trade/">Trade</a>
+  </nav>
+  <a class="btn btn-ghost" href="../store/" aria-current="page">B2B store</a>
+  <a class="cart-link" data-cart-link href="../cart/">Cart<span class="count" data-cart-count>0</span></a>
+</header>
+
+<main>
+<section class="page-hero">
+  <p class="kicker mono">B2B Store</p>
+  <h1>Your <em>order.</em></h1>
+  <p class="lead">Shipping costs are always at the customer’s expense. The minimum order is €1,000. Orders are sent as a request; the house confirms availability, delivery and invoice.</p>
+</section>
+
+<section class="cart-section">
+  <div data-cart-empty>
+    <p class="statement-line">Your cart is empty.</p>
+    <div class="actions"><a class="btn" href="../store/">B2B store</a><a class="btn btn-ghost" href="../order/">B2B order form</a></div>
+  </div>
+
+  <div class="cart-grid" data-cart-full hidden>
+    <ul class="cart-lines" data-cart-lines></ul>
+    <aside class="cart-aside">
+      <dl class="summary" data-cart-summary></dl>
+      <p class="minimum mono" data-cart-minimum role="status"></p>
+      <form id="order-request" class="request">
+        <p class="mono request-title">Order request</p>
+        <label class="field"><span class="mono">Company</span><input type="text" name="company" data-label="Company" required autocomplete="organization"></label>
+        <label class="field"><span class="mono">VAT number</span><input type="text" name="vat" data-label="VAT number" required></label>
+        <label class="field"><span class="mono">Contact name</span><input type="text" name="name" data-label="Contact name" required autocomplete="name"></label>
+        <label class="field"><span class="mono">Email</span><input type="email" name="email" data-label="Email" required autocomplete="email"></label>
+        <label class="field"><span class="mono">Phone (optional)</span><input type="tel" name="phone" data-label="Phone" autocomplete="tel"></label>
+        <label class="field"><span class="mono">Delivery address</span><textarea name="address" rows="3" data-label="Delivery address" required></textarea></label>
+        <label class="field"><span class="mono">Message (optional)</span><textarea name="message" rows="3" data-label="Message"></textarea></label>
+        <button class="btn" type="submit">Send the order request</button>
+        <p class="route" data-route></p>
+        <p class="mono status" data-status role="status"></p>
+        <label class="field" data-fallback hidden><span class="mono">Your order</span><textarea rows="8" readonly></textarea></label>
+      </form>
+    </aside>
+  </div>
+
+  <div data-cart-done hidden>
+    <p class="statement-line">Thank you. The order request for <span data-done-company></span> has been sent.</p>
+    <p>The house will confirm availability, delivery and invoice by email.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="foot-grid">
+    <div>
+      <p class="mark-foot">RÖDEL</p>
+      <p class="mono">&amp; Fils Frères · Fondée en 1824</p>
+    </div>
+    <div>
+      <p class="mono">Cannery</p>
+      <address>2 rue Henri Fabre<br>29900 Concarneau, France</address>
+    </div>
+    <div>
+      <p class="mono">Registered office</p>
+      <address>Rödel SAS<br>14 rue Gambetta<br>78600 Le Mesnil-le-Roi, France</address>
+    </div>
+    <div data-config-group>
+      <p class="mono">Write</p>
+      <a data-config="tradeEmail" data-fill href="#">george@rodel.fr</a>
+      <a data-config="email" data-fill href="#">info@rodel.fr</a>
+    </div>
+    <div data-config-group>
+      <p class="mono">Follow us on social</p>
+      <a data-config="instagram" href="#" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="foot-base mono">
+    <span>© Rödel SAS</span>
+    <a href="../legal/">Legal notice</a>
+    <span>Concept redesign by ALDY Studio, not affiliated with Rödel SAS</span>
+  </div>
+</footer>
+
+<nav class="dock" aria-label="Quick actions">
+  <a class="btn" href="../store/">B2B store</a>
+  <a class="btn btn-ghost" data-cart-link href="../cart/">Cart <span class="count" data-cart-count>0</span></a>
+</nav>
+</body>
+</html>
