@@ -48,6 +48,7 @@ The French is a faithful translation of Rödel's copy. **Have a native speaker p
 
 - The 3D story runs only through its own sections. While a solid band (the collection grid, the archive filmstrip) is on screen, the story holds still and the scene fades out; it is not drawn at all when fully covered.
 - The archive filmstrip pins and slides sideways as you scroll (a CSS scroll timeline). It runs only where `animation-timeline` is supported, the screen is at least 1000px wide and motion is not reduced; elsewhere it is a plain grid. It never adds sideways page scroll.
+- The Maison history is told on scroll (`js/story.js`, CSS "story"): the hero's three archive photographs fan out from a stack; each chapter's photograph opens like a shutter and drifts inside its frame, its date rises in large outline behind the heading, the text arrives line by line, and a rail of chapter numerals (≥1200px) tracks the chapter being read; "Bon appétit" resolves letter by letter. Parallax uses CSS scroll timelines where supported; reduced motion gets the static page; without JS everything is visible.
 - The Maison archive (35 photographs) can be filtered by theme and opens in a full-screen viewer: arrows, keyboard, swipe, Esc.
 
 ## Tools

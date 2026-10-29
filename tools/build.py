@@ -81,10 +81,11 @@ def fig(slug, cls, lang):
     w, h = a['w'], a['h']
     w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
     caption = f'<figcaption>{esc(cap)}</figcaption>' if cap else ''
-    return (f'<figure class="{f"plate {cls}".strip()}"><img src="img/archive/{slug}-800.webp" '
+    # the frame clips the photograph, so it can drift and scale inside without covering the caption
+    return (f'<figure class="{f"plate {cls}".strip()}"><span class="frame"><img src="img/archive/{slug}-800.webp" '
             f'srcset="img/archive/{slug}-800.webp {w8}w, img/archive/{slug}.webp {w}w" '
             f'sizes="(max-width: 900px) 100vw, 46vw" width="{w8}" height="{h8}" '
-            f'alt="{esc(alt)}" loading="lazy" decoding="async">{caption}</figure>')
+            f'alt="{esc(alt)}" loading="lazy" decoding="async"></span>{caption}</figure>')
 
 
 def figs(text, lang):

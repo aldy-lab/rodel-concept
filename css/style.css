@@ -629,6 +629,94 @@ p { text-wrap: pretty; }
 .lb-open, .lb-open body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { .lightbox img { transition: none; transform: none; } }
 
+/* ── Maison: the history told on scroll ── */
+.frame { display: block; overflow: hidden; }
+.chapter .frame { width: fit-content; max-width: 100%; margin-inline: auto; }
+.story-hero { position: relative; max-width: none; min-height: min(90svh, 58rem); display: grid; align-content: center; overflow: clip; }
+.story-hero > :not(.hero-stack) { position: relative; z-index: 1; max-width: 40rem; }
+.hero-stack { position: absolute; right: var(--gutter); top: 52%; width: min(46vw, 42rem); aspect-ratio: 1.25; transform: translateY(-50%); }
+.hero-stack .plate { position: absolute; width: 46%; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.85); }
+.hero-stack .plate figcaption { display: none; }
+.hero-stack .frame img { aspect-ratio: 4 / 5; object-fit: cover; width: 100%; }
+.hero-stack .plate:nth-child(1) { left: 2%; top: 22%; rotate: -8deg; z-index: 2; --dx: 40%; --dy: 0%; --rise: -14%; }
+.hero-stack .plate:nth-child(2) { left: 28%; top: 0; rotate: 2deg; z-index: 1; --dx: 0%; --dy: 16%; --rise: -26%; }
+.hero-stack .plate:nth-child(3) { left: 52%; top: 26%; rotate: 9deg; z-index: 3; --dx: -40%; --dy: 0%; --rise: -6%; }
+
+.chapter { position: relative; }
+.chapter > :not(.chapter-year) { position: relative; z-index: 1; }
+.chapter-year {
+  /* on the text side, rising behind the heading: the photograph would hide it */
+  position: absolute; z-index: 0; top: clamp(1rem, 6vh, 4rem); left: -0.04em;
+  font: 300 italic clamp(8rem, 4rem + 13vw, 18rem)/0.8 var(--serif); letter-spacing: -0.02em;
+  color: transparent; -webkit-text-stroke: 1px rgba(184, 201, 214, 0.3);
+  pointer-events: none; user-select: none; white-space: nowrap; font-variant-numeric: lining-nums;
+}
+.chapter.flip .chapter-year { left: auto; right: -0.04em; }
+
+.story-rail {
+  position: fixed; right: 1.4rem; top: 50%; translate: 0 -50%; z-index: 9;
+  padding-left: 0.9rem; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+}
+.story-rail.shown { opacity: 1; pointer-events: auto; }
+.story-rail::before, .rail-fill { content: ""; position: absolute; left: 0; top: 0; height: calc(100% - 7rem); width: 1px; background: var(--line); }
+.rail-fill { background: var(--accent); transform-origin: top; transform: scaleY(0); transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.story-rail ol { list-style: none; margin: 0; padding: 0; display: grid; }
+.story-rail a { display: flex; align-items: center; min-height: 30px; color: var(--muted); text-decoration: none; opacity: 0.5; transition: opacity 0.3s, color 0.3s; }
+.story-rail a .mono { font-size: 0.56rem; letter-spacing: 0.1em; }
+.story-rail a.on { opacity: 1; color: var(--text); }
+@media (hover: hover) { .story-rail a:hover { opacity: 1; } }
+.rail-now { writing-mode: vertical-rl; margin: 0.8rem 0 0; height: 6rem; font-size: 0.6rem; color: var(--accent); letter-spacing: 0.18em; }
+@media (max-width: 1199px) { .story-rail { display: none; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* entrance: the photograph opens like a shutter, the text rises line by line */
+  .story-ready .chapter .frame { clip-path: inset(100% 0 0 0); transition: clip-path 1.35s cubic-bezier(0.7, 0, 0.2, 1); }
+  .story-ready .chapter.is-in .frame { clip-path: inset(0); }
+  .story-ready .chapter .frame img { scale: 1.2; transition: scale 2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .story-ready .chapter.is-in .frame img { scale: 1.08; }
+  .story-ready .chapter .plates .plate:nth-child(2) .frame, .story-ready .chapter .plates .plate:nth-child(2) img { transition-delay: 0.12s; }
+  .story-ready .chapter .plates .plate:nth-child(3) .frame, .story-ready .chapter .plates .plate:nth-child(3) img { transition-delay: 0.24s; }
+  .story-ready .chapter .plates .plate:nth-child(4) .frame, .story-ready .chapter .plates .plate:nth-child(4) img { transition-delay: 0.36s; }
+  .story-ready .chapter .plate-wide .frame { transition-delay: 0.3s; }
+  .story-ready .chapter figcaption { opacity: 0; transition: opacity 0.8s ease 0.9s; }
+  .story-ready .chapter.is-in figcaption { opacity: 1; }
+  .story-ready .chapter .chapter-text > * { opacity: 0; translate: 0 26px; transition: opacity 0.9s ease, translate 1.1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .story-ready .chapter.is-in .chapter-text > * { opacity: 1; translate: 0 0; }
+  .story-ready .chapter .chapter-text > :nth-child(2) { transition-delay: 0.08s; }
+  .story-ready .chapter .chapter-text > :nth-child(3) { transition-delay: 0.16s; }
+  .story-ready .chapter .chapter-text > :nth-child(4) { transition-delay: 0.24s; }
+  .story-ready .chapter .chapter-text > :nth-child(5) { transition-delay: 0.32s; }
+  .story-ready .chapter .chapter-year { opacity: 0; transition: opacity 1.8s ease 0.2s; }
+  .story-ready .chapter.is-in .chapter-year { opacity: 1; }
+  .story-ready .people, .story-ready .archive-section .section-head { opacity: 0; translate: 0 26px; transition: opacity 1s ease, translate 1.1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .story-ready .people.is-in, .story-ready .archive-section .section-head.is-in { opacity: 1; translate: 0 0; }
+  .story-ready .coda-line span { display: inline-block; opacity: 0; translate: 0 0.35em; filter: blur(6px); transition: opacity 0.9s ease, translate 1s cubic-bezier(0.2, 0.8, 0.2, 1), filter 1s ease; transition-delay: calc(var(--i) * 55ms); }
+  .story-ready .coda.is-in .coda-line span { opacity: 1; translate: 0 0; filter: none; }
+  /* the hero photographs fan out from a single stack */
+  .story-ready .hero-stack .plate { animation: fan 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .story-ready .hero-stack .plate:nth-child(1) { animation-delay: 0.25s; }
+  .story-ready .hero-stack .plate:nth-child(2) { animation-delay: 0.1s; }
+  .story-ready .hero-stack .plate:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes fan { from { translate: var(--dx) var(--dy); rotate: 0deg; scale: 0.92; opacity: 0; } }
+}
+
+/* parallax, where scroll timelines exist: photographs drift inside their frames,
+   the dates float at another speed, the hero stack rises apart as you leave it */
+@supports (animation-timeline: view()) {
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .chapter .frame img { animation: drift linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+    @keyframes drift { from { transform: translateY(-3.5%); } to { transform: translateY(3.5%); } }
+    .chapter-year { animation: float linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+    @keyframes float { from { transform: translateY(22%); } to { transform: translateY(-22%); } }
+    .story-ready .hero-stack .plate {
+      animation: fan 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) both, rise linear both;
+      animation-timeline: auto, view();
+      animation-range: normal, exit 0% exit 100%;
+    }
+    @keyframes rise { to { transform: translateY(var(--rise)); } }
+  }
+}
+
 /* ── phones: no WebGL. Rendered stills, product cards, a bottom action bar ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
   :root { --header: 60px; --gutter: 20px; }
@@ -820,4 +908,13 @@ p { text-wrap: pretty; }
   .lb-prev, .lb-next { top: auto; bottom: 1.2rem; transform: none; }
   .lb-prev { left: calc(50% - 64px); }
   .lb-next { right: calc(50% - 64px); }
+}
+
+/* ── phones: the history story ── */
+@media (max-width: 900px), (max-aspect-ratio: 9/10) {
+  .story-hero { min-height: 0; padding-top: 2rem; }
+  .hero-stack { position: relative; right: auto; top: auto; transform: none; width: 100%; margin: 0 0 2.4rem; }
+  .story-hero > :not(.hero-stack) { max-width: none; }
+  .chapter-year { font-size: 7.5rem; top: 1.4rem; }
+  .chapter.flip .chapter-year { right: auto; left: -0.04em; }
 }
