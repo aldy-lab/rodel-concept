@@ -70,7 +70,7 @@ export function startScene(collection) {
   collection.onChange = (p) => { setProduct(p); spinTarget += Math.PI * 2; };
 
   // ── shoal ──
-  // Two meshes: the five that end up in the tin (full detail, seen close), and
+  // Two meshes: the fish that end up in the tin (full detail, seen close), and
   // the school itself (lighter geometry, its own material so it can fade out).
   const uniforms = { uBeat: { value: 0 } };
   const N = touch ? 260 : 520;
@@ -85,7 +85,26 @@ export function startScene(collection) {
     scene.add(mesh);
     return { mesh, wig };
   }
-  const five = makeShoal(5, touch);
+  const PACKED = tin.slots.length;
+  const five = makeShoal(PACKED, touch);
+  // a soft contact shadow on the floor of the tin under each place, which
+  // darkens in as its fish settles: they lie in the oil, not over it
+  const sc0 = document.createElement('canvas'); sc0.width = 256; sc0.height = 64;
+  const g0 = sc0.getContext('2d');
+  g0.translate(128, 32); g0.scale(1, 0.25);
+  const rg = g0.createRadialGradient(0, 0, 0, 0, 0, 120);
+  rg.addColorStop(0, 'rgba(6,12,20,1)'); rg.addColorStop(0.5, 'rgba(6,12,20,0.6)'); rg.addColorStop(1, 'rgba(8,16,24,0)');
+  g0.fillStyle = rg; g0.beginPath(); g0.arc(0, 0, 120, 0, Math.PI * 2); g0.fill();
+  const shadowTex = new THREE.CanvasTexture(sc0);
+  const beds = tin.slots.map((m) => {
+    const pos = new THREE.Vector3().setFromMatrixPosition(m);
+    const bed = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.15),
+      new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0, depthWrite: false, fog: false }));
+    bed.rotation.x = -Math.PI / 2;
+    bed.position.set(pos.x - 0.1 * Math.sign(pos.x), 0.056, pos.z + 0.2);
+    tin.group.add(bed);
+    return bed;
+  });
   const school = makeShoal(N, true);
   school.mesh.material.transparent = true;
 
@@ -106,8 +125,8 @@ export function startScene(collection) {
   };
   // denser toward the head, thinning to a tail of stragglers
   const fish = Array.from({ length: N }, () => member(Math.pow(Math.random(), 1.25)));
-  // the five that end up in the tin swim near the head
-  const tinFish = Array.from({ length: 5 }, (_, i) => Object.assign(member(0.06 + i * 0.045), { v: (i % 2 ? 0.35 : -0.3), w: 0.8, s: 0.85 }));
+  // the ones that end up in the tin swim near the head
+  const tinFish = Array.from({ length: PACKED }, (_, i) => Object.assign(member(0.06 + i * 0.045), { v: (i % 2 ? 0.35 : -0.3), w: 0.8, s: 0.85 }));
 
   // dust in the water column
   const dustN = touch ? 220 : 500;
@@ -254,6 +273,8 @@ export function startScene(collection) {
     if (typed === '1824') { vortexUntil = performance.now() + 7000; typed = ''; }
   });
   let vortex = 0;
+  let packT = 0, packGoal = 0;
+  const tinUp = new THREE.Vector3(), hover = new THREE.Vector3();
   let lead = 0, flashT = -99, nextFlash = 6, flashSign = 1;
 
   // ── frame ──
@@ -410,18 +431,30 @@ export function startScene(collection) {
       }
       school.mesh.instanceMatrix.needsUpdate = true;
     } else fish.forEach((d) => { d.h = null; });
-    for (let i = 0; i < 5; i++) {
-      // one after another, each arcs over the rim and settles into its place
-      const pk = ease(THREE.MathUtils.clamp(cur.pack * 1.35 - i * 0.07, 0, 1));
+    // Packing plays through on its own once the page reaches the tin (and
+    // back when it leaves), so a fish never hangs half-way over the rim.
+    if (cur.pack > 0.5) packGoal = 1; else if (cur.pack < 0.25) packGoal = 0;
+    packT = THREE.MathUtils.clamp(packT + Math.sign(packGoal - packT) * dt / 2.6, 0, 1);
+    tinUp.set(0, 1, 0).applyQuaternion(tin.group.quaternion);
+    const lift = 2.4 * tin.group.scale.x; // well clear of the rim
+    for (let i = 0; i < PACKED; i++) {
+      const pk = THREE.MathUtils.clamp(packT * 1.75 - i * 0.25, 0, 1);
       place(tinFish[i], i, 1 - arrive);
       slotWorld[i].decompose(p, q, sc);
-      ps.lerp(p, pk);
-      ps.y += Math.sin(pk * Math.PI) * 1.2;
-      qs.slerp(q, pk);
-      ss.lerp(sc, pk);
+      // 1: glide to a point straight above its place, turning to lie as it will
+      const a = ease(THREE.MathUtils.clamp(pk / 0.62, 0, 1));
+      hover.copy(p).addScaledVector(tinUp, lift);
+      ps.lerp(hover, a);
+      ps.addScaledVector(tinUp, Math.sin(a * Math.PI) * 0.6);
+      qs.slerp(q, a);
+      ss.lerp(sc, a);
+      // 2: settle straight down into it, slowing to rest
+      const b = THREE.MathUtils.clamp((pk - 0.62) / 0.38, 0, 1);
+      if (b > 0) ps.copy(hover).lerp(p, 1 - (1 - b) ** 3);
+      beds[i].material.opacity = b * b;
       m4.compose(ps, qs, ss);
       five.mesh.setMatrixAt(i, m4);
-      five.wig.array[i] = 1 - pk;
+      five.wig.array[i] = 1 - Math.min(1, pk / 0.8);
     }
     five.mesh.instanceMatrix.needsUpdate = true;
     five.wig.needsUpdate = true;
@@ -437,7 +470,7 @@ export function startScene(collection) {
 
     // Once everything has settled and the shoal is packed away, a phone only
     // needs the slow drift and wobble: draw every other frame and save the GPU.
-    moving += Math.abs(spinTarget - spin) + Math.abs(dragV) + vortex + (1 - cur.pack);
+    moving += Math.abs(spinTarget - spin) + Math.abs(dragV) + vortex + (1 - cur.pack) + Math.abs(packGoal - packT);
     odd = !odd;
     const sh = shift();
     if (sh !== lastShift) {

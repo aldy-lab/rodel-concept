@@ -82,22 +82,28 @@ export function createTin(labelTexture) {
   lid.add(label);
   group.add(lid);
 
-  // Five fish lying on their side, alternating head-to-tail, slightly staggered in height.
-  const FISH_SCALE = 2.8;
-  // half the fish's full depth from its axis: the dorsal fin reaches 0.168 and the
-  // fuller belly 0.12, and alternate fish face opposite ways, so take the larger
-  // side, plus a clearance so no fin touches the wall
-  const half = 0.17 * FISH_SCALE + 0.05;
-  const slots = [];
+  // Four fish lying on their side, alternating head-to-tail and packed the
+  // way they are by hand: belly to belly, then back to back. Each gap is the
+  // two fish's real depths (the dorsal fin reaches 0.168, the fuller belly
+  // 0.13) plus a hair of clearance, so no fish ever passes through another.
+  const FISH_SCALE = 2.55;
+  const back = 0.168 * FISH_SCALE, belly = 0.13 * FISH_SCALE, gap = 0.02;
   const dIn = D - 2 * T;
+  const rows = [back + 0.04];
+  rows.push(rows[0] + 2 * belly + gap, 0, 0);
+  rows[2] = rows[1] + 2 * back + gap;
+  rows[3] = rows[2] + 2 * belly + gap;
+  const slack = (dIn - (rows[3] + back + 0.04)) / 2;
+  const slots = [];
+  // on its side a fish's back faces −z; turned head-to-tail it faces +z
   const qSide = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
   const qFlip = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
-  for (let k = 0; k < 5; k++) {
+  rows.forEach((z, k) => {
     const flip = k % 2 === 1;
     const q = flip ? qFlip.clone().multiply(qSide) : qSide.clone();
-    const pos = new THREE.Vector3(flip ? -0.14 : 0.14, 0.25 + (k % 2) * 0.06, -(dIn / 2 - half) + k * ((dIn - 2 * half) / 4));
+    const pos = new THREE.Vector3(flip ? -0.12 : 0.12, 0.24 + (k % 2) * 0.03, -dIn / 2 + slack + z);
     slots.push(new THREE.Matrix4().compose(pos, q, new THREE.Vector3().setScalar(FISH_SCALE)));
-  }
+  });
 
   return { group, lid, label, paint, slots };
 }
