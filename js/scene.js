@@ -81,17 +81,20 @@ export function startScene(collection) {
   shoal.frustumCulled = false;
   scene.add(shoal);
 
-  const fish = Array.from({ length: N }, (_, i) => ({
-    r: 0.9 + Math.random() * 2.3,
-    y: (Math.random() - 0.5) * 2.8,
-    speed: 0.16 + Math.random() * 0.1,
-    a0: Math.random() * Math.PI * 2,
-    s: 0.55 + Math.random() * 0.4,
-    bob: Math.random() * 6.28,
+  // A shoal as a loose, elongated cloud: each fish keeps a place in it (denser
+  // toward the middle), all face roughly the shoal's heading, and drift a
+  // little on their own. r/a0/speed/y drive the 1824 vortex easter egg only.
+  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+  const fish = Array.from({ length: N }, () => ({
+    ox: gauss() * 3.6, oy: gauss() * 2.0, oz: gauss() * 2.6,
+    ph: Math.random() * 6.28, jit: 0.6 + Math.random() * 0.8,
+    r: 0.9 + Math.random() * 2.3, y: (Math.random() - 0.5) * 2.8,
+    speed: 0.16 + Math.random() * 0.1, a0: Math.random() * Math.PI * 2,
+    s: 0.55 + Math.random() * 0.4, bob: Math.random() * 6.28,
     out: Math.random() < 0.5 ? -1 : 1,
   }));
   // the five that end up in the tin swim at the front of the shoal
-  for (let i = 0; i < 5; i++) Object.assign(fish[i], { r: 1.6 + i * 0.3, y: (i - 2) * 0.35, s: 0.85 });
+  for (let i = 0; i < 5; i++) Object.assign(fish[i], { ox: (i - 2) * 1.1, oy: (i % 2 ? 0.6 : -0.5), oz: 1.6, s: 0.85 });
 
   // dust in the water column
   const dustN = touch ? 220 : 500;
@@ -113,7 +116,7 @@ export function startScene(collection) {
   const S = (tx, ty, tz, rx, ry, rz, lid, pack, cx, cy, k = 1) => ({ tx, ty, tz, rx, ry, rz, lid, pack, cx, cy, k });
   // ry ≈ π puts the hinge on the right, so an open lid swings away from the copy
   const STATES = [
-      S(0.52, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0.58, 0.04),
+      S(0.52, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0.64, 0.04),
       S(0.37, -0.1, 0, 0.98, 2.75, -0.05, 2.15, 1, 0.42, 0.04, 0.84),
       S(0.44, -0.02, 0, 0.72, 0.45, -0.08, 0, 1, 0.42, 0.04),
       S(0.44, -0.05, 0, 0.85, -0.15, 0, 0, 1, 0.42, 0.04),
@@ -293,13 +296,32 @@ export function startScene(collection) {
       const d = fish[i];
       const tinFish = i < 5;
       const away = tinFish ? 0 : cur.pack;
-      const r = THREE.MathUtils.lerp(d.r, 0.5 + (i % 30) * 0.04, vortex) * shoalScale + away * 12;
-      const spd = d.speed * (1 + vortex * 1.6);
-      const a = d.a0 + t * spd;
-      const y = THREE.MathUtils.lerp(d.y, (i / N - 0.5) * 5, vortex) * shoalScale
-        + Math.sin(t * 0.7 + d.bob) * 0.22 + away * d.out * 4;
-      ps.set(cx + r * Math.cos(a), cy + y, -1 + r * Math.sin(a));
-      tan.set(-Math.sin(a), Math.cos(t * 0.7 + d.bob) * 0.08, Math.cos(a)).normalize();
+      // the shoal's heading swings slowly between profile and a gentle turn
+      const th = Math.sin(t * 0.07) * 0.55 + Math.sin(t * 0.031 + 1.3) * 0.25;
+      const ct = Math.cos(th), st = Math.sin(th);
+      // a fish's own drift inside the shoal, and a ripple travelling through it
+      const lx = d.ox + Math.sin(t * 0.45 * d.jit + d.ph) * 0.35;
+      const lz = d.oz + Math.cos(t * 0.38 * d.jit + d.ph) * 0.3;
+      const ripple = Math.sin(d.ox * 0.9 - t * 1.1) * 0.16;
+      const ly = d.oy + ripple + Math.sin(t * 0.6 + d.ph) * 0.08;
+      // the cloud breathes and wanders a little
+      const breathe = 1 + Math.sin(t * 0.17) * 0.06;
+      const wx = cx + Math.sin(t * 0.09) * 0.5, wy = cy - 0.45 + Math.sin(t * 0.13) * 0.3, wz = -1.4 + Math.cos(t * 0.11) * 0.5;
+      // scatter outward when the shoal gives way to the tin
+      const spread = 1 + away * 4;
+      ps.set(wx + (lx * ct + lz * st) * breathe * shoalScale * spread,
+             wy + ly * shoalScale * spread + away * d.out * 3,
+             wz + (-lx * st + lz * ct) * breathe * shoalScale * spread);
+      // heading: the shoal's, bent by the ripple and the fish's own drift
+      tan.set(ct, Math.cos(d.ox * 0.9 - t * 1.1) * 0.12, -st);
+      tan.x += Math.cos(t * 0.45 * d.jit + d.ph) * 0.1; tan.z += -Math.sin(t * 0.38 * d.jit + d.ph) * 0.12;
+      tan.normalize();
+      if (vortex > 0.001) {
+        // 1824: the shoal winds into a column
+        const a = d.a0 + t * d.speed * 2.6, r = 0.5 + (i % 30) * 0.04;
+        ps.lerp(p.set(cx + r * Math.cos(a), cy + (i / N - 0.5) * 5, -1 + r * Math.sin(a)), vortex);
+        tan.lerp(sc.set(-Math.sin(a), 0, Math.cos(a)), vortex).normalize();
+      }
       qs.setFromUnitVectors(X, tan);
       ss.setScalar(d.s * shoalScale * (cur.pack > 0.985 && !tinFish ? 0 : 1));
 
