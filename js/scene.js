@@ -246,14 +246,7 @@ export function startScene(collection) {
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), qs = new THREE.Quaternion();
   const p = new THREE.Vector3(), ps = new THREE.Vector3(), sc = new THREE.Vector3(), ss = new THREE.Vector3();
   const tan = new THREE.Vector3(), X = new THREE.Vector3(1, 0, 0);
-  const up = new THREE.Vector3(), above = new THREE.Vector3();
-  // the cursor in the water: fish part around it (desktop pointer only)
-  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), water = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const hand = new THREE.Vector3(), push = new THREE.Vector3(), qRoll = new THREE.Quaternion();
-  let handOn = false;
-  addEventListener('pointerleave', () => { handOn = false; });
-  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') handOn = true; });
-  const avoid = fish.map(() => new THREE.Vector3());
+  const qRoll = new THREE.Quaternion();
   const slotWorld = tin.slots.map(() => new THREE.Matrix4());
   const ease = (t) => t * t * (3 - 2 * t);
   const clock = new THREE.Clock();
@@ -318,13 +311,6 @@ export function startScene(collection) {
     tin.group.updateMatrixWorld(true);
     tin.slots.forEach((s, i) => slotWorld[i].multiplyMatrices(tin.group.matrixWorld, s));
 
-    // the cursor's place in the water, on the shoal's plane
-    if (handOn) {
-      ndc.set(mouse.x * 2, -mouse.y * 2);
-      ray.setFromCamera(ndc, camera);
-      water.constant = 1.4;
-      ray.ray.intersectPlane(water, hand);
-    }
     rays.children.forEach((m) => {
       const u = m.userData;
       m.rotation.z = u.base + Math.sin(t * 0.12 + u.ph) * 0.05;
@@ -361,19 +347,6 @@ export function startScene(collection) {
       tan.set(ct, Math.cos(d.ox * 0.9 - t * 1.1) * 0.12, -st);
       tan.x += Math.cos(t * 0.45 * d.jit + d.ph) * 0.1; tan.z += -Math.sin(t * 0.38 * d.jit + d.ph) * 0.12;
       tan.normalize();
-      // part around the cursor, and close again when it leaves
-      push.set(0, 0, 0);
-      if (handOn && !tinFish && cur.pack < 0.5) {
-        const dx = ps.x - hand.x, dy = ps.y - hand.y, dz = (ps.z - hand.z) * 0.5;
-        const dist = Math.hypot(dx, dy, dz);
-        if (dist < 1.9) {
-          const f = (1 - dist / 1.9) ** 2 * 1.5 / Math.max(dist, 0.15);
-          push.set(dx * f, dy * f, dz * f * 0.6);
-        }
-      }
-      avoid[i].lerp(push, push.lengthSq() > avoid[i].lengthSq() ? 0.18 : 0.035);
-      ps.add(avoid[i]);
-      tan.addScaledVector(avoid[i], 0.55).normalize();
       if (vortex > 0.001) {
         // 1824: the shoal winds into a column
         const a = d.a0 + t * d.speed * 2.6, r = 0.5 + (i % 30) * 0.04;
@@ -382,26 +355,20 @@ export function startScene(collection) {
       }
       qs.setFromUnitVectors(X, tan);
       // bank into the turn and roll a little on their own: flanks catch the light
-      const roll = -turn * 9 + Math.sin(t * 0.8 * d.jit + d.ph * 2) * 0.28 + avoid[i].y * 0.6;
+      const roll = -turn * 9 + Math.sin(t * 0.8 * d.jit + d.ph * 2) * 0.28;
       qs.multiply(qRoll.setFromAxisAngle(X, roll * (1 - vortex)));
       ss.setScalar(d.s * shoalScale * (cur.pack > 0.985 && !tinFish ? 0 : 1));
 
       let w = 1;
       if (tinFish) {
-        // all five are home by 70% of the way, so a pause between sections never
-        // leaves one mid-flight
-        const pk = THREE.MathUtils.clamp(cur.pack * 1.6 - i * 0.08, 0, 1);
+        // one after another, each arcs over the rim and settles into its place
+        const pk = ease(THREE.MathUtils.clamp(cur.pack * 1.35 - i * 0.07, 0, 1));
         slotWorld[i].decompose(p, q, sc);
-        // fly to a point above the slot along the tin's own up axis, turned as it
-        // will lie, then drop straight down into place: the path never crosses a wall
-        up.set(0, 1, 0).applyQuaternion(tin.group.quaternion);
-        above.copy(p).addScaledVector(up, 2.6 * tin.group.scale.y);
-        const fly = ease(THREE.MathUtils.clamp(pk / 0.6, 0, 1));
-        const drop = ease(THREE.MathUtils.clamp((pk - 0.6) / 0.4, 0, 1));
-        ps.lerp(above, fly).lerp(p, drop);
-        qs.slerp(q, fly);
-        ss.lerp(sc, fly);
-        w = 1 - fly;
+        ps.lerp(p, pk);
+        ps.y += Math.sin(pk * Math.PI) * 1.2;
+        qs.slerp(q, pk);
+        ss.lerp(sc, pk);
+        w = 1 - pk;
       }
       m4.compose(ps, qs, ss);
       shoal.setMatrixAt(i, m4);
