@@ -48,6 +48,9 @@ def chrome(name, lang):
     return re.sub(r'\{\{t:([a-z_]+)\}\}', lambda m: CHROME[lang][m.group(1)], block(CHROME_SRC, name))
 
 
+# archive pieces that are round objects on a filled square: shown cut to their circle
+ROUND = {'founders-medal'}
+
 ASSET_PREFIXES = ('img/', 'css/', 'js/', 'og.png', 'sitemap.xml')
 
 
@@ -82,6 +85,7 @@ def fig(slug, cls, lang):
     w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
     caption = f'<figcaption>{esc(cap)}</figcaption>' if cap else ''
     # the frame clips the photograph, so it can drift and scale inside without covering the caption
+    cls = f'{cls} round'.strip() if slug in ROUND else cls
     return (f'<figure class="{f"plate {cls}".strip()}"><span class="frame"><img src="img/archive/{slug}-800.webp" '
             f'srcset="img/archive/{slug}-800.webp {w8}w, img/archive/{slug}.webp {w}w" '
             f'sizes="(max-width: 900px) 100vw, 46vw" width="{w8}" height="{h8}" '
@@ -205,7 +209,7 @@ def band_reel(lang):
         ambient.append(f'<img class="{on.strip()}" src="{src}" alt="" data-step="{k}" loading="lazy" decoding="async">')
         video = (f'<video class="print-video" muted playsinline preload="none" poster="{src}" data-src="{vids[slug]["mp4"]}" aria-hidden="true"></video>'
                  if slug in vids else '')
-        scenes.append(f'<figure class="print scene{on}" data-step="{k}" style="--ar: {w / h:.4f}"><span class="frame">'
+        scenes.append(f'<figure class="print scene{on}{" round" if slug in ROUND else ""}" data-step="{k}" style="--ar: {w / h:.4f}"><span class="frame">'
                       f'<img src="img/archive/{slug}.webp" width="{w}" height="{h}" alt="{esc(alt)}" loading="lazy" decoding="async">{video}</span></figure>')
         num = mark[lang] if mark[lang].isdigit() else ''
         cards.append(f'<li class="{on.strip()}" data-step="{k}" data-year="{num}" data-mark="{esc(mark[lang])}" data-prefix="">'
@@ -248,7 +252,7 @@ def gallery(lang):
         w, h = a['w'], a['h']
         w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
         items.append(
-            f'<li class="g-item" data-tag="{tag}"><button type="button" class="g-open" aria-label="{esc(ui["open"].format(cap=label))}">'
+            f'<li class="g-item{" round" if slug in ROUND else ""}" data-tag="{tag}"><button type="button" class="g-open" aria-label="{esc(ui["open"].format(cap=label))}">'
             f'<img src="img/archive/{slug}-800.webp" srcset="img/archive/{slug}-800.webp {w8}w, img/archive/{slug}.webp {w}w" '
             f'sizes="(max-width: 900px) 50vw, 24vw" width="{w8}" height="{h8}" alt="{esc(alt)}" loading="lazy" decoding="async">'
             f'<span class="g-cap">{esc(label)}</span><span class="g-tag mono">{GALLERY_TAGS[tag][lang]}</span></button></li>')

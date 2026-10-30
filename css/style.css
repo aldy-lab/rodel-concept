@@ -630,6 +630,9 @@ p { text-wrap: pretty; }
   /* entrance: the photograph opens like a shutter, the text rises line by line */
   .story-ready .chapter .frame { clip-path: inset(100% 0 0 0); transition: clip-path 1.35s cubic-bezier(0.7, 0, 0.2, 1); }
   .story-ready .chapter.is-in .frame { clip-path: inset(0); }
+  /* the round medal opens as a growing circle instead of a shutter */
+  .story-ready .chapter .round .frame { clip-path: circle(0% at 50% 50%); }
+  .story-ready .chapter.is-in .round .frame { clip-path: circle(44.9% at 50% 50%); }
   .story-ready .chapter .frame img { scale: 1.2; transition: scale 2s cubic-bezier(0.2, 0.8, 0.2, 1); }
   .story-ready .chapter.is-in .frame img { scale: 1.08; }
   .story-ready .chapter .plates .plate:nth-child(2) .frame, .story-ready .chapter .plates .plate:nth-child(2) img { transition-delay: 0.12s; }
@@ -772,6 +775,15 @@ p { text-wrap: pretty; }
   }
 }
 .tabs button img { background: none; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6)); }
+
+/* round objects (the founders' medal): cut to the circle, the shadow follows the edge */
+.round .frame { clip-path: circle(44.9% at 50% 50%); box-shadow: none; background: none; }
+.round .frame img { background: none; }
+.round { filter: drop-shadow(0 40px 50px rgba(0, 0, 0, 0.7)); }
+.scene.round .frame { box-shadow: none; }
+.scene.round.is-active { filter: drop-shadow(0 40px 50px rgba(0, 0, 0, 0.7)); }
+.g-item.round .g-open { background: none; }
+.g-item.round .g-open img { clip-path: circle(44.9% at 50% 50%); }
 
 /* ── phones: no WebGL. Rendered stills, product cards, a bottom action bar ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
