@@ -72,7 +72,7 @@ export function startScene(collection) {
   // ── shoal ──
   // Two meshes: the five that end up in the tin (full detail, seen close), and
   // the school itself (lighter geometry, its own material so it can fade out).
-  const uniforms = { uTime: { value: 0 } };
+  const uniforms = { uBeat: { value: 0 } };
   const N = touch ? 260 : 520;
   function makeShoal(n, lite) {
     const geo = createFishGeometry(lite);
@@ -254,6 +254,7 @@ export function startScene(collection) {
     if (typed === '1824') { vortexUntil = performance.now() + 7000; typed = ''; }
   });
   let vortex = 0;
+  let lead = 0, flashT = -99, nextFlash = 6, flashSign = 1;
 
   // ── frame ──
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), qs = new THREE.Quaternion();
@@ -261,13 +262,18 @@ export function startScene(collection) {
   const tan = new THREE.Vector3(), X = new THREE.Vector3(1, 0, 0);
   const qRoll = new THREE.Quaternion();
   const nrm = new THREE.Vector3(), bin = new THREE.Vector3();
-  // the route the school's head swims: a slow figure across the whole hero,
-  // in and out of the depth. out = position, tg = direction of travel
+  // the route the school's head swims: a wide oval through the depth, so it
+  // crosses the hero close to the viewer and comes back small and far, with
+  // no hairpin turns. out = position, tg = direction of travel
   function path(s, out, tg) {
-    const ax = halfW * 0.74, ay = halfH * 0.42, az = 2.0, zc = -2.8;
+    const ax = halfW * 0.72, ay = halfH * 0.3, az = 2.2, zc = -3;
     const cx = halfW * 0.12, cy = halfH * 0.02;
-    out.set(cx + ax * Math.sin(s * 0.5), cy + ay * Math.sin(s * 0.83 + 1) + 0.25 * Math.sin(s * 1.7), zc + az * Math.sin(s * 0.37 + 0.4));
-    tg.set(ax * 0.5 * Math.cos(s * 0.5), ay * 0.83 * Math.cos(s * 0.83 + 1) + 0.425 * Math.cos(s * 1.7), az * 0.37 * Math.cos(s * 0.37 + 0.4));
+    out.set(cx + ax * (Math.sin(s) + 0.15 * Math.sin(2 * s + 0.7)),
+            cy + ay * (0.7 * Math.sin(2 * s + 1) + 0.3 * Math.sin(0.5 * s)),
+            zc + az * Math.cos(s));
+    tg.set(ax * (Math.cos(s) + 0.3 * Math.cos(2 * s + 0.7)),
+           ay * (1.4 * Math.cos(2 * s + 1) + 0.15 * Math.cos(0.5 * s)),
+           -az * Math.sin(s));
   }
   const slotWorld = tin.slots.map(() => new THREE.Matrix4());
   const ease = (t) => t * t * (3 - 2 * t);
@@ -299,7 +305,6 @@ export function startScene(collection) {
     govern(raw * 1000);
     const dt = Math.min(raw, 0.05);
     t += dt * motion;
-    uniforms.uTime.value = t;
 
     // target state from scroll
     const f = progress();
@@ -342,60 +347,73 @@ export function startScene(collection) {
     // shoal
     const vt = performance.now() < vortexUntil ? 1 : 0;
     vortex += (vt - vortex) * (1 - Math.exp(-dt * 1.5));
-    // the school sinks into the deep and fades as the page moves on
-    const fade = 1 - THREE.MathUtils.smoothstep(cur.pack, 0.02, 0.5);
+    // the school rises out of the deep as the page opens, and sinks back into
+    // it and fades as the page moves on
+    const arrive = THREE.MathUtils.smoothstep(t, 0.8, 4.5);
+    const fade = (1 - THREE.MathUtils.smoothstep(cur.pack, 0.02, 0.5)) * arrive;
     school.mesh.visible = fade > 0.003;
     school.mesh.material.opacity = fade;
+    // now and then the school startles: a turn and a flash of silver flanks
+    // run from head to tail, and it surges for a moment
+    if (t > nextFlash) { flashT = t; nextFlash = t + 8 + Math.random() * 6; flashSign = -flashSign; }
+    const since = t - flashT;
+    const surge = since < 2.6 ? Math.sin(Math.PI * since / 2.6) : 0;
+    const pace = 1 + 0.2 * Math.sin(t * 0.13) + 0.1 * Math.sin(t * 0.31 + 2) + 0.45 * surge;
+    lead += dt * motion * 0.16 * pace;
+    uniforms.uBeat.value += dt * motion * (0.6 + 0.4 * pace);
     const cx = halfW * 0.12, cy = halfH * 0.02;
-    const lead = t * 0.26; // where the head of the school is on its path
-    const span = 4.2; // how much of the path the school covers, head to tail
-    const sink = 1 - fade;
-    const place = (d, i) => {
-      const u = d.u + Math.sin(t * 0.3 * d.jit + d.ph) * 0.012;
+    const span = 2.1; // how much of the path the school covers, head to tail
+    const kHead = 1 - Math.exp(-dt * 5);
+    const place = (d, i, sink) => {
+      const u = d.u + Math.sin(t * 0.21 * d.jit + d.ph) * 0.02;
       const at = lead - u * span;
       path(at, ps, tan);
       tan.normalize();
-      path(at + 0.18, p, sc);
+      path(at + 0.12, p, sc);
       sc.normalize();
       // the cross-section: full in the body, tapering at head and tail, and a
       // slow squeeze travelling down the school
-      const girth = (0.18 + Math.pow(Math.sin(Math.PI * Math.min(1, u * 1.15 + 0.06)), 0.7)) * (1 + Math.sin(t * 0.55 - u * 7) * 0.12);
+      const girth = (0.16 + Math.pow(Math.sin(Math.PI * Math.min(1, u * 1.1 + 0.07)), 0.7)) * (1 + Math.sin(t * 0.5 - u * 7) * 0.1);
       nrm.set(0, 1, 0).addScaledVector(tan, -tan.y).normalize();
       bin.crossVectors(tan, nrm);
-      const v = d.v + Math.sin(t * 0.4 * d.jit + d.ph) * 0.07, w = d.w + Math.cos(t * 0.35 * d.jit + d.ph) * 0.07;
-      ps.addScaledVector(nrm, v * girth * 0.95).addScaledVector(bin, w * girth * 1.35);
+      // each fish wanders slowly inside its part of the school
+      const v = d.v + Math.sin(t * 0.23 * d.jit + d.ph) * 0.12, w = d.w + Math.cos(t * 0.19 * d.jit + d.ph * 1.7) * 0.12;
+      const wave = since - u * 1.6;
+      const flash = wave > 0 && wave < 0.9 ? Math.sin(Math.PI * wave / 0.9) ** 2 : 0;
+      ps.addScaledVector(nrm, v * girth * 0.95).addScaledVector(bin, w * girth * 1.35 + flash * 0.22 * flashSign);
       ps.z -= sink * 5; ps.y -= sink * 0.8;
-      // heading: the path's, with a little of the fish's own
-      tan.x += Math.cos(t * 0.45 * d.jit + d.ph) * 0.06; tan.z -= Math.sin(t * 0.38 * d.jit + d.ph) * 0.06;
-      tan.normalize();
-      // bank into the turn: how fast the path is yawing just ahead of this fish
-      const yaw = tan.z * sc.x - tan.x * sc.z;
-      let roll = THREE.MathUtils.clamp(yaw * 7, -1.1, 1.1) + Math.sin(t * 0.8 * d.jit + d.ph * 2) * 0.18;
       if (vortex > 0.001) {
         // 1824: the shoal winds into a column
         const a = d.a0 + t * d.speed * 2.6, r = 0.5 + (i % 30) * 0.04;
         ps.lerp(p.set(cx + r * Math.cos(a), cy + (i / N - 0.5) * 5, -1 + r * Math.sin(a)), vortex);
-        tan.lerp(sc.set(-Math.sin(a), 0, Math.cos(a)), vortex).normalize();
-        roll *= 1 - vortex;
       }
-      qs.setFromUnitVectors(X, tan);
+      // a fish faces where it is actually going, turning smoothly
+      if (!d.h) { d.h = tan.clone(); d.prev = ps.clone(); }
+      else if (dt > 0) {
+        p.subVectors(ps, d.prev);
+        const len = p.length();
+        if (len > 1e-5) d.h.lerp(p.divideScalar(len), kHead).normalize();
+        d.prev.copy(ps);
+      }
+      // bank into the turn (how fast the path yaws just ahead), and in the flash
+      const yaw = tan.z * sc.x - tan.x * sc.z;
+      const roll = (THREE.MathUtils.clamp(yaw * 9, -1, 1) + Math.sin(t * 0.6 * d.jit + d.ph * 2) * 0.15) * (1 - vortex) + flash * 1.3 * flashSign;
+      qs.setFromUnitVectors(X, d.h);
       qs.multiply(qRoll.setFromAxisAngle(X, roll));
       ss.setScalar(d.s);
     };
     if (school.mesh.visible) {
       for (let i = 0; i < N; i++) {
-        place(fish[i], i);
+        place(fish[i], i, 1 - fade);
         m4.compose(ps, qs, ss);
         school.mesh.setMatrixAt(i, m4);
       }
       school.mesh.instanceMatrix.needsUpdate = true;
-    }
+    } else fish.forEach((d) => { d.h = null; });
     for (let i = 0; i < 5; i++) {
       // one after another, each arcs over the rim and settles into its place
       const pk = ease(THREE.MathUtils.clamp(cur.pack * 1.35 - i * 0.07, 0, 1));
-      place(tinFish[i], i);
-      // the five do not sink with the school; undo it before they leave for the tin
-      ps.z += sink * 5; ps.y += sink * 0.8;
+      place(tinFish[i], i, 1 - arrive);
       slotWorld[i].decompose(p, q, sc);
       ps.lerp(p, pk);
       ps.y += Math.sin(pk * Math.PI) * 1.2;

@@ -101,20 +101,20 @@ export function createFishMaterial(uniforms, lite = false) {
     envMapIntensity: 1.3,
   });
   m.onBeforeCompile = (sh) => {
-    sh.uniforms.uTime = uniforms.uTime;
-    sh.vertexShader = 'uniform float uTime;\nattribute float aWig;\n' + sh.vertexShader.replace(
+    sh.uniforms.uBeat = uniforms.uBeat;
+    sh.vertexShader = 'uniform float uBeat;\nattribute float aWig;\n' + sh.vertexShader.replace(
       '#include <begin_vertex>',
       `#include <begin_vertex>
       // a travelling body wave: small at the head, growing to the tail; each
-      // fish has its own tempo, and the head yaws gently against the tail
+      // fish has its own tempo (uBeat runs faster as the school speeds up), and the head yaws gently against the tail
       float id = float(gl_InstanceID);
       float h = fract(sin(id * 12.9898) * 43758.5453);
       float tempo = 6.5 + h * 3.5;
       float ph = id * 1.37;
       float along = clamp((0.5 - position.x) / 1.1, 0.0, 1.0);
       float amp = (0.012 + 0.085 * along * along) * aWig;
-      transformed.z += sin(position.x * 6.0 - uTime * tempo + ph) * amp;
-      transformed.z -= sin(-uTime * tempo + ph + 3.0) * 0.012 * smoothstep(0.1, 0.5, position.x) * aWig;`
+      transformed.z += sin(position.x * 6.0 - uBeat * tempo + ph) * amp;
+      transformed.z -= sin(-uBeat * tempo + ph + 3.0) * 0.012 * smoothstep(0.1, 0.5, position.x) * aWig;`
     );
   };
   return m;
