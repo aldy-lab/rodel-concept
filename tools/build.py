@@ -186,51 +186,51 @@ def band_collection(lang):
 
 
 def band_reel(lang):
-    """The home history reel: pinned while seven eras pass. Photographs pile up
-    like prints on a table, the year counts to the next era, the ground takes
-    the colour of the current photograph. js/reel.js marks the active step;
-    without it the first era shows."""
+    """The home history film: pinned while nine tableaux pass. Each clip plays in a
+    dark cinema frame under a silent-film intertitle; the mark (a year, or a
+    place) changes top right; scenes cross-fade. js/reel.js marks the active
+    tableau and plays its Higgsfield clip; without JS the first tableau shows."""
     ui = REEL_UI[lang]
-    tilts = [-3, 2.5, -1.5, 3, -2.5, 1.5, -1]
-    # clips made by tools/higgsfield.py; an era without one keeps its still
     vids_file = ROOT / 'tools' / 'reel_videos.json'
     vids = {k: v for k, v in (json.loads(vids_file.read_text()) if vids_file.exists() else {}).items()
             if v.get('mp4') and (ROOT / v['mp4']).exists()}
     n = len(REEL)
-    ambient, prints, texts, steps = [], [], [], []
-    for k, (slug, year, prefix, title, text) in enumerate(REEL):
+    ambient, scenes, cards, ticks = [], [], [], []
+    for k, (slug, roman, mark, title, text) in enumerate(REEL):
         a = ASSETS['archive'][slug]
-        alt, cap = (ARCHIVE_FR[slug] if lang == 'fr' else (a['alt'], a['caption']))
+        alt = ARCHIVE_FR[slug][0] if lang == 'fr' else a['alt']
         w, h = a['w'], a['h']
-        w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
         src = f'img/archive/{slug}-800.webp'
-        on = ' is-active' if k == 0 else ''  # without JS the first era shows
+        on = ' is-active' if k == 0 else ''
         ambient.append(f'<img class="{on.strip()}" src="{src}" alt="" data-step="{k}" loading="lazy" decoding="async">')
-        prints.append(
-            f'<figure class="print{on}" data-step="{k}" style="--r: {tilts[k % len(tilts)]}deg">'
-            f'<span class="frame"><img src="{src}" srcset="{src} {w8}w, img/archive/{slug}.webp {w}w" sizes="(max-width: 900px) 80vw, 34vw" '
-            f'width="{w8}" height="{h8}" alt="{esc(alt)}" loading="lazy" decoding="async">'
-            + (f'<video class="print-video" muted playsinline preload="none" poster="{src}" data-src="{vids[slug]["mp4"]}" aria-hidden="true"></video>' if slug in vids else '')
-            + '</span>'
-            f'{f"<figcaption>{esc(cap)}</figcaption>" if cap else ""}</figure>')
-        texts.append(f'<li class="{on.strip()}" data-step="{k}" data-year="{year}" data-prefix="{prefix[lang]}"><p class="mono reel-date">{(prefix[lang] + " ") if prefix[lang] else ""}{year}</p>'
-                     f'<h3>{esc(title[lang])}</h3><p>{esc(text[lang])}</p></li>')
-        steps.append('<div></div>')
-    return f'''<section class="band-solid reel" style="--steps: {n}" data-reel>
+        video = (f'<video class="print-video" muted playsinline preload="none" poster="{src}" data-src="{vids[slug]["mp4"]}" aria-hidden="true"></video>'
+                 if slug in vids else '')
+        scenes.append(f'<figure class="print scene{on}" data-step="{k}" style="--ar: {w / h:.4f}"><span class="frame">'
+                      f'<img src="img/archive/{slug}.webp" width="{w}" height="{h}" alt="{esc(alt)}" loading="lazy" decoding="async">{video}</span></figure>')
+        num = mark[lang] if mark[lang].isdigit() else ''
+        cards.append(f'<li class="{on.strip()}" data-step="{k}" data-year="{num}" data-mark="{esc(mark[lang])}" data-prefix="">'
+                     f'<p class="mono reel-tableau">{ui["tableau"]} {roman}</p><h3>{esc(title[lang])}</h3><p>{esc(text[lang])}</p></li>')
+        ticks.append(f'<li class="{on.strip()}" data-step="{k}"><span class="mono">{roman}</span></li>')
+    return f'''<section class="band-solid reel cinema" style="--steps: {n}" data-reel>
     <div class="reel-vp">
       <div class="reel-ambient" aria-hidden="true">{''.join(ambient)}</div>
+      <div class="reel-deck">{''.join(scenes)}</div>
+      <div class="cinema-veil" aria-hidden="true"></div>
+      <p class="kicker mono reel-kicker">{ui['kicker']}</p>
+      <p class="reel-year" aria-hidden="true"><span class="reel-prefix"></span><span class="reel-num">{REEL[0][2][lang]}</span></p>
       <div class="reel-copy">
-        <p class="kicker mono">{ui['kicker']}</p>
-        <p class="reel-year" aria-hidden="true"><span class="reel-prefix"></span><span class="reel-num">{REEL[0][1]}</span></p>
-        <ol class="reel-text">{''.join(texts)}</ol>
-        <div class="reel-progress" aria-hidden="true"><span class="mono reel-count">01 / {n:02d}</span><span class="reel-bar"><i></i></span></div>
-        <a class="more" href="maison/">{ui['more']} <span aria-hidden="true">→</span></a>
-        {f'<p class="reel-ai mono">{ui["ai"]}</p>' if vids else ''}
+        <ol class="reel-text">{''.join(cards)}</ol>
       </div>
-      <div class="reel-deck">{''.join(prints)}</div>
+      <div class="reel-foot">
+        <ol class="reel-ticks" aria-hidden="true">{''.join(ticks)}</ol>
+        <span class="mono reel-count">01 / {n:02d}</span>
+        <a class="more" href="maison/">{ui['more']} <span aria-hidden="true">→</span></a>
+      </div>
+      {f'<p class="reel-ai mono">{ui["ai"]}</p>' if vids else ''}
       <p class="reel-hint mono" aria-hidden="true">{ui['hint']}</p>
+      <span class="reel-bar" aria-hidden="true"><i></i></span>
     </div>
-    <div class="reel-steps" aria-hidden="true">{''.join(steps)}</div>
+    <div class="reel-steps" aria-hidden="true">{''.join('<div></div>' for _ in REEL)}</div>
   </section>'''
 
 

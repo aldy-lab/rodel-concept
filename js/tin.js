@@ -78,13 +78,16 @@ export function createTin(labelTexture) {
   labelGeo.rotateX(-Math.PI / 2);
   labelGeo.translate(W / 2, 0.037, 0);
   // the photo already carries the studio light; keep the shading light-handed
-  const label = new THREE.Mesh(labelGeo, new THREE.MeshStandardMaterial({ map: labelTexture, metalness: 0.15, roughness: 0.38, envMapIntensity: 0.6 }));
+  const label = new THREE.Mesh(labelGeo, new THREE.MeshStandardMaterial({ map: labelTexture, metalness: 0.15, roughness: 0.38, envMapIntensity: 0.6, alphaTest: 0.5 }));
   lid.add(label);
   group.add(lid);
 
   // Five fish lying on their side, alternating head-to-tail, slightly staggered in height.
-  const FISH_SCALE = 3.0;
-  const fishH = 0.24 * FISH_SCALE; // body depth incl. the fuller belly
+  const FISH_SCALE = 2.8;
+  // half the fish's full depth from its axis: the dorsal fin reaches 0.168 and the
+  // fuller belly 0.12, and alternate fish face opposite ways, so take the larger
+  // side, plus a clearance so no fin touches the wall
+  const half = 0.17 * FISH_SCALE + 0.05;
   const slots = [];
   const dIn = D - 2 * T;
   const qSide = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
@@ -92,7 +95,7 @@ export function createTin(labelTexture) {
   for (let k = 0; k < 5; k++) {
     const flip = k % 2 === 1;
     const q = flip ? qFlip.clone().multiply(qSide) : qSide.clone();
-    const pos = new THREE.Vector3(flip ? -0.14 : 0.14, 0.25 + (k % 2) * 0.06, -(dIn - fishH) / 2 + k * ((dIn - fishH) / 4));
+    const pos = new THREE.Vector3(flip ? -0.14 : 0.14, 0.25 + (k % 2) * 0.06, -(dIn / 2 - half) + k * ((dIn - 2 * half) / 4));
     slots.push(new THREE.Matrix4().compose(pos, q, new THREE.Vector3().setScalar(FISH_SCALE)));
   }
 

@@ -10,7 +10,7 @@ import json, pathlib, sys
 from PIL import Image, ImageChops, ImageFilter, ImageOps
 
 Image.MAX_IMAGE_PIXELS = None
-SRC = pathlib.Path(sys.argv[1])
+SRC = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else None
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 IMG = ROOT / 'img'
 
@@ -93,39 +93,44 @@ def tin_box(im):
     mask = ImageChops.difference(im, bg).convert('L').point(lambda v: 255 if v > 70 else 0)
     return mask.filter(ImageFilter.MedianFilter(9)).getbbox()
 
-meta = {'archive': {}, 'products': {}}
-for n, (slug, alt, cap) in ARCHIVE.items():
-    im = ImageOps.exif_transpose(Image.open(src(n)))
-    if im.mode in ('RGBA', 'LA', 'P'):
-        # cut-outs: flatten onto the page ground, or the transparent pixels turn to noise
-        im = im.convert('RGBA')
-        ground = Image.new('RGBA', im.size, (11, 22, 33, 255))
-        ground.alpha_composite(im)
-        im = ground
-    im = im.convert('RGB')
-    w, h = save(im, IMG / 'archive' / f'{slug}.webp', 1600)
-    save(im, IMG / 'archive' / f'{slug}-800.webp', 800)
-    meta['archive'][slug] = {'alt': alt, 'caption': cap, 'w': w, 'h': h}
-for n, slug in BRAND.items():
-    im = Image.open(src(n)).convert('RGBA')
-    im.thumbnail((1000, 1000))
-    im.save(IMG / 'brand' / f'{slug}.webp', 'WEBP', quality=90, method=6)
-for pid, n in PACKS.items():
-    im = Image.open(src(n)).convert('RGB')
-    l, t, r, b = tin_box(im)
-    # catalogue photograph: the tin on its cream ground, with even margin
-    pad = round((r - l) * 0.12)
-    cx, cy = (l + r) / 2, (t + b) / 2
-    half_w = (r - l) / 2 + pad
-    half_h = half_w * 3 / 4
-    photo = im.crop((round(cx - half_w), round(cy - half_h), round(cx + half_w), round(cy + half_h)))
-    save(photo, IMG / 'products' / f'{pid}.webp', 1200, 82)
-    save(photo, IMG / 'products' / f'{pid}-600.webp', 600, 80)
-    # lid texture for the 3D tin: the tin top only, a hair inside its edge
-    inset = round((r - l) * 0.004)
-    lid = im.crop((l + inset, t + inset, r - inset, b - inset))
-    save(lid, IMG / 'lids' / f'{pid}.webp', 1100, 80)
-    meta['products'][pid] = {'aspect': round((r - l) / (b - t), 4)}
-    print(pid, 'lid aspect', meta['products'][pid]['aspect'])
-(ROOT / 'tools' / 'assets.json').write_text(json.dumps({**meta, 'excluded': EXCLUDED}, ensure_ascii=False, indent=1))
-print('archive', len(ARCHIVE), 'brand', len(BRAND), 'products', len(PACKS))
+def main():
+    meta = {'archive': {}, 'products': {}}
+    for n, (slug, alt, cap) in ARCHIVE.items():
+        im = ImageOps.exif_transpose(Image.open(src(n)))
+        if im.mode in ('RGBA', 'LA', 'P'):
+            # cut-outs: flatten onto the page ground, or the transparent pixels turn to noise
+            im = im.convert('RGBA')
+            ground = Image.new('RGBA', im.size, (11, 22, 33, 255))
+            ground.alpha_composite(im)
+            im = ground
+        im = im.convert('RGB')
+        w, h = save(im, IMG / 'archive' / f'{slug}.webp', 1600)
+        save(im, IMG / 'archive' / f'{slug}-800.webp', 800)
+        meta['archive'][slug] = {'alt': alt, 'caption': cap, 'w': w, 'h': h}
+    for n, slug in BRAND.items():
+        im = Image.open(src(n)).convert('RGBA')
+        im.thumbnail((1000, 1000))
+        im.save(IMG / 'brand' / f'{slug}.webp', 'WEBP', quality=90, method=6)
+    for pid, n in PACKS.items():
+        im = Image.open(src(n)).convert('RGB')
+        l, t, r, b = tin_box(im)
+        # catalogue photograph: the tin on its cream ground, with even margin
+        pad = round((r - l) * 0.12)
+        cx, cy = (l + r) / 2, (t + b) / 2
+        half_w = (r - l) / 2 + pad
+        half_h = half_w * 3 / 4
+        photo = im.crop((round(cx - half_w), round(cy - half_h), round(cx + half_w), round(cy + half_h)))
+        save(photo, IMG / 'products' / f'{pid}.webp', 1200, 82)
+        save(photo, IMG / 'products' / f'{pid}-600.webp', 600, 80)
+        # lid texture for the 3D tin: the tin top only, a hair inside its edge
+        inset = round((r - l) * 0.004)
+        lid = im.crop((l + inset, t + inset, r - inset, b - inset))
+        save(lid, IMG / 'lids' / f'{pid}.webp', 1100, 80)
+        meta['products'][pid] = {'aspect': round((r - l) / (b - t), 4)}
+        print(pid, 'lid aspect', meta['products'][pid]['aspect'])
+    (ROOT / 'tools' / 'assets.json').write_text(json.dumps({**meta, 'excluded': EXCLUDED}, ensure_ascii=False, indent=1))
+    print('archive', len(ARCHIVE), 'brand', len(BRAND), 'products', len(PACKS))
+
+
+if __name__ == '__main__':
+    main()

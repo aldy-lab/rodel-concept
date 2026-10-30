@@ -675,78 +675,103 @@ p { text-wrap: pretty; }
   }
 }
 
-/* ── home history reel: pinned while seven eras pass ── */
-.reel { --step: 72svh; height: calc(100svh + var(--steps) * var(--step)); padding: 0; }
-.reel-vp {
-  position: sticky; top: 0; height: 100svh; overflow: clip;
-  display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(2rem, 5vw, 5rem);
-  padding: calc(var(--header) + 1rem) var(--gutter) 2rem;
-}
-/* spacers the observer reads, one per era. They cover the whole section, first
-   and last stretched by half a screen, so a jump to either end still lands on
-   the right era instead of keeping a stale one */
+/* ── home history film: nine tableaux, pinned ── */
+.reel { --step: 70svh; height: calc(100svh + var(--steps) * var(--step)); padding: 0; background: #04080d; }
+.reel-vp { position: sticky; top: 0; height: 100svh; overflow: clip; }
+/* spacers the observer reads, one per tableau, first and last stretched so a
+   jump to either end lands on the right one */
 .reel-steps { margin-top: -100svh; }
 .reel-steps > div { height: var(--step); }
 .reel-steps > div:first-child, .reel-steps > div:last-child { height: calc(var(--step) + 50svh); }
 
 .reel-ambient { position: absolute; inset: 0; z-index: 0; }
-.reel-ambient img {
-  position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover;
-  filter: blur(70px) saturate(1.35); opacity: 0; transition: opacity 1.6s ease;
-}
-.reel-ambient img.is-active { opacity: 0.34; }
-.reel-ambient::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 70% 50%, rgba(7, 13, 20, 0.35), var(--bg) 78%); }
+.reel-ambient img { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; filter: blur(80px) saturate(1.3); opacity: 0; transition: opacity 1.8s ease; }
+.reel-ambient img.is-active { opacity: 0.28; }
 
-.reel-copy { position: relative; z-index: 2; min-width: 0; }
-.reel-year {
-  margin: 0.4rem 0 1.4rem; display: flex; align-items: baseline; gap: 0.6rem;
-  font: 300 italic clamp(5.5rem, 2.5rem + 8vw, 11.5rem)/0.82 var(--serif); letter-spacing: -0.02em;
-  color: var(--text); font-variant-numeric: lining-nums tabular-nums;
-}
-.reel-prefix { font-size: 0.32em; color: var(--accent); }
-.reel-text { list-style: none; margin: 0; padding: 0; display: grid; }
-.reel-text li { grid-area: 1 / 1; opacity: 0; translate: 0 20px; transition: opacity 0.7s ease, translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
-.reel-text li.is-active { opacity: 1; translate: 0 0; transition-delay: 0.15s; pointer-events: auto; }
-.reel-date { display: none; }
-.reel-text h3 { font: 300 clamp(1.8rem, 1.2rem + 1.6vw, 2.8rem)/1.05 var(--serif); margin: 0 0 0.9rem; color: var(--text); }
-.reel-text p { max-width: 30rem; }
-.reel-progress { display: flex; align-items: center; gap: 1rem; margin: 2rem 0 1.4rem; }
-.reel-count { color: var(--accent); font-size: 0.6rem; }
-.reel-bar { position: relative; width: 9rem; height: 1px; background: var(--line-strong); }
-.reel-bar i { position: absolute; inset: 0; background: var(--accent); transform-origin: left; transform: scaleX(0.143); transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.reel-hint { position: absolute; left: 50%; bottom: 1.6rem; translate: -50% 0; z-index: 2; color: var(--muted); font-size: 0.58rem; transition: opacity 0.6s; }
-.reel.started .reel-hint { opacity: 0; }
-
-/* the pile of prints */
-.reel-deck { position: relative; z-index: 1; height: min(72svh, 46rem); min-width: 0; }
-.print {
-  position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; max-width: 100%;
-  padding: 0.75rem 0.75rem 0.6rem; background: #0f1b27; border: 1px solid var(--line);
-  box-shadow: 0 50px 90px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 0, 0, 0.3);
-  opacity: 0; transform: translate(14%, 80%) rotate(calc(var(--r) + 12deg)) scale(0.96);
-  transition: transform 1.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.9s ease, filter 1.2s ease;
-}
-.print .frame img { display: block; width: auto; height: auto; max-width: min(40vw, 36rem); max-height: 60svh; }
-.print figcaption { margin-top: 0.6rem; font: 400 0.56rem/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); max-width: 30ch; }
-.print.is-active { opacity: 1; transform: rotate(var(--r)); filter: none; }
-.print.is-past {
-  /* each step back: further up and left, smaller, darker, more askew */
-  opacity: calc(1 + var(--d) * 0.24);
-  transform: translate(calc(var(--d) * 7%), calc(var(--d) * 5%)) rotate(calc(var(--r) + var(--d) * 5deg)) scale(calc(1 + var(--d) * 0.06));
-  filter: brightness(calc(1 + var(--d) * 0.16)) saturate(0.7);
-}
-.print.is-active .frame img { animation: kenburns 11s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
-/* a Higgsfield clip sits over its still and fades in once it plays */
-.print .frame { position: relative; }
-.print-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s ease; }
+/* the screen: each tableau as large as the frame allows, cross-fading */
+/* intertitle in its own column on the left, the screen to its right: no text ever lies on a photograph */
+.reel { --col: min(30vw, 27rem); --deck-l: calc(var(--gutter) + var(--col) + 3rem); --deck-r: var(--gutter); --deck-t: calc(var(--header) + 2.4rem); --deck-b: 5.6rem; }
+.reel-deck { position: absolute; z-index: 1; top: var(--deck-t); bottom: var(--deck-b); left: var(--deck-l); right: var(--deck-r); }
+.scene { position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content; opacity: 0; transform: scale(1.045); transition: opacity 1.4s ease, transform 2.4s cubic-bezier(0.2, 0.7, 0.2, 1), filter 1.4s ease; filter: blur(6px) brightness(0.7); }
+.scene.is-active { opacity: 1; transform: none; filter: none; }
+.scene .frame { position: relative; display: block; box-shadow: 0 60px 120px -40px rgba(0, 0, 0, 0.95); }
+.scene .frame img, .scene .print-video { display: block; width: min(calc(100vw - var(--deck-l) - var(--deck-r)), calc((100svh - var(--deck-t) - var(--deck-b)) * var(--ar)), 1500px); height: auto; aspect-ratio: var(--ar); object-fit: cover; }
+.scene.is-active .frame img { animation: kenburns 14s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+@keyframes kenburns { from { scale: 1.08; } to { scale: 1; } }
+.print-video { position: absolute; inset: 0; opacity: 0; transition: opacity 1.1s ease; }
 .print.playing .print-video { opacity: 1; }
 .print.playing .frame img { animation: none; }
-.reel-ai { margin: 1rem 0 0; color: var(--muted); font-size: 0.54rem; }
-@keyframes kenburns { from { scale: 1.16; translate: 2% 1.5%; } to { scale: 1.02; translate: 0 0; } }
+
+/* film look: vignette and a fine moving grain over everything */
+.cinema-veil { position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(120% 95% at 50% 45%, transparent 55%, rgba(2, 5, 9, 0.85) 100%), linear-gradient(rgba(4, 8, 13, 0.9), transparent 22%, transparent 62%, rgba(4, 8, 13, 0.96)); }
+.cinema-veil::after { content: ""; position: absolute; inset: -50%; opacity: 0.07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite; }
+@keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-4%, 3%); } 40% { transform: translate(3%, -5%); } 60% { transform: translate(-6%, -2%); } 80% { transform: translate(5%, 4%); } 100% { transform: translate(0, 0); } }
+
+.reel-kicker { position: absolute; z-index: 3; left: var(--gutter); top: calc(var(--header) + 1rem); margin: 0; }
+.reel-year { position: absolute; z-index: 3; left: var(--gutter); top: calc(var(--header) + 3.4rem); width: var(--col); margin: 0;
+  font: 300 italic clamp(3.6rem, 1.6rem + 5vw, 7rem)/0.9 var(--serif); letter-spacing: -0.02em;
+  color: transparent; -webkit-text-stroke: 1px rgba(230, 236, 241, 0.7); font-variant-numeric: lining-nums tabular-nums; }
+.reel-num.is-place { font-size: 0.55em; -webkit-text-stroke: 0; color: var(--text); letter-spacing: 0.02em; }
+.reel-prefix { display: none; }
+
+/* the intertitle */
+.reel-copy { position: absolute; z-index: 3; left: var(--gutter); bottom: 6rem; width: var(--col); }
+.reel-text { list-style: none; margin: 0; padding: 0; display: grid; }
+.reel-text li { grid-area: 1 / 1; opacity: 0; translate: 0 18px; transition: opacity 0.8s ease, translate 1s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
+.reel-text li.is-active { opacity: 1; translate: 0 0; transition-delay: 0.35s; pointer-events: auto; }
+.reel-tableau { color: var(--accent); margin: 0 0 0.6rem; display: flex; align-items: center; gap: 0.8rem; }
+.reel-tableau::before { content: ""; width: 28px; height: 1px; background: var(--accent); }
+.reel-text h3 { font: 300 italic clamp(1.9rem, 1.1rem + 1.8vw, 3rem)/1.04 var(--serif); margin: 0 0 0.7rem; color: var(--text); text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6); }
+.reel-text p:not(.reel-tableau) { max-width: 34rem; margin: 0; color: rgba(230, 236, 241, 0.78); }
+
+/* the timeline of tableaux */
+.reel-foot { position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); bottom: 1.6rem; display: flex; align-items: center; gap: 1.6rem; }
+.reel-ticks { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.4rem; flex: 1; }
+.reel-ticks li { flex: 1; position: relative; padding-top: 0.7rem; color: var(--muted); opacity: 0.45; transition: opacity 0.5s, color 0.5s; }
+.reel-ticks li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--line-strong); }
+.reel-ticks li::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.reel-ticks li.is-past, .reel-ticks li.is-active { opacity: 1; }
+.reel-ticks li.is-past::after, .reel-ticks li.is-active::after { transform: scaleX(1); }
+.reel-ticks li.is-active { color: var(--text); }
+.reel-ticks .mono { font-size: 0.56rem; }
+.reel-count { color: var(--accent); font-size: 0.6rem; white-space: nowrap; }
+.reel-foot .more { margin: 0; white-space: nowrap; }
+.reel-bar { display: none; }
+.reel-ai { position: absolute; z-index: 3; right: var(--gutter); bottom: 4rem; margin: 0; color: var(--muted); font-size: 0.52rem; opacity: 0.7; }
+.reel-hint { position: absolute; z-index: 3; left: 50%; top: calc(var(--header) + 1rem); translate: -50% 0; margin: 0; color: var(--muted); font-size: 0.56rem; transition: opacity 0.6s; }
+.reel.started .reel-hint { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .print, .reel-text li, .reel-ambient img, .reel-bar i { transition: none; }
-  .print.is-active .frame img { animation: none; }
+  .scene, .reel-text li, .reel-ambient img { transition: none; }
+  .scene.is-active .frame img { animation: none; }
+  .cinema-veil::after { animation: none; }
 }
+
+/* ── product cut-outs: the tins float on the page, no studio card ── */
+.range-item img, .store-card-media img, .pack img, .card img, .cart-line img {
+  background: none;
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.6)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+.range-item a, .store-card-media, .pack, .card picture, .cart-line > a { position: relative; isolation: isolate; }
+/* a faint cool pool of light, so the black and dark-red tins stay visible */
+.range-item a::before, .store-card-media::before, .pack::before, .card picture::before {
+  content: ""; position: absolute; z-index: -1; left: 8%; right: 8%; top: 4%; height: 70%;
+  background: radial-gradient(closest-side, rgba(150, 180, 205, 0.2), transparent);
+  filter: blur(14px); pointer-events: none;
+}
+.store-card-media { padding: 1.4rem 1.6rem 0.4rem; }
+.store-card { background: linear-gradient(180deg, rgba(22, 44, 68, 0.38), rgba(11, 22, 33, 0.08)); }
+.card picture { background: none; border-bottom: 0; padding: 1rem 1.2rem 0; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .range-item img, .store-card-media img { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s; }
+  .range-item a:hover img, .store-card:hover .store-card-media img {
+    transform: translateY(-8px) rotate(-1.2deg);
+    filter: drop-shadow(0 40px 36px rgba(0, 0, 0, 0.55)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.45));
+  }
+}
+.tabs button img { background: none; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6)); }
 
 /* ── phones: no WebGL. Rendered stills, product cards, a bottom action bar ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
@@ -950,18 +975,30 @@ p { text-wrap: pretty; }
   .chapter.flip .chapter-year { right: auto; left: -0.04em; }
 }
 
-/* ── phones: the reel stacks photograph over text ── */
+/* ── phones: the film stacks screen over intertitle ── */
 @media (max-width: 900px), (max-aspect-ratio: 9/10) {
-  .reel { --step: 64svh; padding: 0; }
-  /* room for the header above and the action dock below */
-  .reel-vp { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; align-items: stretch; gap: 0.8rem; padding: calc(var(--header) + 1.6rem) var(--gutter) calc(88px + env(safe-area-inset-bottom)); }
-  .reel-deck { height: auto; min-height: 0; order: -1; }
-  .print .frame img { max-width: 70vw; max-height: 30svh; }
-  .reel-year { font-size: clamp(4rem, 18vw, 5.5rem); margin: 0 0 0.6rem; }
-  .reel-copy .kicker { display: none; }
-  .reel-text h3 { font-size: 1.6rem; margin-bottom: 0.5rem; }
-  .reel-text p { font-size: 0.92rem; margin-bottom: 0; }
-  .reel-progress { margin: 1rem 0 0.6rem; }
-  .reel-copy .more { margin-top: 0.4rem; }
-  .reel-hint { display: none; }
+  .reel { --step: 62svh; }
+  /* phone: mark, screen, intertitle, timeline — stacked rows, none overlapping */
+  .reel { --deck-l: var(--gutter); --deck-t: calc(var(--header) + 4.4rem); }
+  .reel-deck { top: var(--deck-t); bottom: auto; height: 34svh; }
+  .scene .frame img, .scene .print-video { width: min(calc(100vw - 2 * var(--gutter)), calc(34svh * var(--ar))); }
+  .reel-copy { top: calc(var(--deck-t) + 34svh + 1.4rem); bottom: auto; width: auto; right: var(--gutter); }
+  .reel-kicker { display: none; }
+  .reel-year { left: var(--gutter); right: auto; width: auto; top: calc(var(--header) + 0.8rem); font-size: 3.2rem; }
+  .reel-text h3 { font-size: 1.8rem; }
+  .reel-text p:not(.reel-tableau) { font-size: 0.9rem; }
+  .reel-foot { bottom: calc(92px + env(safe-area-inset-bottom)); gap: 0.8rem; }
+  .reel-ticks .mono, .reel-foot .more, .reel-ai, .reel-hint { display: none; }
+}
+
+/* ── short phones (iPhone SE): smaller screen and type, text held to three lines ── */
+@media (max-width: 900px) and (max-height: 720px) {
+  .reel { --deck-t: calc(var(--header) + 3.6rem); }
+  .reel-deck { height: 28svh; }
+  .scene .frame img, .scene .print-video { width: min(calc(100vw - 2 * var(--gutter)), calc(28svh * var(--ar))); }
+  .reel-copy { top: calc(var(--deck-t) + 28svh + 1rem); }
+  .reel-year { font-size: 2.6rem; }
+  .reel-tableau { margin-bottom: 0.3rem; }
+  .reel-text h3 { font-size: 1.45rem; margin-bottom: 0.4rem; }
+  .reel-text p:not(.reel-tableau) { font-size: 0.84rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 }

@@ -54,5 +54,37 @@
   "model": "kling-video/v2.5-turbo/pro/image-to-video",
   "mp4": "img/reel/tin-marble-red.mp4",
   "kb": 718
+ },
+ "fishermen": {
+  "request_id": "01a18a0a-22bc-7b64-8da6-81eda424cd31",
+  "digest": "8c55faa27041ea7b",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/fishermen.mp4",
+  "kb": 1714
+ },
+ "cannery-workers": {
+  "request_id": "01a18a0d-138b-7dd7-b25d-9b35c3c9035a",
+  "digest": "346d8c4db400a5bb",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/cannery-workers.mp4",
+  "kb": 1763
+ },
+ "canton-road": {
+  "request_id": "01a18a0f-8fdb-7af3-b3f2-310c4ea910c9",
+  "digest": "0c82b03cfd75841a",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/canton-road.mp4",
+  "kb": 868
+ },
+ "hands-open-tins": {
+  "request_id": "01a18a12-7650-71ce-8151-9376db2e86ee",
+  "digest": "08f25abe35ee6937",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/hands-open-tins.mp4",
+  "kb": 891
  }
 }

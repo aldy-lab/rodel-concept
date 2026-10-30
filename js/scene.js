@@ -114,12 +114,12 @@ export function startScene(collection) {
   // ry ≈ π puts the hinge on the right, so an open lid swings away from the copy
   const STATES = [
       S(0.52, -3.6, 0, 0.9, 2.6, 0, 2.15, 0, 0.58, 0.04),
-      S(0.27, -0.1, 0, 0.98, 2.75, -0.05, 2.15, 1, 0.42, 0.04),
+      S(0.37, -0.1, 0, 0.98, 2.75, -0.05, 2.15, 1, 0.42, 0.04, 0.84),
       S(0.44, -0.02, 0, 0.72, 0.45, -0.08, 0, 1, 0.42, 0.04),
       S(0.44, -0.05, 0, 0.85, -0.15, 0, 0, 1, 0.42, 0.04),
       // history: a portrait of the closed tin, lid to the viewer, out of the fog
       S(0.6, -0.06, 0, 1.26, 0.36, -0.1, 0, 1, 0.42, 0.04, 0.74),
-      S(0.3, -0.08, 0, 0.98, 2.7, -0.04, 2.15, 1, 0.42, 0.04),
+      S(0.38, -0.08, 0, 0.98, 2.7, -0.04, 2.15, 1, 0.42, 0.04, 0.84),
   ];
   const KEYS = Object.keys(STATES[0]);
   const cur = { ...STATES[0] };

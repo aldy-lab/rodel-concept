@@ -45,7 +45,7 @@ NEGATIVE = ('new objects, new people, people walking, faces changing, morphing, 
 # drifted to copper. These eras get a locked-off camera and extra guards.
 NEGATIVE_EXTRA = {
     slug: ', new words, rotating object, camera orbit, camera movement, orange tint'
-    for slug in ('founders-medal', 'plage-rodel', 'tin-marble-red')
+    for slug in ('founders-medal', 'plage-rodel', 'tin-marble-red', 'fishermen', 'cannery-workers', 'canton-road', 'hands-open-tins')
 }
 PROMPTS = {
     'napoleon': 'Slow cinematic push-in on this oil painting. Clouds drift slowly across the dusk sky, the sea '
@@ -71,6 +71,20 @@ PROMPTS = {
                       'marble and does not move or rotate. Only soft sunlight and the shadows of leaves drift slowly '
                       'across the tin and the marble. The tin, its shape and every letter of its label stay sharp and '
                       'identical in every frame.',
+    # the film's new tableaux: locked camera throughout; faces and hands stay as photographed
+    'fishermen': 'Locked-off static camera on an archival black-and-white photograph of a Breton harbour. Only '
+                 'the water ripples and glints, the sails and rigging stir softly in the wind, a few gulls drift '
+                 'far away. The fishermen keep their poses; faces unchanged. Film grain.',
+    'cannery-workers': 'Locked-off static camera on an archival photograph of Breton women preparing sardines '
+                       'on racks by the harbour. The women do not move; faces and white coiffes unchanged. Only '
+                       'soft daylight shifts across the scene and the sea and masts in the background shimmer '
+                       'faintly. Film grain.',
+    'canton-road': 'Locked-off static camera on a hand-tinted early photograph of Canton Road in Shanghai. A faint '
+                   'warm haze and soft daylight drift along the street, the hanging shop banners sway very slightly. '
+                   'The people stay as photographed. Hand-tinted colours and the printed caption unchanged.',
+    'hands-open-tins': 'Locked-off static camera, close-up of two hands holding two open tins of sardines in olive '
+                       'oil. The hands stay still. Only a soft light glides slowly across the silver skin of the '
+                       'sardines and the oil glistens. Natural colours, sharp detail.',
 }
 DURATION = 5
 CFG = 0.5

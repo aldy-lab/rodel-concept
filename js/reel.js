@@ -10,6 +10,7 @@ export function initReel(root) {
   const texts = [...root.querySelectorAll('.reel-text li')];
   const ambient = [...root.querySelectorAll('.reel-ambient img')];
   const steps = [...root.querySelectorAll('.reel-steps > div')];
+  const ticks = [...root.querySelectorAll('.reel-ticks li')];
   const num = root.querySelector('.reel-num');
   const prefix = root.querySelector('.reel-prefix');
   const count = root.querySelector('.reel-count');
@@ -17,7 +18,7 @@ export function initReel(root) {
   const n = texts.length;
   const pad = (v) => String(v).padStart(2, '0');
   let active = -1;
-  let shown = Number(texts[0].dataset.year);
+  let shown = Number(texts[0].dataset.year) || 0;
   let raf = 0;
 
   // photographs further down the pile load as the reader approaches
@@ -63,7 +64,13 @@ export function initReel(root) {
     texts.forEach((t, i) => t.classList.toggle('is-active', i === k));
     ambient.forEach((a, i) => a.classList.toggle('is-active', i === k));
     prefix.textContent = texts[k].dataset.prefix ? `${texts[k].dataset.prefix} ` : '';
-    countTo(Number(texts[k].dataset.year));
+    ticks.forEach((t, i) => { t.classList.toggle('is-active', i === k); t.classList.toggle('is-past', i < k); });
+    // a year counts up from the last one; a place simply appears
+    const year = Number(texts[k].dataset.year);
+    num.classList.toggle('is-place', !year);
+    if (year && shown) countTo(year);
+    else { cancelAnimationFrame(raf); num.textContent = texts[k].dataset.mark; }
+    if (year) shown = year;
     count.textContent = `${pad(k + 1)} / ${pad(n)}`;
     bar.style.transform = `scaleX(${((k + 1) / n).toFixed(3)})`;
     root.classList.toggle('started', k > 0);
