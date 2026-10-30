@@ -91,6 +91,10 @@ CFG = 0.5
 # seconds kept from a clip whose tail drifts (the medal warms to copper and the
 # profiles start to change after ~3 s); it then holds its last good frame
 TRIM = {'founders-medal': 2.6}
+# longer takes: (model duration, slow-down factor), slowed with motion-interpolated
+# frames. A 10 s Kling take of the fishermen was rejected: past 5 s the camera
+# drifted and the men changed pose. The approved 5 s take, slowed 3x, runs 15 s.
+LONG = {'fishermen': (5, 3.0)}
 
 # python.org builds on macOS ship without system certificates; use certifi's
 try:
@@ -138,10 +142,12 @@ def ffmpeg():
         return 'ffmpeg'
 
 
-def compress(src, dst, trim=None):
+def compress(src, dst, trim=None, slow=None):
     """H.264, at most 1280px wide, no audio, fast start: small enough to stream on the page."""
+    vf = "scale='min(1280,iw)':-2:flags=lanczos"
+    vf += f",setpts={slow}*PTS,minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:vsbmc=1" if slow else ",fps=30"
     subprocess.run([ffmpeg(), '-y', '-loglevel', 'error', '-i', str(src), *(['-t', str(trim)] if trim else []),
-                    '-vf', "scale='min(1280,iw)':-2:flags=lanczos,fps=30", '-an',
+                    '-vf', vf, '-an',
                     '-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-pix_fmt', 'yuv420p',
                     '-movflags', '+faststart', str(dst)], check=True)
 
@@ -160,7 +166,7 @@ def main():
             rid = state.get(slug, {}).get('request_id', '')
             raw = CACHE / f'{slug}-{rid[:8]}.mp4'
             if raw.exists():
-                compress(raw, OUT / f'{slug}.mp4', TRIM.get(slug))
+                compress(raw, OUT / f'{slug}.mp4', TRIM.get(slug), LONG.get(slug, (0, None))[1])
                 state[slug]['kb'] = (OUT / f'{slug}.mp4').stat().st_size // 1024
                 print(f'  {slug}: recompressed, {state[slug]["kb"]} KB')
         STATE.write_text(json.dumps(state, indent=1))
@@ -170,14 +176,15 @@ def main():
     for slug in slugs:
         prompt = PROMPTS[slug]
         negative = NEGATIVE + NEGATIVE_EXTRA.get(slug, '')
-        digest = hashlib.sha256(f'{MODEL}|{prompt}|{negative}|{DURATION}|{CFG}'.encode()).hexdigest()[:16]
+        duration = LONG.get(slug, (DURATION, None))[0]
+        digest = hashlib.sha256(f'{MODEL}|{prompt}|{negative}|{duration}|{CFG}'.encode()).hexdigest()[:16]
         have = state.get(slug, {})
         if have.get('mp4') and have.get('digest') == digest and slug not in a.redo and (ROOT / have['mp4']).exists():
             print(f'  {slug}: done ({have["mp4"]})')
             continue
         take = have.get('take', 0) + (1 if slug in a.redo else 0)
         body = {'prompt': prompt, 'negative_prompt': negative, 'image_url': f'{SITE_URL}img/archive/{slug}.webp',
-                'duration': DURATION, 'cfg_scale': CFG}
+                'duration': duration, 'cfg_scale': CFG}
         idem = str(uuid.uuid5(uuid.NAMESPACE_URL, f'rodel-reel/{slug}/{digest}/{take}'))
         jobs.append((slug, digest, take, body, idem, have))
 
@@ -212,7 +219,7 @@ def main():
         with urllib.request.urlopen(r['video']['url'], timeout=300, context=TLS) as resp:
             raw.write_bytes(resp.read())
         dst = OUT / f'{slug}.mp4'
-        compress(raw, dst, TRIM.get(slug))
+        compress(raw, dst, TRIM.get(slug), LONG.get(slug, (0, None))[1])
         state[slug].update({'mp4': f'img/reel/{slug}.mp4', 'kb': dst.stat().st_size // 1024})
         STATE.write_text(json.dumps(state, indent=1))
         print(f'  {slug}: ready, {dst.stat().st_size // 1024} KB')

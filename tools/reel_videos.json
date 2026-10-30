@@ -61,7 +61,10 @@
   "take": 0,
   "model": "kling-video/v2.5-turbo/pro/image-to-video",
   "mp4": "img/reel/fishermen.mp4",
-  "kb": 1714
+  "kb": 3377,
+  "rejected": [
+   "01a18a2a-ffe5-7a0c-97ba-9401d394ddbe (10 s: camera drift, poses changed)"
+  ]
  },
  "cannery-workers": {
   "request_id": "01a18a0d-138b-7dd7-b25d-9b35c3c9035a",

@@ -219,6 +219,7 @@ export function startScene(collection) {
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), qs = new THREE.Quaternion();
   const p = new THREE.Vector3(), ps = new THREE.Vector3(), sc = new THREE.Vector3(), ss = new THREE.Vector3();
   const tan = new THREE.Vector3(), X = new THREE.Vector3(1, 0, 0);
+  const up = new THREE.Vector3(), above = new THREE.Vector3();
   const slotWorld = tin.slots.map(() => new THREE.Matrix4());
   const ease = (t) => t * t * (3 - 2 * t);
   const clock = new THREE.Clock();
@@ -304,14 +305,20 @@ export function startScene(collection) {
 
       let w = 1;
       if (tinFish) {
-        const pk = ease(THREE.MathUtils.clamp(cur.pack * 1.35 - i * 0.07, 0, 1));
+        // all five are home by 70% of the way, so a pause between sections never
+        // leaves one mid-flight
+        const pk = THREE.MathUtils.clamp(cur.pack * 1.6 - i * 0.08, 0, 1);
         slotWorld[i].decompose(p, q, sc);
-        ps.lerp(p, pk);
-        // arc over the rim instead of passing through the wall
-        ps.y += Math.sin(pk * Math.PI) * 1.2;
-        qs.slerp(q, pk);
-        ss.lerp(sc, pk);
-        w = 1 - pk;
+        // fly to a point above the slot along the tin's own up axis, turned as it
+        // will lie, then drop straight down into place: the path never crosses a wall
+        up.set(0, 1, 0).applyQuaternion(tin.group.quaternion);
+        above.copy(p).addScaledVector(up, 2.6 * tin.group.scale.y);
+        const fly = ease(THREE.MathUtils.clamp(pk / 0.6, 0, 1));
+        const drop = ease(THREE.MathUtils.clamp((pk - 0.6) / 0.4, 0, 1));
+        ps.lerp(above, fly).lerp(p, drop);
+        qs.slerp(q, fly);
+        ss.lerp(sc, fly);
+        w = 1 - fly;
       }
       m4.compose(ps, qs, ss);
       shoal.setMatrixAt(i, m4);

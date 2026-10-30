@@ -27,14 +27,24 @@ export function initReel(root) {
   // its last frame; data savers and reduced motion keep the stills
   const saveData = navigator.connection?.saveData;
   const motion = !reduced && !saveData;
+  // a clip starts only while the film is on screen, from its first frame;
+  // the next tableau's clip is fetched in advance so it starts at once
+  let inView = false;
+  const fetchClip = (p) => {
+    const v = p?.querySelector('video');
+    if (v && !v.src && motion) { v.preload = 'auto'; v.src = v.dataset.src; v.load(); }
+    return v;
+  };
   function play(p, on) {
     const v = p.querySelector('video');
     if (!v) return;
-    if (!on || !motion) { v.pause(); p.classList.remove('playing'); return; }
-    if (!v.src) v.src = v.dataset.src;
+    if (!on || !motion || !inView) { v.pause(); if (!on) p.classList.remove('playing'); return; }
+    fetchClip(p);
     v.currentTime = 0;
     v.play().then(() => p.classList.add('playing')).catch(() => {});
   }
+  // the opening clip loads with the page
+  fetchClip(prints[0]);
 
   function countTo(target) {
     cancelAnimationFrame(raf);
@@ -61,6 +71,7 @@ export function initReel(root) {
       p.style.zIndex = String(10 + i);
       play(p, d === 0);
     });
+    if (inView) fetchClip(prints[k + 1]);
     texts.forEach((t, i) => t.classList.toggle('is-active', i === k));
     ambient.forEach((a, i) => a.classList.toggle('is-active', i === k));
     prefix.textContent = texts[k].dataset.prefix ? `${texts[k].dataset.prefix} ` : '';
@@ -82,4 +93,11 @@ export function initReel(root) {
   }), { rootMargin: '-50% 0px -50% 0px' });
   steps.forEach((s) => io.observe(s));
   go(0);
+  // entering the film (from above or below) restarts the tableau on show
+  new IntersectionObserver(([e]) => {
+    const was = inView;
+    inView = e.isIntersecting;
+    if (inView && !was && active >= 0) { play(prints[active], true); fetchClip(prints[active + 1]); }
+    if (!inView) prints.forEach((p) => p.querySelector('video')?.pause());
+  }, { threshold: 0.9 }).observe(root.querySelector('.reel-vp'));
 }
