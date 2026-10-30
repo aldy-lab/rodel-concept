@@ -70,31 +70,44 @@ export function startScene(collection) {
   collection.onChange = (p) => { setProduct(p); spinTarget += Math.PI * 2; };
 
   // ── shoal ──
+  // Two meshes: the five that end up in the tin (full detail, seen close), and
+  // the school itself (lighter geometry, its own material so it can fade out).
   const uniforms = { uTime: { value: 0 } };
-  const N = innerWidth < 700 ? 110 : 220;
-  const fishGeo = createFishGeometry(touch);
-  const wig = new THREE.InstancedBufferAttribute(new Float32Array(N).fill(1), 1);
-  wig.setUsage(THREE.DynamicDrawUsage);
-  fishGeo.setAttribute('aWig', wig);
-  const shoal = new THREE.InstancedMesh(fishGeo, createFishMaterial(uniforms, touch), N);
-  shoal.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  shoal.frustumCulled = false;
-  scene.add(shoal);
+  const N = touch ? 260 : 520;
+  function makeShoal(n, lite) {
+    const geo = createFishGeometry(lite);
+    const wig = new THREE.InstancedBufferAttribute(new Float32Array(n).fill(1), 1);
+    wig.setUsage(THREE.DynamicDrawUsage);
+    geo.setAttribute('aWig', wig);
+    const mesh = new THREE.InstancedMesh(geo, createFishMaterial(uniforms, lite), n);
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    mesh.frustumCulled = false;
+    scene.add(mesh);
+    return { mesh, wig };
+  }
+  const five = makeShoal(5, touch);
+  const school = makeShoal(N, true);
+  school.mesh.material.transparent = true;
 
-  // A shoal as a loose, elongated cloud: each fish keeps a place in it (denser
-  // toward the middle), all face roughly the shoal's heading, and drift a
-  // little on their own. r/a0/speed/y drive the 1824 vortex easter egg only.
+  // A real sardine school is a long, dense, polarised ribbon: every fish keeps
+  // a place in the ribbon's cross-section and follows the path the leaders
+  // swam a moment earlier, so a turn travels back through the school as a
+  // bend, and the flanks flash in a wave as each part of it banks.
+  // u: place along the ribbon (0 = the head), v/w: place in its cross-section.
   const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-  const fish = Array.from({ length: N }, () => ({
-    ox: gauss() * 3.6, oy: gauss() * 2.0, oz: gauss() * 2.6,
-    ph: Math.random() * 6.28, jit: 0.6 + Math.random() * 0.8,
-    r: 0.9 + Math.random() * 2.3, y: (Math.random() - 0.5) * 2.8,
-    speed: 0.16 + Math.random() * 0.1, a0: Math.random() * Math.PI * 2,
-    s: 0.55 + Math.random() * 0.4, bob: Math.random() * 6.28,
-    out: Math.random() < 0.5 ? -1 : 1,
-  }));
-  // the five that end up in the tin swim at the front of the shoal
-  for (let i = 0; i < 5; i++) Object.assign(fish[i], { ox: (i - 2) * 1.1, oy: (i % 2 ? 0.6 : -0.5), oz: 1.6, s: 0.85 });
+  const member = (u) => {
+    const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random());
+    return {
+      u, v: Math.cos(a) * r, w: Math.sin(a) * r,
+      ph: Math.random() * 6.28, jit: 0.6 + Math.random() * 0.8,
+      s: 0.5 + Math.random() * 0.28 + gauss() * 0.04,
+      a0: Math.random() * Math.PI * 2, speed: 0.16 + Math.random() * 0.1,
+    };
+  };
+  // denser toward the head, thinning to a tail of stragglers
+  const fish = Array.from({ length: N }, () => member(Math.pow(Math.random(), 1.25)));
+  // the five that end up in the tin swim near the head
+  const tinFish = Array.from({ length: 5 }, (_, i) => Object.assign(member(0.06 + i * 0.045), { v: (i % 2 ? 0.35 : -0.3), w: 0.8, s: 0.85 }));
 
   // dust in the water column
   const dustN = touch ? 220 : 500;
@@ -247,6 +260,15 @@ export function startScene(collection) {
   const p = new THREE.Vector3(), ps = new THREE.Vector3(), sc = new THREE.Vector3(), ss = new THREE.Vector3();
   const tan = new THREE.Vector3(), X = new THREE.Vector3(1, 0, 0);
   const qRoll = new THREE.Quaternion();
+  const nrm = new THREE.Vector3(), bin = new THREE.Vector3();
+  // the route the school's head swims: a slow figure across the whole hero,
+  // in and out of the depth. out = position, tg = direction of travel
+  function path(s, out, tg) {
+    const ax = halfW * 0.74, ay = halfH * 0.42, az = 2.0, zc = -2.8;
+    const cx = halfW * 0.12, cy = halfH * 0.02;
+    out.set(cx + ax * Math.sin(s * 0.5), cy + ay * Math.sin(s * 0.83 + 1) + 0.25 * Math.sin(s * 1.7), zc + az * Math.sin(s * 0.37 + 0.4));
+    tg.set(ax * 0.5 * Math.cos(s * 0.5), ay * 0.83 * Math.cos(s * 0.83 + 1) + 0.425 * Math.cos(s * 1.7), az * 0.37 * Math.cos(s * 0.37 + 0.4));
+  }
   const slotWorld = tin.slots.map(() => new THREE.Matrix4());
   const ease = (t) => t * t * (3 - 2 * t);
   const clock = new THREE.Clock();
@@ -320,62 +342,71 @@ export function startScene(collection) {
     // shoal
     const vt = performance.now() < vortexUntil ? 1 : 0;
     vortex += (vt - vortex) * (1 - Math.exp(-dt * 1.5));
-    const cx = cur.cx * halfW, cy = cur.cy * halfH;
-    const shoalScale = 1;
-    for (let i = 0; i < N; i++) {
-      const d = fish[i];
-      const tinFish = i < 5;
-      const away = tinFish ? 0 : cur.pack;
-      // the shoal's heading swings slowly between profile and a gentle turn
-      const th = Math.sin(t * 0.07) * 0.55 + Math.sin(t * 0.031 + 1.3) * 0.25;
-      const turn = Math.cos(t * 0.07) * 0.0385 + Math.cos(t * 0.031 + 1.3) * 0.00775; // dθ/dt
-      const ct = Math.cos(th), st = Math.sin(th);
-      // a fish's own drift inside the shoal, and a ripple travelling through it
-      const lx = d.ox + Math.sin(t * 0.45 * d.jit + d.ph) * 0.35;
-      const lz = d.oz + Math.cos(t * 0.38 * d.jit + d.ph) * 0.3;
-      const ripple = Math.sin(d.ox * 0.9 - t * 1.1) * 0.16;
-      const ly = d.oy + ripple + Math.sin(t * 0.6 + d.ph) * 0.08;
-      // the cloud breathes and wanders a little
-      const breathe = 1 + Math.sin(t * 0.17) * 0.06;
-      const wx = cx + Math.sin(t * 0.09) * 0.5, wy = cy - 0.45 + Math.sin(t * 0.13) * 0.3, wz = -1.4 + Math.cos(t * 0.11) * 0.5;
-      // scatter outward when the shoal gives way to the tin
-      const spread = 1 + away * 4;
-      ps.set(wx + (lx * ct + lz * st) * breathe * shoalScale * spread,
-             wy + ly * shoalScale * spread + away * d.out * 3,
-             wz + (-lx * st + lz * ct) * breathe * shoalScale * spread);
-      // heading: the shoal's, bent by the ripple and the fish's own drift
-      tan.set(ct, Math.cos(d.ox * 0.9 - t * 1.1) * 0.12, -st);
-      tan.x += Math.cos(t * 0.45 * d.jit + d.ph) * 0.1; tan.z += -Math.sin(t * 0.38 * d.jit + d.ph) * 0.12;
+    // the school sinks into the deep and fades as the page moves on
+    const fade = 1 - THREE.MathUtils.smoothstep(cur.pack, 0.02, 0.5);
+    school.mesh.visible = fade > 0.003;
+    school.mesh.material.opacity = fade;
+    const cx = halfW * 0.12, cy = halfH * 0.02;
+    const lead = t * 0.26; // where the head of the school is on its path
+    const span = 4.2; // how much of the path the school covers, head to tail
+    const sink = 1 - fade;
+    const place = (d, i) => {
+      const u = d.u + Math.sin(t * 0.3 * d.jit + d.ph) * 0.012;
+      const at = lead - u * span;
+      path(at, ps, tan);
       tan.normalize();
+      path(at + 0.18, p, sc);
+      sc.normalize();
+      // the cross-section: full in the body, tapering at head and tail, and a
+      // slow squeeze travelling down the school
+      const girth = (0.18 + Math.pow(Math.sin(Math.PI * Math.min(1, u * 1.15 + 0.06)), 0.7)) * (1 + Math.sin(t * 0.55 - u * 7) * 0.12);
+      nrm.set(0, 1, 0).addScaledVector(tan, -tan.y).normalize();
+      bin.crossVectors(tan, nrm);
+      const v = d.v + Math.sin(t * 0.4 * d.jit + d.ph) * 0.07, w = d.w + Math.cos(t * 0.35 * d.jit + d.ph) * 0.07;
+      ps.addScaledVector(nrm, v * girth * 0.95).addScaledVector(bin, w * girth * 1.35);
+      ps.z -= sink * 5; ps.y -= sink * 0.8;
+      // heading: the path's, with a little of the fish's own
+      tan.x += Math.cos(t * 0.45 * d.jit + d.ph) * 0.06; tan.z -= Math.sin(t * 0.38 * d.jit + d.ph) * 0.06;
+      tan.normalize();
+      // bank into the turn: how fast the path is yawing just ahead of this fish
+      const yaw = tan.z * sc.x - tan.x * sc.z;
+      let roll = THREE.MathUtils.clamp(yaw * 7, -1.1, 1.1) + Math.sin(t * 0.8 * d.jit + d.ph * 2) * 0.18;
       if (vortex > 0.001) {
         // 1824: the shoal winds into a column
         const a = d.a0 + t * d.speed * 2.6, r = 0.5 + (i % 30) * 0.04;
         ps.lerp(p.set(cx + r * Math.cos(a), cy + (i / N - 0.5) * 5, -1 + r * Math.sin(a)), vortex);
         tan.lerp(sc.set(-Math.sin(a), 0, Math.cos(a)), vortex).normalize();
+        roll *= 1 - vortex;
       }
       qs.setFromUnitVectors(X, tan);
-      // bank into the turn and roll a little on their own: flanks catch the light
-      const roll = -turn * 9 + Math.sin(t * 0.8 * d.jit + d.ph * 2) * 0.28;
-      qs.multiply(qRoll.setFromAxisAngle(X, roll * (1 - vortex)));
-      ss.setScalar(d.s * shoalScale * (cur.pack > 0.985 && !tinFish ? 0 : 1));
-
-      let w = 1;
-      if (tinFish) {
-        // one after another, each arcs over the rim and settles into its place
-        const pk = ease(THREE.MathUtils.clamp(cur.pack * 1.35 - i * 0.07, 0, 1));
-        slotWorld[i].decompose(p, q, sc);
-        ps.lerp(p, pk);
-        ps.y += Math.sin(pk * Math.PI) * 1.2;
-        qs.slerp(q, pk);
-        ss.lerp(sc, pk);
-        w = 1 - pk;
+      qs.multiply(qRoll.setFromAxisAngle(X, roll));
+      ss.setScalar(d.s);
+    };
+    if (school.mesh.visible) {
+      for (let i = 0; i < N; i++) {
+        place(fish[i], i);
+        m4.compose(ps, qs, ss);
+        school.mesh.setMatrixAt(i, m4);
       }
-      m4.compose(ps, qs, ss);
-      shoal.setMatrixAt(i, m4);
-      wig.array[i] = w;
+      school.mesh.instanceMatrix.needsUpdate = true;
     }
-    shoal.instanceMatrix.needsUpdate = true;
-    wig.needsUpdate = true;
+    for (let i = 0; i < 5; i++) {
+      // one after another, each arcs over the rim and settles into its place
+      const pk = ease(THREE.MathUtils.clamp(cur.pack * 1.35 - i * 0.07, 0, 1));
+      place(tinFish[i], i);
+      // the five do not sink with the school; undo it before they leave for the tin
+      ps.z += sink * 5; ps.y += sink * 0.8;
+      slotWorld[i].decompose(p, q, sc);
+      ps.lerp(p, pk);
+      ps.y += Math.sin(pk * Math.PI) * 1.2;
+      qs.slerp(q, pk);
+      ss.lerp(sc, pk);
+      m4.compose(ps, qs, ss);
+      five.mesh.setMatrixAt(i, m4);
+      five.wig.array[i] = 1 - pk;
+    }
+    five.mesh.instanceMatrix.needsUpdate = true;
+    five.wig.needsUpdate = true;
 
     // dust drifts upward and wraps
     const dp = dustGeo.attributes.position;
