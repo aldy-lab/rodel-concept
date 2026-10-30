@@ -23,6 +23,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script type="module" src="js/main.js"></script>
+<script>
+/* set before first paint, so the page never flashes ahead of the opening */
+try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('intro-on'); } catch (e) {}
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
@@ -32,6 +36,11 @@
 </head>
 <body class="home">
 
+<div class="intro" aria-hidden="true">
+  <img class="intro-logo" src="img/brand/logo-white.png" width="1154" height="338" alt="">
+  <span class="intro-line mono">Bordeaux · 1824 · Concarneau</span>
+  <button class="intro-skip mono" type="button" tabindex="-1">Skip</button>
+</div>
 <div class="viewport" aria-hidden="true">
   <canvas id="scene"></canvas>
 </div>
@@ -224,6 +233,11 @@
       <p>In 1820 the French Admiralty asked Nicolas Appert, the inventor of preserving, to build a cannery in Bordeaux. He entrusted it to his most accomplished disciple, Charles Rödel.</p>
       <a class="more" href="maison/">Read the history <span aria-hidden="true">→</span></a>
     </div>
+  </section>
+
+  <section class="band-solid numbers-band" aria-label="The house in numbers">
+    <p class="kicker mono">The house in numbers</p>
+    <ol class="numbers"><li><span class="num-n" data-to="1824" data-sep="">1824</span><span class="num-l mono">Founded in Bordeaux</span></li><li><span class="num-n" data-to="17" data-sep="">17</span><span class="num-l mono">Factories, from Arcachon to Concarneau</span></li><li><span class="num-n" data-to="1500" data-sep=",">1,500</span><span class="num-l mono">Workers at the zenith</span></li><li><span class="num-n" data-to="9" data-sep="">9</span><span class="num-l mono">Fishing families of Concarneau</span></li><li><span class="num-n" data-to="30" data-sep="">30</span><span class="num-l mono">Seconds in the pan, to seal the flesh</span></li></ol>
   </section>
 
   <section class="band-solid reel cinema" style="--steps: 9" data-reel>

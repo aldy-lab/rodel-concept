@@ -1,5 +1,9 @@
 <!-- {"title": "Rödel — Sardines depuis 1824", "description": "Rödel & Fils Frères, fondée en 1824 : sardines millésimées de Concarneau, pêchées le matin et mises en boîte à la main le jour même.", "nav": "", "body": "home"} -->
 <!-- extra-head -->
+<script>
+/* set before first paint, so the page never flashes ahead of the opening */
+try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('intro-on'); } catch (e) {}
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
@@ -8,6 +12,11 @@
 </script>
 <!-- /extra-head -->
 <!-- before-header -->
+<div class="intro" aria-hidden="true">
+  <img class="intro-logo" src="img/brand/logo-white.png" width="1154" height="338" alt="">
+  <span class="intro-line mono">Bordeaux · 1824 · Concarneau</span>
+  <button class="intro-skip mono" type="button" tabindex="-1">Passer</button>
+</div>
 <div class="viewport" aria-hidden="true">
   <canvas id="scene"></canvas>
 </div>
@@ -95,6 +104,8 @@
       <a class="more" href="maison/">Lire l’histoire <span aria-hidden="true">→</span></a>
     </div>
   </section>
+
+  {{band:numbers}}
 
   {{band:reel}}
 

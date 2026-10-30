@@ -11,7 +11,7 @@ Old rodel.fr addresses get redirect pages; sitemap.xml lists both languages.
 import html, json, pathlib, re, subprocess, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from i18n import CHROME, S, STOCKISTS, ARCHIVE_FR, GALLERY, GALLERY_TAGS, GALLERY_UI, REEL, REEL_UI  # noqa: E402
+from i18n import CHROME, S, STOCKISTS, ARCHIVE_FR, GALLERY, GALLERY_TAGS, GALLERY_UI, REEL, REEL_UI, NUMBERS, NUMBERS_UI  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE_URL = 'https://aldy-lab.github.io/rodel-concept/'
@@ -238,6 +238,17 @@ def band_reel(lang):
   </section>'''
 
 
+def band_numbers(lang):
+    sep = '\u202f' if lang == 'fr' else ','
+    items = ''.join(
+        f'<li><span class="num-n" data-to="{n}" data-sep="{sep if n >= 10000 or (n >= 1000 and n != 1824) else ""}">{n if n == 1824 or n < 1000 else f"{n:,}".replace(",", sep)}</span>'
+        f'<span class="num-l mono">{label[lang]}</span></li>' for n, label in NUMBERS)
+    return f'''<section class="band-solid numbers-band" aria-label="{NUMBERS_UI[lang]}">
+    <p class="kicker mono">{NUMBERS_UI[lang]}</p>
+    <ol class="numbers">{items}</ol>
+  </section>'''
+
+
 def gallery(lang):
     ui = GALLERY_UI[lang]
     counts = {tag: sum(1 for _, t in GALLERY if t == tag) for tag in GALLERY_TAGS}
@@ -273,7 +284,7 @@ def band_stockists(lang):
         f'<li><span>{esc(n)}</span><span class="mono">{c[lang] if c else ""}</span></li>' for n, c in STOCKISTS) + '</ul>'
 
 
-BANDS = {'collection': band_collection, 'reel': band_reel, 'stockists': band_stockists}
+BANDS = {'collection': band_collection, 'reel': band_reel, 'numbers': band_numbers, 'stockists': band_stockists}
 
 
 # ── generated pages ────────────────────────────────────────────────────────

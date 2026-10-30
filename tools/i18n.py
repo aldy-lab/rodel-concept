@@ -256,6 +256,16 @@ REEL = [
      {'en': 'The finest catch of the year, found in the finest houses of Paris: a name whispered among gourmets.',
       'fr': 'La plus belle pêche de l’année, présente dans les plus belles maisons de Paris : un nom murmuré entre gourmets.'}),
 ]
+# the house in numbers — all from rodel.fr
+NUMBERS = [
+    (1824, {'en': 'Founded in Bordeaux', 'fr': 'Fondée à Bordeaux'}),
+    (17, {'en': 'Factories, from Arcachon to Concarneau', 'fr': 'Usines, d’Arcachon à Concarneau'}),
+    (1500, {'en': 'Workers at the zenith', 'fr': 'Ouvriers à l’apogée'}),
+    (9, {'en': 'Fishing families of Concarneau', 'fr': 'Familles de pêcheurs de Concarneau'}),
+    (30, {'en': 'Seconds in the pan, to seal the flesh', 'fr': 'Secondes de friture, pour saisir la chair'}),
+]
+NUMBERS_UI = {'en': 'The house in numbers', 'fr': 'La Maison en chiffres'}
+
 REEL_UI = {'en': {'kicker': 'Rödel · a film in nine tableaux', 'tableau': 'Tableau', 'more': 'The whole history', 'hint': 'Scroll through the eras',
                   'ai': 'Archive photographs animated with AI (Higgsfield)'},
            'fr': {'kicker': 'Rödel · un film en neuf tableaux', 'tableau': 'Tableau', 'more': 'Toute l’histoire', 'hint': 'Faites défiler les époques',

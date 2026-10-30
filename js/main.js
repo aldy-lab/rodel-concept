@@ -24,6 +24,7 @@ const collection = initCollection();
 applyConfig();
 initStore(CONFIG);
 
+if (document.body.classList.contains('home')) import('./wow.js').then((m) => m.initWow());
 const reelRoot = document.querySelector('[data-reel]');
 if (reelRoot) import('./reel.js').then((m) => m.initReel(reelRoot));
 const storyRoot = document.querySelector('[data-story]');

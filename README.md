@@ -57,6 +57,11 @@ The French is a faithful translation of Rödel's copy. **Have a native speaker p
 
 Credentials go in `~/.config/higgsfield/credentials` (never in the repo). Run `python3 tools/higgsfield.py --dry-run` first: it shows the seven requests and costs nothing.
 
+## Hosting
+
+- GitHub Pages: https://aldy-lab.github.io/rodel-concept/
+- Vercel: https://rodel-concept.vercel.app (account nozzjoy-7758, project `rodel-concept`). Deploy with `npx vercel@latest deploy --prod --yes` from the repo root; `.vercelignore` keeps tools and sources off the server.
+
 ## Tools
 
     python3 -m http.server 8731            # serve
