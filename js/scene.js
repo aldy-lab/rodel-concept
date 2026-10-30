@@ -111,6 +111,30 @@ export function startScene(collection) {
   }));
   scene.add(dust);
 
+  // shafts of light from the surface, swaying slowly: additive, very faint
+  const rays = new THREE.Group();
+  if (!touch) {
+    const rc = document.createElement('canvas'); rc.width = 64; rc.height = 256;
+    const g = rc.getContext('2d');
+    const lin = g.createLinearGradient(0, 0, 64, 0);
+    lin.addColorStop(0, 'rgba(255,255,255,0)'); lin.addColorStop(0.5, 'rgba(255,255,255,1)'); lin.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = lin; g.fillRect(0, 0, 64, 256);
+    g.globalCompositeOperation = 'destination-in';
+    const fade = g.createLinearGradient(0, 0, 0, 256);
+    fade.addColorStop(0, 'rgba(0,0,0,1)'); fade.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = fade; g.fillRect(0, 0, 64, 256);
+    const rayTex = new THREE.CanvasTexture(rc);
+    for (let k = 0; k < 6; k++) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(0.9 + Math.random() * 1.4, 16),
+        new THREE.MeshBasicMaterial({ map: rayTex, color: '#9fc4e6', transparent: true, opacity: 0.035 + Math.random() * 0.04, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+      m.position.set(-2 + k * 1.7 + Math.random(), 3, -5 - Math.random() * 3);
+      m.rotation.z = -0.32 + Math.random() * 0.12;
+      m.userData = { ph: Math.random() * 6.28, base: m.rotation.z, o: m.material.opacity };
+      rays.add(m);
+    }
+    scene.add(rays);
+  }
+
   // ── scroll states, one per section. tx/ty are fractions of the visible half-width/height ──
   // k scales the tin for one moment without moving it into the fog
   const S = (tx, ty, tz, rx, ry, rz, lid, pack, cx, cy, k = 1) => ({ tx, ty, tz, rx, ry, rz, lid, pack, cx, cy, k });
@@ -223,6 +247,13 @@ export function startScene(collection) {
   const p = new THREE.Vector3(), ps = new THREE.Vector3(), sc = new THREE.Vector3(), ss = new THREE.Vector3();
   const tan = new THREE.Vector3(), X = new THREE.Vector3(1, 0, 0);
   const up = new THREE.Vector3(), above = new THREE.Vector3();
+  // the cursor in the water: fish part around it (desktop pointer only)
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), water = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const hand = new THREE.Vector3(), push = new THREE.Vector3(), qRoll = new THREE.Quaternion();
+  let handOn = false;
+  addEventListener('pointerleave', () => { handOn = false; });
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') handOn = true; });
+  const avoid = fish.map(() => new THREE.Vector3());
   const slotWorld = tin.slots.map(() => new THREE.Matrix4());
   const ease = (t) => t * t * (3 - 2 * t);
   const clock = new THREE.Clock();
@@ -287,6 +318,19 @@ export function startScene(collection) {
     tin.group.updateMatrixWorld(true);
     tin.slots.forEach((s, i) => slotWorld[i].multiplyMatrices(tin.group.matrixWorld, s));
 
+    // the cursor's place in the water, on the shoal's plane
+    if (handOn) {
+      ndc.set(mouse.x * 2, -mouse.y * 2);
+      ray.setFromCamera(ndc, camera);
+      water.constant = 1.4;
+      ray.ray.intersectPlane(water, hand);
+    }
+    rays.children.forEach((m) => {
+      const u = m.userData;
+      m.rotation.z = u.base + Math.sin(t * 0.12 + u.ph) * 0.05;
+      m.material.opacity = u.o * (0.6 + 0.4 * Math.sin(t * 0.3 + u.ph)) * (1 - cur.pack * 0.7);
+    });
+
     // shoal
     const vt = performance.now() < vortexUntil ? 1 : 0;
     vortex += (vt - vortex) * (1 - Math.exp(-dt * 1.5));
@@ -298,6 +342,7 @@ export function startScene(collection) {
       const away = tinFish ? 0 : cur.pack;
       // the shoal's heading swings slowly between profile and a gentle turn
       const th = Math.sin(t * 0.07) * 0.55 + Math.sin(t * 0.031 + 1.3) * 0.25;
+      const turn = Math.cos(t * 0.07) * 0.0385 + Math.cos(t * 0.031 + 1.3) * 0.00775; // dθ/dt
       const ct = Math.cos(th), st = Math.sin(th);
       // a fish's own drift inside the shoal, and a ripple travelling through it
       const lx = d.ox + Math.sin(t * 0.45 * d.jit + d.ph) * 0.35;
@@ -316,6 +361,19 @@ export function startScene(collection) {
       tan.set(ct, Math.cos(d.ox * 0.9 - t * 1.1) * 0.12, -st);
       tan.x += Math.cos(t * 0.45 * d.jit + d.ph) * 0.1; tan.z += -Math.sin(t * 0.38 * d.jit + d.ph) * 0.12;
       tan.normalize();
+      // part around the cursor, and close again when it leaves
+      push.set(0, 0, 0);
+      if (handOn && !tinFish && cur.pack < 0.5) {
+        const dx = ps.x - hand.x, dy = ps.y - hand.y, dz = (ps.z - hand.z) * 0.5;
+        const dist = Math.hypot(dx, dy, dz);
+        if (dist < 1.9) {
+          const f = (1 - dist / 1.9) ** 2 * 1.5 / Math.max(dist, 0.15);
+          push.set(dx * f, dy * f, dz * f * 0.6);
+        }
+      }
+      avoid[i].lerp(push, push.lengthSq() > avoid[i].lengthSq() ? 0.18 : 0.035);
+      ps.add(avoid[i]);
+      tan.addScaledVector(avoid[i], 0.55).normalize();
       if (vortex > 0.001) {
         // 1824: the shoal winds into a column
         const a = d.a0 + t * d.speed * 2.6, r = 0.5 + (i % 30) * 0.04;
@@ -323,6 +381,9 @@ export function startScene(collection) {
         tan.lerp(sc.set(-Math.sin(a), 0, Math.cos(a)), vortex).normalize();
       }
       qs.setFromUnitVectors(X, tan);
+      // bank into the turn and roll a little on their own: flanks catch the light
+      const roll = -turn * 9 + Math.sin(t * 0.8 * d.jit + d.ph * 2) * 0.28 + avoid[i].y * 0.6;
+      qs.multiply(qRoll.setFromAxisAngle(X, roll * (1 - vortex)));
       ss.setScalar(d.s * shoalScale * (cur.pack > 0.985 && !tinFish ? 0 : 1));
 
       let w = 1;
