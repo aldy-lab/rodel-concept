@@ -25,7 +25,7 @@ Each request carries an Idempotency-Key derived from slug, model and prompt, so
 running it twice does not pay twice; a run that was interrupted resumes
 polling the requests it already made.
 """
-import argparse, hashlib, json, os, pathlib, ssl, subprocess, sys, time, urllib.error, urllib.request, uuid
+import argparse, hashlib, json, math, os, pathlib, ssl, subprocess, sys, time, urllib.error, urllib.request, uuid
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE_URL = 'https://aldy-lab.github.io/rodel-concept/'   # the inputs are the site's own public images
@@ -110,7 +110,7 @@ CFG = 0.5
 # profiles start to change after ~3 s); it then holds its last good frame
 TRIM = {'founders-medal': 2.6,
         'tin-dark': 2.5,             # the lid's lettering is redrawn after 2.5 s (FRÈRES became FRÈAKS)
-        'arcachon-fishermen': 2.5}   # the faces soften towards the end
+        }
 # longer takes: (model duration, slow-down factor), slowed with motion-interpolated
 # frames. A 10 s Kling take of the fishermen was rejected: past 5 s the camera
 # drifted and the men changed pose. The approved 5 s take, slowed 3x, runs 15 s.
@@ -172,6 +172,48 @@ def compress(src, dst, trim=None, slow=None):
                     '-movflags', '+faststart', str(dst)], check=True)
 
 
+# Clips that keep the photograph and take only its sea from the model: a matte
+# (tools/mattes/<slug>.json, polygons in source pixels) lets the clip through
+# only where water is, so faces, hands, nets and printing are the original's in
+# every frame. The sea is looped with long cross-fades to the given length.
+MATTE = {'arcachon-fishermen': 30}
+
+
+def sea_composite(src, dst, slug, seconds):
+    from PIL import Image, ImageDraw, ImageFilter
+    m = json.loads((ROOT / 'tools' / 'mattes' / f'{slug}.json').read_text())
+    w, h = m['size']
+    mask = Image.new('L', (w, h), 0)
+    d = ImageDraw.Draw(mask)
+    d.polygon([tuple(p) for p in m['sea']], fill=255)
+    for k in m['keep']:
+        d.polygon([tuple(p) for p in k], fill=0)
+    mask = mask.filter(ImageFilter.MinFilter(9)).filter(ImageFilter.GaussianBlur(m['feather']))
+    matte, still = CACHE / f'{slug}-matte.png', CACHE / f'{slug}-still.png'
+    mask.save(matte)
+    Image.open(ROOT / 'img' / 'archive' / f'{slug}.webp').convert('RGB').save(still)
+    # the sea plays forward, then back: a seamless cycle with no cross-fade ghosts,
+    # looped to length, from the take's clean stretch, slowed a little to calm it.
+    cycle = CACHE / f'{slug}-cycle.mp4'
+    a, b, slow = m['clean'][0], m['clean'][1], m.get('slow', 1)
+    subprocess.run([ffmpeg(), '-y', '-loglevel', 'error', '-ss', str(a), '-t', str(b - a), '-i', str(src), '-filter_complex',
+                    f'[0:v]scale={w}:{h},setpts={slow}*PTS,minterpolate=fps=30:mi_mode=blend,setsar=1,format=yuv420p,split[f][b];[b]reverse[r];[f][r]concat=n=2:v=1[v]',
+                    '-map', '[v]', '-c:v', 'libx264', '-crf', '14', '-preset', 'fast', str(cycle)], check=True)
+    vf = ("[2:v]format=gray[m];[1:v][m]alphamerge[sea];"
+          "[0:v]format=yuv420p[bg];[bg][sea]overlay=shortest=1,scale='min(1280,iw)':-2:flags=lanczos,format=yuv420p")
+    subprocess.run([ffmpeg(), '-y', '-loglevel', 'error', '-loop', '1', '-i', str(still), '-stream_loop', '-1', '-i', str(cycle),
+                    '-loop', '1', '-i', str(matte), '-filter_complex', vf, '-t', str(seconds), '-r', '30', '-an',
+                    '-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-pix_fmt', 'yuv420p',
+                    '-movflags', '+faststart', str(dst)], check=True)
+
+
+def render(raw, dst, slug):
+    if slug in MATTE:
+        sea_composite(raw, dst, slug, MATTE[slug])
+    else:
+        compress(raw, dst, TRIM.get(slug), LONG.get(slug, (0, None))[1])
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dry-run', action='store_true')
@@ -186,7 +228,7 @@ def main():
             rid = state.get(slug, {}).get('request_id', '')
             raw = CACHE / f'{slug}-{rid[:8]}.mp4'
             if raw.exists():
-                compress(raw, OUT / f'{slug}.mp4', TRIM.get(slug), LONG.get(slug, (0, None))[1])
+                render(raw, OUT / f'{slug}.mp4', slug)
                 state[slug]['kb'] = (OUT / f'{slug}.mp4').stat().st_size // 1024
                 print(f'  {slug}: recompressed, {state[slug]["kb"]} KB')
         STATE.write_text(json.dumps(state, indent=1))
@@ -239,7 +281,7 @@ def main():
         with urllib.request.urlopen(r['video']['url'], timeout=300, context=TLS) as resp:
             raw.write_bytes(resp.read())
         dst = OUT / f'{slug}.mp4'
-        compress(raw, dst, TRIM.get(slug), LONG.get(slug, (0, None))[1])
+        render(raw, dst, slug)
         state[slug].update({'mp4': f'img/reel/{slug}.mp4', 'kb': dst.stat().st_size // 1024})
         STATE.write_text(json.dumps(state, indent=1))
         print(f'  {slug}: ready, {dst.stat().st_size // 1024} KB')

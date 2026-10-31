@@ -96,9 +96,10 @@
   "take": 0,
   "model": "kling-video/v2.5-turbo/pro/image-to-video",
   "mp4": "img/reel/arcachon-fishermen.mp4",
-  "kb": 769,
+  "kb": 2881,
   "rejected": [
-   "01a19308-892c-73a1-97b7-3ef886156157 (the men stood up and hauled a net that is not in the photograph)"
+   "01a19308-892c-73a1-97b7-3ef886156157 (the men stood up and hauled a net that is not in the photograph)",
+   "01a19322-68d3-720f-a8e0-0b950e73432c (10 s: the horizon tilted and the man on the right stood up into the sea)"
   ]
  },
  "engraving-workshop": {
