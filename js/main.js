@@ -98,3 +98,21 @@ function initCollection() {
   render(TINS[0]);
   return api;
 }
+
+// Desktop scrolling glides with a little inertia, the way the scene moves.
+// Touch keeps the native scroll; reduced motion and lightbox keep it still.
+if (!phone && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(pointer: fine)').matches) {
+  import('https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.mjs').then(({ default: Lenis }) => {
+    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')) || 72;
+    const lenis = new Lenis({
+      autoRaf: true, lerp: 0.09, wheelMultiplier: 0.9,
+      anchors: { offset: -header },
+      prevent: (node) => !!node.closest?.('dialog, [data-lenis-prevent]'),
+    });
+    let held = false;
+    new MutationObserver(() => {
+      const open = document.documentElement.classList.contains('lb-open');
+      if (open !== held) { held = open; if (open) lenis.stop(); else lenis.start(); }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }).catch(() => { /* the native scroll stays */ });
+}

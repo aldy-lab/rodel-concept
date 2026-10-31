@@ -20,7 +20,7 @@
 <link rel="icon" href="../../img/brand/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../css/style.css">
 <script type="module" src="../../js/main.js"></script>
 </head>
@@ -40,20 +40,23 @@
 </header>
 
 <main>
-<section class="page-hero store-hero">
-  <p class="kicker mono">Boutique B2B</p>
-  <h1>Boutique <em>B2B.</em></h1>
-  <p class="lead">L’accès à notre boutique en ligne est réservé aux partenaires professionnels et aux commandes de revente. Nous vous remercions de votre compréhension.</p>
-  <ul class="terms">
-    <li><span class="mono">Minimum de commande</span>1 000,00 €</li>
-    <li><span class="mono">Livraison</span>À la charge du client</li>
-    <li><span class="mono">Commande</span>À la caisse ; confirmée par la Maison</li>
-  </ul>
-  <div class="actions">
-    <button class="btn" type="button" data-assortment data-href="../../fr/cart/">Ajouter l’assortiment complet : 3 caisses de chaque sardine, 1 314,90 €</button>
-    <a class="btn btn-ghost" href="../../fr/order/">Bon de commande B2B</a>
-    <a class="btn btn-ghost" data-config="tradeEmail" href="#">Demander un compte professionnel</a>
+<section class="page-hero split store-hero">
+  <div>
+    <p class="kicker mono">Boutique B2B</p>
+    <h1>Boutique <em>B2B.</em></h1>
+    <p class="lead">L’accès à notre boutique en ligne est réservé aux partenaires professionnels et aux commandes de revente. Nous vous remercions de votre compréhension.</p>
+    <ul class="terms">
+      <li><span class="mono">Minimum de commande</span>1 000,00 €</li>
+      <li><span class="mono">Livraison</span>À la charge du client</li>
+      <li><span class="mono">Commande</span>À la caisse ; confirmée par la Maison</li>
+    </ul>
+    <div class="actions">
+      <button class="btn" type="button" data-assortment data-href="../../fr/cart/">Ajouter l’assortiment complet : 3 caisses de chaque sardine, 1 314,90 €</button>
+      <a class="more" href="../../fr/order/">Bon de commande B2B <span aria-hidden="true">→</span></a>
+      <a class="more" data-config="tradeEmail" href="#">Demander un compte professionnel <span aria-hidden="true">→</span></a>
+    </div>
   </div>
+  <div class="still-life" aria-hidden="true"><span><img src="../../img/products/classic-1926-600.webp" srcset="../../img/products/classic-1926-600.webp 600w, ../../img/products/classic-1926.webp 1200w" sizes="(max-width: 900px) 60vw, 26vw" width="600" height="450" alt="Rödel Classique 1926, photographiée du dessus" loading="lazy" decoding="async"></span><span><img src="../../img/products/millesime-600.webp" srcset="../../img/products/millesime-600.webp 600w, ../../img/products/millesime.webp 1200w" sizes="(max-width: 900px) 60vw, 26vw" width="600" height="450" alt="Rödel Millésime 2025, photographiée du dessus" fetchpriority="high" decoding="async"></span><span><img src="../../img/products/citron-600.webp" srcset="../../img/products/citron-600.webp 600w, ../../img/products/citron.webp 1200w" sizes="(max-width: 900px) 60vw, 26vw" width="600" height="450" alt="Rödel Citron, photographiée du dessus" loading="lazy" decoding="async"></span></div>
 </section>
 
 <section class="store">
@@ -64,101 +67,119 @@
   </div>
   <ul class="store-grid">
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/millesime/"><img src="../../img/products/millesime-600.webp" srcset="../../img/products/millesime-600.webp 600w, ../../img/products/millesime.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Millésime 2025, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/millesime/"><img src="../../img/products/millesime-600.webp" srcset="../../img/products/millesime-600.webp 600w, ../../img/products/millesime.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Millésime 2025, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Millésime · 115 g</p>
         <h3><a href="../../fr/store/millesime/">Millésime 2025</a></h3>
         <p class="shop-name">Sardines Millésime</p>
-        <p class="price">4,20 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 50,40 €</p>
+        <div class="price-row">
+          <p class="price">4,20 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 50,40 €</p>
+        </div>
         <form class="buy" data-id="millesime"><div class="stepper" role="group" aria-label="Caisses de Millésime 2025"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/millesime-boneless/"><img src="../../img/products/millesime-boneless-600.webp" srcset="../../img/products/millesime-boneless-600.webp 600w, ../../img/products/millesime-boneless.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Millésime sans arêtes, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/millesime-boneless/"><img src="../../img/products/millesime-boneless-600.webp" srcset="../../img/products/millesime-boneless-600.webp 600w, ../../img/products/millesime-boneless.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Millésime sans arêtes, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Millésime · 115 g</p>
         <h3><a href="../../fr/store/millesime-boneless/">Millésime sans arêtes</a></h3>
         <p class="shop-name">Sardines Millésime sans arêtes</p>
-        <p class="price">4,50 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 54,00 €</p>
+        <div class="price-row">
+          <p class="price">4,50 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 54,00 €</p>
+        </div>
         <form class="buy" data-id="millesime-boneless"><div class="stepper" role="group" aria-label="Caisses de Millésime sans arêtes"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/chica-pica/"><img src="../../img/products/chica-pica-600.webp" srcset="../../img/products/chica-pica-600.webp 600w, ../../img/products/chica-pica.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Chica Pica, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/chica-pica/"><img src="../../img/products/chica-pica-600.webp" srcset="../../img/products/chica-pica-600.webp 600w, ../../img/products/chica-pica.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Chica Pica, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Recettes de la Maison · 115 g</p>
         <h3><a href="../../fr/store/chica-pica/">Chica Pica</a></h3>
         <p class="shop-name">Sardines aux épices Chica Pica</p>
-        <p class="price">4,60 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 55,20 €</p>
+        <div class="price-row">
+          <p class="price">4,60 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 55,20 €</p>
+        </div>
         <form class="buy" data-id="chica-pica"><div class="stepper" role="group" aria-label="Caisses de Chica Pica"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/citron/"><img src="../../img/products/citron-600.webp" srcset="../../img/products/citron-600.webp 600w, ../../img/products/citron.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Citron, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/citron/"><img src="../../img/products/citron-600.webp" srcset="../../img/products/citron-600.webp 600w, ../../img/products/citron.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Citron, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Recettes de la Maison · 115 g</p>
         <h3><a href="../../fr/store/citron/">Citron</a></h3>
         <p class="shop-name">Sardines au citron</p>
-        <p class="price">4,40 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 52,80 €</p>
+        <div class="price-row">
+          <p class="price">4,40 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 52,80 €</p>
+        </div>
         <form class="buy" data-id="citron"><div class="stepper" role="group" aria-label="Caisses de Citron"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/classic-1926/"><img src="../../img/products/classic-1926-600.webp" srcset="../../img/products/classic-1926-600.webp 600w, ../../img/products/classic-1926.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Classique 1926, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/classic-1926/"><img src="../../img/products/classic-1926-600.webp" srcset="../../img/products/classic-1926-600.webp 600w, ../../img/products/classic-1926.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Classique 1926, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Millésime · 69 g</p>
         <h3><a href="../../fr/store/classic-1926/">Classique 1926</a></h3>
         <p class="shop-name">Sardines 69 g Classique 1926</p>
-        <p class="price">3,30 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 15 · 49,50 €</p>
+        <div class="price-row">
+          <p class="price">3,30 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 15 · 49,50 €</p>
+        </div>
         <form class="buy" data-id="classic-1926"><div class="stepper" role="group" aria-label="Caisses de Classique 1926"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/green-pepper/"><img src="../../img/products/green-pepper-600.webp" srcset="../../img/products/green-pepper-600.webp 600w, ../../img/products/green-pepper.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Poivre Vert, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/green-pepper/"><img src="../../img/products/green-pepper-600.webp" srcset="../../img/products/green-pepper-600.webp 600w, ../../img/products/green-pepper.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Poivre Vert, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Recettes de la Maison · 115 g</p>
         <h3><a href="../../fr/store/green-pepper/">Poivre Vert</a></h3>
         <p class="shop-name">Sardines au poivre vert</p>
-        <p class="price">4,40 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 52,80 €</p>
+        <div class="price-row">
+          <p class="price">4,40 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 52,80 €</p>
+        </div>
         <form class="buy" data-id="green-pepper"><div class="stepper" role="group" aria-label="Caisses de Poivre Vert"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/spicy-tomato/"><img src="../../img/products/spicy-tomato-600.webp" srcset="../../img/products/spicy-tomato-600.webp 600w, ../../img/products/spicy-tomato.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Tomate Épicée, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/spicy-tomato/"><img src="../../img/products/spicy-tomato-600.webp" srcset="../../img/products/spicy-tomato-600.webp 600w, ../../img/products/spicy-tomato.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Tomate Épicée, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Recettes de la Maison · 115 g</p>
         <h3><a href="../../fr/store/spicy-tomato/">Tomate Épicée</a></h3>
         <p class="shop-name">Sardines à la tomate épicée</p>
-        <p class="price">4,40 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 52,80 €</p>
+        <div class="price-row">
+          <p class="price">4,40 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 52,80 €</p>
+        </div>
         <form class="buy" data-id="spicy-tomato"><div class="stepper" role="group" aria-label="Caisses de Tomate Épicée"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Sardines">
-      <a class="store-card-media" href="../../fr/store/achards-truffle/"><img src="../../img/products/achards-truffle-600.webp" srcset="../../img/products/achards-truffle-600.webp 600w, ../../img/products/achards-truffle.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Achards &amp; Truffe, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/achards-truffle/"><img src="../../img/products/achards-truffle-600.webp" srcset="../../img/products/achards-truffle-600.webp 600w, ../../img/products/achards-truffle.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Achards &amp; Truffe, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Recettes de la Maison · 115 g</p>
         <h3><a href="../../fr/store/achards-truffle/">Achards &amp; Truffe</a></h3>
         <p class="shop-name">Sardines aux achards et à la truffe</p>
-        <p class="price">5,90 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 70,80 €</p>
+        <div class="price-row">
+          <p class="price">5,90 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 70,80 €</p>
+        </div>
         <form class="buy" data-id="achards-truffle"><div class="stepper" role="group" aria-label="Caisses de Achards &amp; Truffe"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>
     <li class="store-card" data-cat="Specialities">
-      <a class="store-card-media" href="../../fr/store/cod-liver/"><img src="../../img/products/cod-liver-600.webp" srcset="../../img/products/cod-liver-600.webp 600w, ../../img/products/cod-liver.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Foie de Morue Fumé, photographiée du dessus" loading="lazy" decoding="async"><span class="tag mono">Réservé B2B</span></a>
+      <a class="store-card-media" href="../../fr/store/cod-liver/"><img src="../../img/products/cod-liver-600.webp" srcset="../../img/products/cod-liver-600.webp 600w, ../../img/products/cod-liver.webp 1200w" sizes="(max-width: 900px) 100vw, 30vw" width="600" height="450" alt="Rödel Foie de Morue Fumé, photographiée du dessus" loading="lazy" decoding="async"></a>
       <div class="store-card-copy">
         <p class="mono">Spécialités · 121 g</p>
         <h3><a href="../../fr/store/cod-liver/">Foie de Morue Fumé</a></h3>
         <p class="shop-name">Foie de morue fumé</p>
-        <p class="price">3,60 € <span class="mono">la boîte</span></p>
-        <p class="case mono">Caisse de 12 · 43,20 €</p>
+        <div class="price-row">
+          <p class="price">3,60 € <span class="mono">la boîte</span></p>
+          <p class="case mono">Caisse de 12 · 43,20 €</p>
+        </div>
         <form class="buy" data-id="cod-liver"><div class="stepper" role="group" aria-label="Caisses de Foie de Morue Fumé"><button type="button" data-step="-1" aria-label="Une caisse de moins">−</button><input type="number" name="cases" inputmode="numeric" min="1" max="999" value="1" aria-label="Caisses"><button type="button" data-step="1" aria-label="Une caisse de plus">+</button></div><button class="btn" type="submit">Ajouter au panier</button><p class="added mono" role="status" hidden></p></form>
       </div>
     </li>

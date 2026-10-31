@@ -33,7 +33,7 @@ const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
 function fishMesh(n, wiggle) {
   const geo = createFishGeometry();
   geo.setAttribute('aWig', new THREE.InstancedBufferAttribute(new Float32Array(n).fill(wiggle), 1));
-  const mesh = new THREE.InstancedMesh(geo, createFishMaterial({ uTime: { value: 2.3 } }), n);
+  const mesh = new THREE.InstancedMesh(geo, createFishMaterial({ uBeat: { value: 2.3 } }), n);
   mesh.frustumCulled = false;
   return mesh;
 }
@@ -67,7 +67,7 @@ if (shot === 'shoal') {
     tin.group.scale.setScalar(0.7);
     tin.lid.rotation.z = 2.15;
     tin.group.updateMatrixWorld(true);
-    const fish = fishMesh(5, 0);
+    const fish = fishMesh(tin.slots.length, 0);
     tin.slots.forEach((s, i) => fish.setMatrixAt(i, m4.multiplyMatrices(tin.group.matrixWorld, s)));
     scene.add(fish);
   } else if (shot === 'ajar') {
@@ -76,7 +76,7 @@ if (shot === 'shoal') {
     tin.group.scale.setScalar(0.85);
     tin.lid.rotation.z = 0.55;
     tin.group.updateMatrixWorld(true);
-    const fish = fishMesh(5, 0);
+    const fish = fishMesh(tin.slots.length, 0);
     tin.slots.forEach((s, i) => fish.setMatrixAt(i, m4.multiplyMatrices(tin.group.matrixWorld, s)));
     scene.add(fish);
   } else {

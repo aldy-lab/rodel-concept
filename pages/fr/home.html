@@ -31,14 +31,9 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
       <p class="kicker mono">Rödel &amp; Fils Frères · Bordeaux, 1824</p>
       <h1>Le goût de la Bretagne. <br><em>L’élégance de Bordeaux.</em></h1>
       <p class="lead">Des sardines de la baie de Concarneau, pêchées le matin et rangées à la main dans la boîte le jour même. Depuis 1824.</p>
-      <ul class="proof mono">
-        <li>Mises en boîte à la main à Concarneau</li>
-        <li>Pêchées et conservées le jour même</li>
-        <li>Neuf familles de pêcheurs</li>
-      </ul>
       <div class="actions">
         <a class="btn" href="#all-products">Découvrir la collection</a>
-        <a class="btn btn-ghost" href="maison/">Notre histoire</a>
+        <a class="more" href="maison/">Notre histoire <span aria-hidden="true">→</span></a>
       </div>
     </div>
     <p class="cue mono" aria-hidden="true"><span></span>Suivez le banc</p>
@@ -47,10 +42,10 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
   <section id="maison" class="band" data-scene>
     <picture class="still">
       <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-      <img src="img/tin-open.webp" width="1200" height="853" alt="Une boîte ouverte, cinq sardines rangées tête-bêche" loading="lazy" decoding="async">
+      <img src="img/tin-open.webp" width="1200" height="853" alt="Une boîte ouverte, quatre sardines rangées tête-bêche" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
-      <p class="kicker mono">01 — Le même procédé depuis 1824</p>
+      <p class="kicker mono">Le même procédé depuis 1824</p>
       <h2>Pêchées le matin. <br><em>En boîte le jour même.</em></h2>
       <p>Neuf familles de pêcheurs de Concarneau ramènent la pêche à la bolinche traditionnelle, depuis la baie de Concarneau, l’archipel des Glénan et la pointe de Trévignon. Chaque sardine est nettoyée à la main, frite trente secondes pour être saisie, puis rangée dans la boîte. Jamais congelée.</p>
       <dl class="specs">
@@ -68,7 +63,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
       <img src="img/tin-ajar.webp" width="1200" height="853" alt="La boîte Millésime 2025, couvercle entrouvert" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
-      <p class="kicker mono">02 — Millésime</p>
+      <p class="kicker mono">Millésime</p>
       <h2>La plus belle pêche <br><em>d’une année.</em></h2>
       <p>La Maison Rödel se distingue par sa sélection de sardines. Le Millésime est une appellation réservée à la plus belle pêche d’une année donnée, récoltée à maturité optimale pour une richesse exceptionnelle et une remarquable profondeur de goût. Rödel indique sur chaque couvercle quand, par qui et où le poisson a été pêché.</p>
       <figure class="rule" aria-label="Se savoure même après dix ans, de 2025 à 2035">
@@ -81,7 +76,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
 
   <section id="collection" class="band" data-scene>
     <div class="copy">
-      <p class="kicker mono">03 — La collection</p>
+      <p class="kicker mono">La collection</p>
       <div class="tabs" role="group" aria-label="Choisir une boîte"></div>
       <div class="product" aria-live="polite">
         <h2 data-p="name">Millésime 2025</h2>
@@ -98,7 +93,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
 
   <section id="histoire" class="band" data-scene>
     <div class="copy wide">
-      <p class="kicker mono">04 — Depuis 1824</p>
+      <p class="kicker mono">Depuis 1824</p>
       <h2>La plus ancienne marque <br><em>de conserves au monde.</em></h2>
       <p>En 1820, l’Amirauté française demanda à Nicolas Appert, l’inventeur de la conserve, d’établir une conserverie à Bordeaux. Il en confia la charge à son disciple le plus accompli, Charles Rödel.</p>
       <a class="more" href="maison/">Lire l’histoire <span aria-hidden="true">→</span></a>
@@ -111,7 +106,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
 
   <section id="contact" class="band" data-scene>
     <div class="copy">
-      <p class="kicker mono">05 — Où trouver Rödel</p>
+      <p class="kicker mono">Où trouver Rödel</p>
       <h2>Un nom murmuré <br><em>entre gourmets.</em></h2>
       <p>Nos produits se trouvent aujourd’hui exclusivement dans des maisons emblématiques, recherchées par les gourmets du monde entier :</p>
       {{band:stockists}}

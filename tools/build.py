@@ -408,32 +408,41 @@ def store_page(lang):
     t = S[lang]
     cards = ''.join(f'''
     <li class="store-card" data-cat="{p['cat']}">
-      <a class="store-card-media" href="store/{p['id']}/">{pack_img(p, lang)}<span class="tag mono">{t['b2b_only']}</span></a>
+      <a class="store-card-media" href="store/{p['id']}/">{pack_img(p, lang)}</a>
       <div class="store-card-copy">
         <p class="mono">{line_of(p, lang)} · {p['weight']}</p>
         <h3><a href="store/{p['id']}/">{esc(ptx(p, 'name', lang))}</a></h3>
         <p class="shop-name">{esc(ptx(p, 'shop', lang))}</p>
-        <p class="price">{money(p['price'], lang)} <span class="mono">{t['per_tin']}</span></p>
-        <p class="case mono">{t['case_of']} {p['units']} · {money(p['units'] * p['price'], lang)}</p>
+        <div class="price-row">
+          <p class="price">{money(p['price'], lang)} <span class="mono">{t['per_tin']}</span></p>
+          <p class="case mono">{t['case_of']} {p['units']} · {money(p['units'] * p['price'], lang)}</p>
+        </div>
         {buy(p, lang)}
       </div>
     </li>''' for p in PRODUCTS)
+    # three tins arranged as a still life beside the title
+    byid = {p['id']: p for p in PRODUCTS}
+    still = ''.join(f'<span>{pack_img(byid[k], lang, "(max-width: 900px) 60vw, 26vw", eager=k == "millesime")}</span>'
+                    for k in ('classic-1926', 'millesime', 'citron'))
     head = json.dumps({'title': t['store_title'], 'description': t['store_desc'], 'nav': 'store/'}, ensure_ascii=False)
     return f'''<!-- {head} -->
-<section class="page-hero store-hero">
-  <p class="kicker mono">{t['store_kicker']}</p>
-  <h1>{t['store_h1']}</h1>
-  <p class="lead">{t['store_lead']}</p>
-  <ul class="terms">
-    <li><span class="mono">{t['min_order']}</span>{money(1000, lang)}</li>
-    <li><span class="mono">{t['shipping']}</span>{t['shipping_v']}</li>
-    <li><span class="mono">{t['ordering']}</span>{t['ordering_v']}</li>
-  </ul>
-  <div class="actions">
-    <button class="btn" type="button" data-assortment data-href="cart/">{t['band_assort'].format(total=money(assortment_total(), lang))}</button>
-    <a class="btn btn-ghost" href="order/">{t['b2b_form']}</a>
-    <a class="btn btn-ghost" data-config="tradeEmail" href="#">{t['request_account']}</a>
+<section class="page-hero split store-hero">
+  <div>
+    <p class="kicker mono">{t['store_kicker']}</p>
+    <h1>{t['store_h1']}</h1>
+    <p class="lead">{t['store_lead']}</p>
+    <ul class="terms">
+      <li><span class="mono">{t['min_order']}</span>{money(1000, lang)}</li>
+      <li><span class="mono">{t['shipping']}</span>{t['shipping_v']}</li>
+      <li><span class="mono">{t['ordering']}</span>{t['ordering_v']}</li>
+    </ul>
+    <div class="actions">
+      <button class="btn" type="button" data-assortment data-href="cart/">{t['band_assort'].format(total=money(assortment_total(), lang))}</button>
+      <a class="more" href="order/">{t['b2b_form']} <span aria-hidden="true">→</span></a>
+      <a class="more" data-config="tradeEmail" href="#">{t['request_account']} <span aria-hidden="true">→</span></a>
+    </div>
   </div>
+  <div class="still-life" aria-hidden="true">{still}</div>
 </section>
 
 <section class="store">
@@ -460,15 +469,19 @@ def product_page(p, lang):
 <article class="product-page">
   <figure class="pack">{pack_img(p, lang, '(max-width: 900px) 100vw, 50vw', eager=True)}</figure>
   <div class="product-copy">
-    <p class="mono">{line_of(p, lang)} · {p['weight']} · <span class="tag-inline">{t['b2b_only']}</span></p>
+    <p class="mono">{line_of(p, lang)} · {p['weight']}</p>
     <h1>{esc(name)}</h1>
     <p class="shop-name">{esc(ptx(p, 'shop', lang))}</p>
-    <p class="tin-text mono">{esc(p['tin'])}</p>
-    <p class="price big">{money(p['price'], lang)} <span class="mono">{t['per_tin']}</span></p>
-    <p class="case mono">{t['case_of']} {p['units']} {t['tins']} · {money(p['units'] * p['price'], lang)}</p>
-    {buy(p, lang, True)}
-    <p class="small-terms">{t['terms_line']}</p>
     <p class="lead">{esc(ptx(p, 'lead', lang))}</p>
+    <div class="purchase">
+      <div class="price-row">
+        <p class="price big">{money(p['price'], lang)} <span class="mono">{t['per_tin']}</span></p>
+        <p class="case mono">{t['case_of']} {p['units']} {t['tins']} · {money(p['units'] * p['price'], lang)} · {t['b2b_only']}</p>
+      </div>
+      {buy(p, lang, True)}
+      <p class="small-terms">{t['terms_line']}</p>
+    </div>
+    <p class="tin-text mono">{esc(p['tin'])}</p>
     <p>{esc(ptx(p, 'desc', lang))}</p>
     {note}
     {facts([(t['net_weight'], p['weight']), (t['format'], fmt(p, lang)), (t['case'], f"{p['units']} {t['tins']}"), (t['ref'], p['ref']), (t['ean'], p['ean'])])}

@@ -287,8 +287,8 @@ export function startScene(collection) {
   // crosses the hero close to the viewer and comes back small and far, with
   // no hairpin turns. out = position, tg = direction of travel
   function path(s, out, tg) {
-    const ax = halfW * 0.72, ay = halfH * 0.3, az = 2.2, zc = -3;
-    const cx = halfW * 0.12, cy = halfH * 0.02;
+    const ax = halfW * 0.66, ay = halfH * 0.3, az = 2.2, zc = -3;
+    const cx = halfW * 0.3, cy = halfH * 0.02;
     out.set(cx + ax * (Math.sin(s) + 0.15 * Math.sin(2 * s + 0.7)),
             cy + ay * (0.7 * Math.sin(2 * s + 1) + 0.3 * Math.sin(0.5 * s)),
             zc + az * Math.cos(s));
@@ -382,7 +382,7 @@ export function startScene(collection) {
     const pace = 1 + 0.2 * Math.sin(t * 0.13) + 0.1 * Math.sin(t * 0.31 + 2) + 0.45 * surge;
     lead += dt * motion * 0.16 * pace;
     uniforms.uBeat.value += dt * motion * (0.6 + 0.4 * pace);
-    const cx = halfW * 0.12, cy = halfH * 0.02;
+    const cx = halfW * 0.3, cy = halfH * 0.02;
     const span = 2.1; // how much of the path the school covers, head to tail
     const kHead = 1 - Math.exp(-dt * 5);
     const place = (d, i, sink) => {

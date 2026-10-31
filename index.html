@@ -20,7 +20,7 @@
 <link rel="icon" href="img/brand/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script type="module" src="js/main.js"></script>
 <script>
@@ -68,14 +68,9 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
       <p class="kicker mono">Rödel &amp; Fils Frères · Bordeaux, 1824</p>
       <h1>The taste of Brittany. <br><em>The elegance of Bordeaux.</em></h1>
       <p class="lead">Sardines from the Bay of Concarneau, caught in the morning and laid in the tin by hand the same day. Since 1824.</p>
-      <ul class="proof mono">
-        <li>Packed by hand in Concarneau</li>
-        <li>Caught and tinned the same day</li>
-        <li>Nine fishing families of Concarneau</li>
-      </ul>
       <div class="actions">
         <a class="btn" href="#all-products">Discover the collection</a>
-        <a class="btn btn-ghost" href="maison/">Our history</a>
+        <a class="more" href="maison/">Our history <span aria-hidden="true">→</span></a>
       </div>
     </div>
     <p class="cue mono" aria-hidden="true"><span></span>Follow the shoal</p>
@@ -84,10 +79,10 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
   <section id="maison" class="band" data-scene>
     <picture class="still">
       <source media="(min-width: 901px) and (min-aspect-ratio: 9/10)" srcset="data:image/gif;base64, R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-      <img src="img/tin-open.webp" width="1200" height="853" alt="An open tin with five sardines laid head to tail" loading="lazy" decoding="async">
+      <img src="img/tin-open.webp" width="1200" height="853" alt="An open tin with four sardines laid head to tail" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
-      <p class="kicker mono">01 — The same process from 1824</p>
+      <p class="kicker mono">The same process from 1824</p>
       <h2>Caught in the morning. <br><em>In the tin the same day.</em></h2>
       <p>Nine fishing families of Concarneau bring in the catch with the traditional bolinche, from the Bay of Concarneau, the Glénan archipelago and Cape Trévignon. Every sardine is cleaned by hand, fried for thirty seconds to seal it, and laid in the tin. Never frozen.</p>
       <dl class="specs">
@@ -105,7 +100,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
       <img src="img/tin-ajar.webp" width="1200" height="853" alt="The Millésime 2025 tin, lid ajar" loading="lazy" decoding="async">
     </picture>
     <div class="copy">
-      <p class="kicker mono">02 — Millésime</p>
+      <p class="kicker mono">Millésime</p>
       <h2>The finest catch <br><em>of a given year.</em></h2>
       <p>The House of Rödel is distinguished by its selection of sardines. Millésime is a designation reserved for the finest catch of a given year, harvested at optimal maturity for exceptional richness and remarkable depth of flavour. Rödel marks on each lid when, by whom and where the fish were caught.</p>
       <figure class="rule" aria-label="Savoured even after ten years, 2025 to 2035">
@@ -118,7 +113,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
 
   <section id="collection" class="band" data-scene>
     <div class="copy">
-      <p class="kicker mono">03 — The collection</p>
+      <p class="kicker mono">The collection</p>
       <div class="tabs" role="group" aria-label="Choose a tin"></div>
       <div class="product" aria-live="polite">
         <h2 data-p="name">Millésime 2025</h2>
@@ -228,7 +223,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
 
   <section id="histoire" class="band" data-scene>
     <div class="copy wide">
-      <p class="kicker mono">04 — Since 1824</p>
+      <p class="kicker mono">Since 1824</p>
       <h2>The oldest cannery brand <br><em>in the world.</em></h2>
       <p>In 1820 the French Admiralty asked Nicolas Appert, the inventor of preserving, to build a cannery in Bordeaux. He entrusted it to his most accomplished disciple, Charles Rödel.</p>
       <a class="more" href="maison/">Read the history <span aria-hidden="true">→</span></a>
@@ -264,7 +259,7 @@ try { if (!sessionStorage.getItem('rodel-intro') && !matchMedia('(prefers-reduce
 
   <section id="contact" class="band" data-scene>
     <div class="copy">
-      <p class="kicker mono">05 — Where to find Rödel</p>
+      <p class="kicker mono">Where to find Rödel</p>
       <h2>A name whispered <br><em>among gourmets.</em></h2>
       <p>Today our products are found exclusively in iconic stores, sought out by gourmets from around the world:</p>
       <ul class="stockists compact"><li><span>La Grande Épicerie de Paris</span><span class="mono">Paris</span></li><li><span>Galeries Lafayette Haussmann</span><span class="mono">Paris</span></li><li><span>Gillardeau La Boutique</span><span class="mono"></span></li><li><span>Kaviari Delikatessen</span><span class="mono"></span></li><li><span>Maison Rolle, Halles de Lyon Paul Bocuse</span><span class="mono">Lyon</span></li><li><span>Julius Meinl am Graben</span><span class="mono">Vienna</span></li><li><span>Maison Arostéguy</span><span class="mono">Biarritz</span></li><li><span>L’Échoppe de la Lune</span><span class="mono">Bordeaux</span></li><li><span>Maison Janicot</span><span class="mono">Sète</span></li><li><span>Les Accords Parfaits</span><span class="mono"></span></li><li><span>Grand Marché Marnière</span><span class="mono"></span></li><li><span>Izraël</span><span class="mono"></span></li><li><span>Épicerie de Longueil</span><span class="mono"></span></li><li><span>Maison Gabriella Delicatessen</span><span class="mono"></span></li></ul>
