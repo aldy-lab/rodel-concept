@@ -10,7 +10,7 @@ A static site with no build step to serve it. The text, product data and photogr
 |---|---|
 | `/` | The 3D story: the shoal, the open tin, the Millésime, the collection (real lids), the history, stockists |
 | `/maison/` | The full history from the About page, plus the archive from the Gallery |
-| `/sardines/` | The Secret of Perfection: season, waters, cannery, fishermen and method |
+| `/sardines/` | The Secret of Perfection as a journey from the sea to the tin: eight rules, each with a living archive photograph, and a chart of the fishing grounds |
 | `/collection/` | All nine products: pack shot, tin wording, description, ref, EAN, weight, case |
 | `/trade/` | B2B terms, the trade catalogue, stockists, contacts |
 | `/legal/` | Mentions légales |
@@ -54,6 +54,10 @@ The French is a faithful translation of Rödel's copy. **Have a native speaker p
 ## Animated history (Higgsfield)
 
 `tools/higgsfield.py` turns the seven history-reel photographs into short clips with Higgsfield's Kling 2.5 Turbo Pro image-to-video model. The prompts are restrained: light, air, water and the camera move, while faces, objects and lettering stay as they are. The clips are compressed into `img/reel/` and listed in `tools/reel_videos.json`; `tools/build.py` then puts them on the reel. An era plays its clip once when it comes on screen and holds the last frame. Data savers and reduced motion keep the stills. The reel then carries the line "Archive photographs animated with AI (Higgsfield)", because a heritage brand must not pass animation off as archive footage.
+
+The same clips now play wherever their photograph appears as a figure: eight on the Maison page, and one per rule on the Sardines page, where four new ones were made (Arcachon fishermen, the cannery engraving, the factory staff, the tin in low light). Every animated figure says "animated with AI" in its caption. Two takes were cut short where the model began to redraw: the tin's lid lettering ("FRÈRES" became "FRÈAKS") and the fishermen's faces, both trimmed at 2.5 s. A first take of the Arcachon postcard was rejected outright: the men stood up and hauled a net that is not in the photograph. Rejections are logged in `tools/reel_videos.json`.
+
+**The chart** on the Sardines page (`img/waters.svg`, inlined by the build) is drawn by `tools/chart.py` from OpenStreetMap's coastline (© OpenStreetMap contributors, ODbL, credited on the chart): the three places rodel.fr names, real latitude and longitude ticks, a 5 km scale and the measured 18 km run from Concarneau to the Glénan islands.
 
 Credentials go in `~/.config/higgsfield/credentials` (never in the repo). Run `python3 tools/higgsfield.py --dry-run` first: it shows the seven requests and costs nothing.
 

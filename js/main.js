@@ -29,6 +29,7 @@ const reelRoot = document.querySelector('[data-reel]');
 if (reelRoot) import('./reel.js').then((m) => m.initReel(reelRoot));
 const storyRoot = document.querySelector('[data-story]');
 if (storyRoot) import('./story.js').then((m) => m.initStory(storyRoot));
+if (document.querySelector('.plate-video, .journey')) initClips();
 const galleryRoot = document.querySelector('[data-gallery]');
 if (galleryRoot) import('./gallery.js').then((m) => m.initGallery(galleryRoot));
 
@@ -115,4 +116,23 @@ if (!phone && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMe
       if (open !== held) { held = open; if (open) lenis.stop(); else lenis.start(); }
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   }).catch(() => { /* the native scroll stays */ });
+}
+
+// Archive photographs animated with Higgsfield: each clip loads only when its
+// figure comes on screen, plays once over the still and holds its last frame.
+// Reduced motion and data savers keep the stills. Journey chapters reveal too.
+function initClips() {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData;
+  document.documentElement.classList.add('clips-ready');
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    const el = e.target;
+    if (el.matches('.journey > li')) { if (e.isIntersecting) { el.classList.add('is-in'); io.unobserve(el); } return; }
+    const v = el.querySelector('.plate-video');
+    if (!e.isIntersecting) { v.pause(); return; }
+    if (v.ended) return;
+    if (!v.src) { v.preload = 'auto'; v.src = v.dataset.src; }
+    v.play().then(() => el.classList.add('playing')).catch(() => {});
+  }), { threshold: 0.4 });
+  if (!still) document.querySelectorAll('.plate').forEach((f) => { if (f.querySelector('.plate-video')) io.observe(f); });
+  document.querySelectorAll('.journey > li').forEach((li) => (still ? li.classList.add('is-in') : io.observe(li)));
 }

@@ -89,5 +89,40 @@
   "model": "kling-video/v2.5-turbo/pro/image-to-video",
   "mp4": "img/reel/hands-open-tins.mp4",
   "kb": 891
+ },
+ "arcachon-fishermen": {
+  "request_id": "01a19314-68b1-78e7-855a-ea4fecb0f68b",
+  "digest": "1e36bd59f3cf58e6",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/arcachon-fishermen.mp4",
+  "kb": 769,
+  "rejected": [
+   "01a19308-892c-73a1-97b7-3ef886156157 (the men stood up and hauled a net that is not in the photograph)"
+  ]
+ },
+ "engraving-workshop": {
+  "request_id": "01a1930b-ea43-7596-a48a-87d86579b819",
+  "digest": "f8f834cf05752cb8",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/engraving-workshop.mp4",
+  "kb": 906
+ },
+ "factory-staff": {
+  "request_id": "01a1930f-ba96-7652-b297-93566743a1de",
+  "digest": "3d1eabb5aa2decbb",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/factory-staff.mp4",
+  "kb": 534
+ },
+ "tin-dark": {
+  "request_id": "01a19312-9e17-722b-b11f-bc7ff4b4a637",
+  "digest": "02863eebc1bf2e55",
+  "take": 0,
+  "model": "kling-video/v2.5-turbo/pro/image-to-video",
+  "mp4": "img/reel/tin-dark.mp4",
+  "kb": 110
  }
 }

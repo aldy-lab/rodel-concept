@@ -45,7 +45,9 @@ NEGATIVE = ('new objects, new people, people walking, faces changing, morphing, 
 # drifted to copper. These eras get a locked-off camera and extra guards.
 NEGATIVE_EXTRA = {
     slug: ', new words, rotating object, camera orbit, camera movement, orange tint'
-    for slug in ('founders-medal', 'plage-rodel', 'tin-marble-red', 'fishermen', 'cannery-workers', 'canton-road', 'hands-open-tins')
+    + (', people moving, standing up, hauling, lifting, hands moving, new net' if slug == 'arcachon-fishermen' else '')
+    for slug in ('founders-medal', 'plage-rodel', 'tin-marble-red', 'fishermen', 'cannery-workers', 'canton-road', 'hands-open-tins',
+                 'arcachon-fishermen', 'engraving-workshop', 'factory-staff', 'tin-dark')
 }
 PROMPTS = {
     'napoleon': 'Slow cinematic push-in on this oil painting. Clouds drift slowly across the dusk sky, the sea '
@@ -85,12 +87,30 @@ PROMPTS = {
     'hands-open-tins': 'Locked-off static camera, close-up of two hands holding two open tins of sardines in olive '
                        'oil. The hands stay still. Only a soft light glides slowly across the silver skin of the '
                        'sardines and the oil glistens. Natural colours, sharp detail.',
+    # the Sardines page journey: one living photograph per principle
+    # second take: the first had the men stand up and haul an invented net within a second
+    'arcachon-fishermen': 'Locked-off static camera on a sepia postcard photograph of fishermen sitting in a boat. '
+                          'Nobody moves: every man, hand and net stays exactly where it is, as in a still photograph. '
+                          'Only the open sea in the background swells slowly and glints. The printed caption and the '
+                          'white logo are fixed and identical in every frame. Film grain.',
+    'engraving-workshop': 'Locked-off static camera on a fine nineteenth-century engraving of a cannery workshop. '
+                          'Only soft daylight from the tall windows drifts slowly across the room and the stacked '
+                          'tins catch a faint glint. The workers keep their poses. Engraving lines and monochrome '
+                          'paper tone preserved.',
+    'factory-staff': 'Locked-off static camera on an archival photograph of factory staff standing in front of a '
+                     'cannery beside drying racks of sardines. The people stay still; faces unchanged. Only soft '
+                     'daylight and a light breeze move across the scene. Film grain.',
+    'tin-dark': 'Locked-off static camera, luxury product photograph of a dark Rödel sardine tin on black. The tin '
+                'does not move or rotate. Only a slow, thin band of light glides across the rim and lid. '
+                'The tin, its shape and every letter of its label stay sharp and identical in every frame.',
 }
 DURATION = 5
 CFG = 0.5
 # seconds kept from a clip whose tail drifts (the medal warms to copper and the
 # profiles start to change after ~3 s); it then holds its last good frame
-TRIM = {'founders-medal': 2.6}
+TRIM = {'founders-medal': 2.6,
+        'tin-dark': 2.5,             # the lid's lettering is redrawn after 2.5 s (FRÈRES became FRÈAKS)
+        'arcachon-fishermen': 2.5}   # the faces soften towards the end
 # longer takes: (model duration, slow-down factor), slowed with motion-interpolated
 # frames. A 10 s Kling take of the fishermen was rejected: past 5 s the camera
 # drifted and the men changed pose. The approved 5 s take, slowed 3x, runs 15 s.

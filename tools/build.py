@@ -78,21 +78,33 @@ def rebase(text, asset_base, page_base):
 
 # ── shared pieces ──────────────────────────────────────────────────────────
 
+CLIPS_FILE = ROOT / 'tools' / 'reel_videos.json'
+CLIPS = {k: v['mp4'] for k, v in (json.loads(CLIPS_FILE.read_text()) if CLIPS_FILE.exists() else {}).items()
+         if v.get('mp4') and (ROOT / v['mp4']).exists()}
+ANIMATED = {'en': 'animated with AI', 'fr': 'animé par IA'}
+
+
 def fig(slug, cls, lang):
     a = ASSETS['archive'][slug]
     alt, cap = (ARCHIVE_FR[slug] if lang == 'fr' else (a['alt'], a['caption']))
     w, h = a['w'], a['h']
     w8, h8 = (800, round(h * 800 / w)) if w > 800 else (w, h)
-    caption = f'<figcaption>{esc(cap)}</figcaption>' if cap else ''
+    # a Higgsfield clip plays over the photograph once, on screen (js/main.js), and says so
+    video = (f'<video class="plate-video" muted playsinline preload="none" data-src="{CLIPS[slug]}" aria-hidden="true"></video>'
+             if slug in CLIPS else '')
+    note = f' <span class="ai-note">· {ANIMATED[lang]}</span>' if video else ''
+    caption = f'<figcaption>{esc(cap or alt)}{note}</figcaption>' if cap or video else ''
     # the frame clips the photograph, so it can drift and scale inside without covering the caption
     cls = f'{cls} round'.strip() if slug in ROUND else cls
     return (f'<figure class="{f"plate {cls}".strip()}"><span class="frame"><img src="img/archive/{slug}-800.webp" '
             f'srcset="img/archive/{slug}-800.webp {w8}w, img/archive/{slug}.webp {w}w" '
             f'sizes="(max-width: 900px) 100vw, 46vw" width="{w8}" height="{h8}" '
-            f'alt="{esc(alt)}" loading="lazy" decoding="async"></span>{caption}</figure>')
+            f'alt="{esc(alt)}" loading="lazy" decoding="async">{video}</span>{caption}</figure>')
 
 
 def figs(text, lang):
+    if '{{chart}}' in text:
+        text = text.replace('{{chart}}', (ROOT / 'img' / 'waters.svg').read_text())
     return re.sub(r'\{\{fig:([a-z0-9-]+)(?:\|([a-z0-9 -]+))?\}\}', lambda m: fig(m.group(1), m.group(2) or '', lang), text)
 
 
