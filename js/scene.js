@@ -274,7 +274,21 @@ export function startScene(collection) {
   });
   let vortex = 0;
   let packT = 0, packGoal = 0;
+  // each fish takes PACK_EACH seconds, the next leaving PACK_STAGGER later
+  const PACK_EACH = 2.3, PACK_STAGGER = 0.38, PACK_TIME = PACK_EACH + PACK_STAGGER * (PACKED - 1);
   const tinUp = new THREE.Vector3(), hover = new THREE.Vector3();
+  const start = new THREE.Vector3(), startDir = new THREE.Vector3(), head = new THREE.Vector3();
+  const vel = new THREE.Vector3(), upHint = new THREE.Vector3(), qUp = new THREE.Quaternion();
+  const bx = new THREE.Vector3(), by = new THREE.Vector3(), bz = new THREE.Vector3(), bm = new THREE.Matrix4();
+  // orientation with the head along fwd and the back toward up
+  function basis(fwd, up, out) {
+    bz.crossVectors(fwd, up);
+    if (bz.lengthSq() < 1e-6) bz.crossVectors(fwd, X); // heading straight up or down
+    bz.normalize();
+    by.crossVectors(bz, fwd);
+    bm.makeBasis(bx.copy(fwd), by, bz);
+    return out.setFromRotationMatrix(bm);
+  }
   let lead = 0, flashT = -99, nextFlash = 6, flashSign = 1;
 
   // ── frame ──
@@ -369,9 +383,10 @@ export function startScene(collection) {
     const vt = performance.now() < vortexUntil ? 1 : 0;
     vortex += (vt - vortex) * (1 - Math.exp(-dt * 1.5));
     // the school rises out of the deep as the page opens, and sinks back into
-    // it and fades as the page moves on
+    // it and fades once the tin is being packed
     const arrive = THREE.MathUtils.smoothstep(t, 0.8, 4.5);
-    const fade = (1 - THREE.MathUtils.smoothstep(cur.pack, 0.02, 0.5)) * arrive;
+    // it stays while the tin's sardines peel away from it, then goes
+    const fade = (1 - THREE.MathUtils.smoothstep(packT, 0.38, 0.95)) * arrive;
     school.mesh.visible = fade > 0.003;
     school.mesh.material.opacity = fade;
     // now and then the school startles: a turn and a flash of silver flanks
@@ -433,28 +448,59 @@ export function startScene(collection) {
     } else fish.forEach((d) => { d.h = null; });
     // Packing plays through on its own once the page reaches the tin (and
     // back when it leaves), so a fish never hangs half-way over the rim.
-    if (cur.pack > 0.5) packGoal = 1; else if (cur.pack < 0.25) packGoal = 0;
-    packT = THREE.MathUtils.clamp(packT + Math.sign(packGoal - packT) * dt / 2.6, 0, 1);
+    // Each fish peels away from the school on a curve that leaves along its
+    // own heading and arrives gliding along its place in the tin, well above
+    // the rim, always facing the way it moves; then it slows, turns onto its
+    // side and settles straight down while its tail goes still.
+    if (cur.pack > 0.3) packGoal = 1; else if (cur.pack < 0.12) packGoal = 0;
+    // the way back up is quicker: the hero should not stand empty
+    packT = THREE.MathUtils.clamp(packT + Math.sign(packGoal - packT) * dt / (packGoal ? PACK_TIME : PACK_TIME * 0.55), 0, 1);
     tinUp.set(0, 1, 0).applyQuaternion(tin.group.quaternion);
-    const lift = 2.4 * tin.group.scale.x; // well clear of the rim
+    const lift = 2.2 * tin.group.scale.x; // well clear of the rim
     for (let i = 0; i < PACKED; i++) {
-      const pk = THREE.MathUtils.clamp(packT * 1.75 - i * 0.25, 0, 1);
-      place(tinFish[i], i, 1 - arrive);
+      const d = tinFish[i];
+      const pk = THREE.MathUtils.clamp((packT * PACK_TIME - i * PACK_STAGGER) / PACK_EACH, 0, 1);
+      place(d, i, 1 - arrive);
       slotWorld[i].decompose(p, q, sc);
-      // 1: glide to a point straight above its place, turning to lie as it will
-      const a = ease(THREE.MathUtils.clamp(pk / 0.62, 0, 1));
-      hover.copy(p).addScaledVector(tinUp, lift);
-      ps.lerp(hover, a);
-      ps.addScaledVector(tinUp, Math.sin(a * Math.PI) * 0.6);
-      qs.slerp(q, a);
-      ss.lerp(sc, a);
-      // 2: settle straight down into it, slowing to rest
-      const b = THREE.MathUtils.clamp((pk - 0.62) / 0.38, 0, 1);
-      if (b > 0) ps.copy(hover).lerp(p, 1 - (1 - b) ** 3);
-      beds[i].material.opacity = b * b;
+      if (pk > 0) {
+        const fromScale = d.s;
+        start.copy(ps); startDir.copy(d.h);
+        head.set(1, 0, 0).applyQuaternion(q);
+        hover.copy(p).addScaledVector(tinUp, lift);
+        const A = 0.72; // share of the time spent swimming in
+        const sw = THREE.MathUtils.clamp(pk / A, 0, 1);
+        const s1 = sw * sw * (3 - 2 * sw); // gathers speed, then eases off
+        // cubic Hermite from the school to above the place, bowed upward
+        const len = start.distanceTo(hover) * 1.1;
+        const h00 = 2 * s1 ** 3 - 3 * s1 ** 2 + 1, h10 = s1 ** 3 - 2 * s1 ** 2 + s1, h01 = -2 * s1 ** 3 + 3 * s1 ** 2, h11 = s1 ** 3 - s1 ** 2;
+        ps.copy(start).multiplyScalar(h00).addScaledVector(startDir, h10 * len)
+          .addScaledVector(hover, h01).addScaledVector(head, h11 * len)
+          .addScaledVector(tinUp, Math.sin(Math.PI * s1) * 0.7);
+        const g00 = 6 * s1 ** 2 - 6 * s1, g10 = 3 * s1 ** 2 - 4 * s1 + 1, g01 = -g00, g11 = 3 * s1 ** 2 - 2 * s1;
+        vel.copy(start).multiplyScalar(g00).addScaledVector(startDir, g10 * len)
+          .addScaledVector(hover, g01).addScaledVector(head, g11 * len)
+          .addScaledVector(tinUp, Math.cos(Math.PI * s1) * Math.PI * 0.7);
+        if (vel.lengthSq() < 1e-8) vel.copy(head);
+        // face the direction of travel, back turning from the sky to the tin's up
+        upHint.set(0, 1, 0).lerp(tinUp, s1).normalize();
+        basis(vel.normalize(), upHint, qs);
+        ss.setScalar(THREE.MathUtils.lerp(fromScale, sc.x, s1 * s1 * (3 - 2 * s1)));
+        // then down into its place, rolling onto its side as it goes
+        const st = THREE.MathUtils.clamp((pk - A) / (1 - A), 0, 1);
+        if (st > 0) {
+          basis(head, tinUp, qUp);
+          ps.copy(hover).lerp(p, 1 - (1 - st) ** 3);
+          qs.copy(qUp).slerp(q, ease(st));
+          ss.copy(sc);
+        }
+        beds[i].material.opacity = st * st;
+        five.wig.array[i] = 1 - ease(st);
+      } else {
+        beds[i].material.opacity = 0;
+        five.wig.array[i] = 1;
+      }
       m4.compose(ps, qs, ss);
       five.mesh.setMatrixAt(i, m4);
-      five.wig.array[i] = 1 - Math.min(1, pk / 0.8);
     }
     five.mesh.instanceMatrix.needsUpdate = true;
     five.wig.needsUpdate = true;
