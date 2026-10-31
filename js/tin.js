@@ -33,14 +33,36 @@ function slab(dims, depth) {
   return g;
 }
 
+function brushed() {
+  const c = document.createElement('canvas');
+  c.width = 1024; c.height = 256;
+  const g = c.getContext('2d');
+  g.fillStyle = 'rgb(200,200,200)';
+  g.fillRect(0, 0, c.width, c.height);
+  for (let i = 0; i < 2600; i++) {
+    const v = 175 + Math.random() * 70 | 0;
+    g.strokeStyle = `rgba(${v},${v},${v},${0.15 + Math.random() * 0.35})`;
+    g.lineWidth = 0.5 + Math.random();
+    const y = Math.random() * c.height, x = Math.random() * c.width;
+    g.beginPath(); g.moveTo(x - 400, y); g.lineTo(x + 400, y + (Math.random() - 0.5) * 2); g.stroke();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(0.35, 1.2);
+  t.anisotropy = 8;
+  return t;
+}
+
 export const TIN = { W: 4.2, D: 3.3, H: 0.8, R: 0.52, T: 0.06 };
 
 export function createTin(labelTexture) {
   const { W, D, H, R, T } = TIN;
   const group = new THREE.Group();
 
-  const tinplate = new THREE.MeshStandardMaterial({ color: '#c9d1d8', metalness: 1, roughness: 0.28 });
-  const paint = new THREE.MeshStandardMaterial({ color: '#b3121a', metalness: 0.7, roughness: 0.3, envMapIntensity: 0.8 });
+  // Tinplate is rolled, so its sheen runs in fine streaks: a roughness map of
+  // random hairlines, drawn once. The sleeve is lacquered, so it gets a clear coat.
+  const tinplate = new THREE.MeshStandardMaterial({ color: '#c9d1d8', metalness: 1, roughness: 0.36, roughnessMap: brushed() });
+  const paint = new THREE.MeshPhysicalMaterial({ color: '#a50e16', metalness: 0.65, roughness: 0.32, clearcoat: 0.4, clearcoatRoughness: 0.12, envMapIntensity: 0.75 });
 
   const inner = [W - 2 * T, D - 2 * T, R - T];
   group.add(new THREE.Mesh(ring([W, D, R], inner, H), tinplate));

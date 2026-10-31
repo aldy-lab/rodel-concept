@@ -80,6 +80,8 @@ export function createFishGeometry(lite = false) {
     });
   });
 
+  const tag = (g, v) => g.setAttribute('aSkin', new THREE.BufferAttribute(new Float32Array(g.attributes.position.count).fill(v), 1));
+  tag(body, 1); tag(tail, 0.5); tag(dorsal, 0.5); eyes.forEach((e) => tag(e, 0));
   const geo = mergeGeometries([body, tail, dorsal, ...eyes]);
   geo.computeBoundingSphere();
   return geo;
@@ -102,9 +104,10 @@ export function createFishMaterial(uniforms, lite = false) {
   });
   m.onBeforeCompile = (sh) => {
     sh.uniforms.uBeat = uniforms.uBeat;
-    sh.vertexShader = 'uniform float uBeat;\nattribute float aWig;\n' + sh.vertexShader.replace(
+    sh.vertexShader = 'uniform float uBeat;\nattribute float aWig;\nattribute float aSkin;\nvarying vec3 vObj;\nvarying float vSkin;\n' + sh.vertexShader.replace(
       '#include <begin_vertex>',
       `#include <begin_vertex>
+      vObj = position; vSkin = aSkin;
       // a travelling body wave: small at the head, growing to the tail; each
       // fish has its own tempo (uBeat runs faster as the school speeds up), and the head yaws gently against the tail
       float id = float(gl_InstanceID);
@@ -116,6 +119,39 @@ export function createFishMaterial(uniforms, lite = false) {
       transformed.z += sin(position.x * 6.0 - uBeat * tempo + ph) * amp;
       transformed.z -= sin(-uBeat * tempo + ph + 3.0) * 0.012 * smoothstep(0.1, 0.5, position.x) * aWig;`
     );
+    // The skin: rows of fine scales, the line of dark spots along the upper
+    // flank behind the gill that marks Sardina pilchardus, and a blue-green
+    // sheen between the dark back and the silver flank. The scale pattern
+    // fades out where it would be finer than a pixel, so a distant fish
+    // never shimmers.
+    sh.fragmentShader = 'varying vec3 vObj;\nvarying float vSkin;\n' + sh.fragmentShader
+      .replace('#include <color_fragment>', `#include <color_fragment>
+      float skinScale = 0.5;
+      float onBody = step(0.9, vSkin);
+      if (onBody > 0.5) {
+        float r = max(length(vec2(vObj.y, vObj.z / 0.55)), 1e-4);
+        float k = vObj.y / r; // -1 belly … +1 back
+        float ang = atan(vObj.z / 0.55, vObj.y);
+        vec2 g = vec2(vObj.x * 90.0, ang * 13.0);
+        g.y += mod(floor(g.x), 2.0) * 0.5;
+        vec2 f = fract(g) - 0.5;
+        float fine = 1.0 - smoothstep(0.25, 0.7, fwidth(g.x));
+        skinScale = mix(0.5, smoothstep(0.55, 0.1, length(f * vec2(1.0, 1.5))), fine);
+        float flank = smoothstep(-0.75, -0.2, k) * (1.0 - smoothstep(0.55, 0.85, k));
+        diffuseColor.rgb *= 1.0 + (skinScale - 0.5) * 0.45 * flank;
+        float band = exp(-pow((k - 0.45) / 0.17, 2.0)) * smoothstep(-0.38, -0.2, vObj.x);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.16, 0.36, 0.47), band * 0.6);
+        float sx = fract(vObj.x * 12.5 + 0.35) - 0.5;
+        float spot = exp(-pow((k - 0.27) / 0.09, 2.0)) * exp(-pow(sx / 0.16, 2.0))
+          * smoothstep(-0.02, 0.04, vObj.x) * (1.0 - smoothstep(0.26, 0.32, vObj.x));
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.02, 0.04, 0.06), spot * 0.9);
+      } else if (vSkin > 0.4) {
+        // fin rays
+        float rays = 0.5 + 0.5 * sin(atan(vObj.y, vObj.x + 0.39) * 60.0);
+        diffuseColor.rgb *= 0.9 + 0.12 * rays;
+      }`)
+      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+      roughnessFactor = clamp(roughnessFactor * mix(1.35, 0.75, skinScale), 0.05, 1.0);`);
   };
   return m;
 }
